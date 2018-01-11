@@ -33,25 +33,32 @@ struct CompareArriendo
     }
 };
 
+using Arriendos = std::set<Arriendo, CompareArriendo>;
+Q_DECLARE_METATYPE(Arriendos);
+
 class ArriendosList : public QObject
 {
     Q_OBJECT
 
 public:
-    ArriendosList(const std::string& fileName);
+    ArriendosList();
     ~ArriendosList();
+
+    void cargarArriendos(const std::string& fileName);
 
 public slots:
     void agregarArriendo(const Arriendo& arriendo);
     void removerArriendo(const std::string& local);
 
+    void setArriendos(const Arriendos& arriendos);
+
 private:
-    std::set<Arriendo, CompareArriendo> arriendos;
+    Arriendos arriendos;
     std::string fileName;
     std::size_t precioTotal;
     std::size_t IVATotal;
 
 signals:
-    void cargarArriendos(const std::set<Arriendo, std::less<>>& arriendos);
+    void enviarArriendos(const Arriendos& arriendos);
     void cambiaronTotales(std::size_t precioTotal, std::size_t IVATotal);
 };

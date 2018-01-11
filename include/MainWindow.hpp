@@ -9,9 +9,11 @@ InversePalindrome.com
 
 #include "SpreadSheet.hpp"
 #include "ArriendosList.hpp"
-#include "AgregarArriendoDialog.hpp"
+#include "GuardarDialog.hpp"
+#include "AgregarDialog.hpp"
 
 #include <QMenuBar>
+#include <QToolBar>
 #include <QMainWindow>
 
 
@@ -20,12 +22,18 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-MainWindow(ArriendosList& arriendos, int width, int height);
+    MainWindow(ArriendosList& arriendos);
 
 private:
-ArriendosList& arriendos;
+    QMenuBar* menuBar;
+    QToolBar* toolBar;
+    SpreadSheet* spreadSheet;
+    GuardarDialog* guardarDialog;
+    AgregarDialog* agregarDialog;
 
-QMenuBar* menuBar;
-SpreadSheet* spreadSheet;
-AgregarArriendoDialog* agregarArriendo;
+    ArriendosList& arriendos;
+
+signals:
+    void guardarArriendos();
+    void emprimir();
 };

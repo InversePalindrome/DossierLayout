@@ -14,6 +14,7 @@ InversePalindrome.com
 class Arriendo
 {
 public:
+    Arriendo();
     Arriendo(const std::string& local, const std::string& nombre, const std::string& telefono, const std::string& correo,
              std::size_t precio, std::size_t IVA);
 
