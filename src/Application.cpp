@@ -12,8 +12,7 @@ InversePalindrome.com
 
 Application::Application(int& argc, char** argv) :
      QApplication(argc, argv),
-     arriendos(""),
-     mainWindow(arriendos, 2048, 1536),
+     mainWindow(arriendos),
      splashScreen(QPixmap(":/Resources/InversePalindromeLogo.png"))
 {
 }

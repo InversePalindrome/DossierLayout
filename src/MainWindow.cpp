@@ -9,44 +9,50 @@ InversePalindrome.com
 
 #include <QMenu>
 #include <QBoxLayout>
+#include <QApplication>
 #include <QGraphicsView>
 
 
-MainWindow::MainWindow(ArriendosList& arriendos, int width, int height) :
-    arriendos(arriendos),
-    menuBar(new QMenuBar()),
+MainWindow::MainWindow(ArriendosList& arriendos) :
+    menuBar(new QMenuBar(this)),
+    toolBar(new QToolBar(this)),
     spreadSheet(new SpreadSheet(this)),
-    agregarArriendo(new AgregarArriendoDialog(this, 1000, 900))
+    guardarDialog(new GuardarDialog(this)),
+    agregarDialog(new AgregarDialog(this)),
+    arriendos(arriendos)
 {
-  setFixedSize(width, height);
+    setFixedSize(2048, 1536);
 
-  auto* archivo = new QMenu("Archivos", this);
+    auto* archivo = new QMenu("Archivos", this);
 
-  archivo->addAction("Guardar", [](){});
-  archivo->addAction("Guardar Como", [](){});
-  archivo->addAction("Imprimir", [](){});
+    archivo->addAction("Guardar", [this](){ emit guardarArriendos(); });
+    archivo->addAction("Guardar Como", [this](){ guardarDialog->open(); });
+    archivo->addAction("Imprimir", [this](){ emit emprimir(); });
 
-  menuBar->addMenu(archivo);
+    menuBar->addMenu(archivo);
+    setMenuBar(menuBar);
 
-  auto* arriendosMenu = new QMenu("Arriendos", this);
+    toolBar->addAction(QIcon(QApplication::style()->standardIcon(QStyle::SP_FileDialogNewFolder)), "",
+                     [this](){ agregarDialog->open(); });
 
-  arriendosMenu->addAction("Agregar", [this](){ agregarArriendo->open(); });
+    addToolBar(toolBar);
 
-  menuBar->addMenu(arriendosMenu);
+    auto* mainLayout = new QVBoxLayout();
+    mainLayout->addWidget(spreadSheet);
 
-  setMenuBar(menuBar);
+    auto* view = new QGraphicsView(this);
+    view->setLayout(mainLayout);
 
-  auto* mainLayout = new QVBoxLayout(this);
+    setCentralWidget(view);
 
-  mainLayout->addWidget(spreadSheet);
+    QObject::connect(this, &MainWindow::guardarArriendos, spreadSheet, &SpreadSheet::guardarArriendos);
+    QObject::connect(this, &MainWindow::emprimir, spreadSheet, &SpreadSheet::emprimir);
+    QObject::connect(agregarDialog, &AgregarDialog::agregarArriendo, &arriendos, &ArriendosList::agregarArriendo);
+    QObject::connect(agregarDialog, &AgregarDialog::agregarArriendo, spreadSheet, &SpreadSheet::agregarArriendo);
+    QObject::connect(&arriendos, &ArriendosList::enviarArriendos, spreadSheet, &SpreadSheet::cargarArriendos);
+    QObject::connect(&arriendos, &ArriendosList::cambiaronTotales, spreadSheet, &SpreadSheet::cambiarTotales);
+    QObject::connect(spreadSheet, &SpreadSheet::arriendoRemovido, &arriendos, &ArriendosList::removerArriendo);
+    QObject::connect(spreadSheet, &SpreadSheet::setArriendos, &arriendos, &ArriendosList::setArriendos);
 
-  auto* view = new QGraphicsView(this);
-
-  view->setLayout(mainLayout);
-
-  setCentralWidget(view);
-
-  QObject::connect(agregarArriendo, &AgregarArriendoDialog::agregarArriendo, &arriendos, &ArriendosList::agregarArriendo);
-  QObject::connect(agregarArriendo, &AgregarArriendoDialog::agregarArriendo, spreadSheet, &SpreadSheet::agregarArriendo);
-  QObject::connect(&arriendos, &ArriendosList::cambiaronTotales, spreadSheet, &SpreadSheet::cambiarTotales);
+    arriendos.cargarArriendos("Arriendos.xml");
 }
