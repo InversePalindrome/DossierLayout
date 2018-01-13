@@ -15,7 +15,7 @@ InversePalindrome.com
 #include <QPushButton>
 #include <QApplication>
 #include <QTableWidgetItem>
-#include <QtPrintSupport/QtPrintSupport>
+#include <QPrintDialog>
 
 #include <sstream>
 
@@ -177,15 +177,32 @@ void SpreadSheet::cambiarTotales(std::size_t precioTotal, std::size_t IVATotal)
          setText(QString::fromStdString('$' + std::to_string(IVATotal)));
 }
 
-void SpreadSheet::emprimir()
+void SpreadSheet::guardarDocumento(const QString& fileName)
 {
     QPrinter printer;
-    QPainter painter;
-    SpreadSheetPrinter spreadSheetPrinter(&painter, &printer);
 
     printer.setOutputFormat(QPrinter::PdfFormat);
     printer.setPaperSize(QPrinter::A4);
-    printer.setOutputFileName("print.pdf");
+    printer.setOutputFileName(fileName);
+
+    pintar(printer);
+}
+
+void SpreadSheet::imprimir()
+{
+    QPrinter printer;
+    QPrintDialog printDialog(&printer, this);
+
+    if(printDialog.exec() == QDialog::Accepted)
+    {
+        pintar(printer);
+    }
+}
+
+void SpreadSheet::pintar(QPrinter& printer)
+{
+    QPainter painter;
+    SpreadSheetPrinter spreadSheetPrinter(&painter, &printer);
 
     painter.begin(&printer);
 

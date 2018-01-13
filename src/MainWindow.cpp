@@ -11,13 +11,13 @@ InversePalindrome.com
 #include <QBoxLayout>
 #include <QApplication>
 #include <QGraphicsView>
+#include <QFileDialog>
 
 
 MainWindow::MainWindow(ArriendosList& arriendos) :
     menuBar(new QMenuBar(this)),
     toolBar(new QToolBar(this)),
     spreadSheet(new SpreadSheet(this)),
-    guardarDialog(new GuardarDialog(this)),
     agregarDialog(new AgregarDialog(this)),
     arriendos(arriendos)
 {
@@ -25,9 +25,19 @@ MainWindow::MainWindow(ArriendosList& arriendos) :
 
     auto* archivo = new QMenu("Archivos", this);
 
-    archivo->addAction("Guardar", [this](){ emit guardarArriendos(); });
-    archivo->addAction("Guardar Como", [this](){ guardarDialog->open(); });
-    archivo->addAction("Imprimir", [this](){ emit emprimir(); });
+    archivo->addAction("Guardar", [this]()
+    {
+        emit guardarArriendos();
+        emit guardarDocumento("Arriendos.pdf");
+    });
+    archivo->addAction("Guardar Como", [this]()
+    {
+        emit guardarArriendos();
+        emit guardarDocumento(QFileDialog::getSaveFileName
+             (this, "Agregue o cree un documento.", "", "Documents (*.pdf)"));
+    });
+
+    archivo->addAction("Imprimir", [this](){ emit imprimir(); });
 
     menuBar->addMenu(archivo);
     setMenuBar(menuBar);
@@ -45,8 +55,9 @@ MainWindow::MainWindow(ArriendosList& arriendos) :
 
     setCentralWidget(view);
 
+    QObject::connect(this, &MainWindow::guardarDocumento, spreadSheet, &SpreadSheet::guardarDocumento);
+    QObject::connect(this, &MainWindow::imprimir, spreadSheet, &SpreadSheet::imprimir);
     QObject::connect(this, &MainWindow::guardarArriendos, spreadSheet, &SpreadSheet::guardarArriendos);
-    QObject::connect(this, &MainWindow::emprimir, spreadSheet, &SpreadSheet::emprimir);
     QObject::connect(agregarDialog, &AgregarDialog::agregarArriendo, &arriendos, &ArriendosList::agregarArriendo);
     QObject::connect(agregarDialog, &AgregarDialog::agregarArriendo, spreadSheet, &SpreadSheet::agregarArriendo);
     QObject::connect(&arriendos, &ArriendosList::enviarArriendos, spreadSheet, &SpreadSheet::cargarArriendos);
