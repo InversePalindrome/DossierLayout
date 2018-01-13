@@ -9,7 +9,6 @@ InversePalindrome.com
 
 #include "SpreadSheet.hpp"
 #include "ArriendosList.hpp"
-#include "GuardarDialog.hpp"
 #include "AgregarDialog.hpp"
 
 #include <QMenuBar>
@@ -28,12 +27,12 @@ private:
     QMenuBar* menuBar;
     QToolBar* toolBar;
     SpreadSheet* spreadSheet;
-    GuardarDialog* guardarDialog;
     AgregarDialog* agregarDialog;
 
     ArriendosList& arriendos;
 
 signals:
     void guardarArriendos();
-    void emprimir();
+    void guardarDocumento(const QString& string);
+    void imprimir();
 };

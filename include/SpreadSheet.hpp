@@ -11,6 +11,7 @@ InversePalindrome.com
 #include "ArriendosList.hpp"
 
 #include <QTableWidget>
+#include <QPrinter>
 
 
 class SpreadSheet : public QTableWidget
@@ -28,7 +29,12 @@ public slots:
     void cargarArriendos(const Arriendos& arriendos);
     void cambiarTotales(std::size_t precioTotal, std::size_t IVATotal);
 
-    void emprimir();
+    void guardarDocumento(const QString& fileName);
+
+    void imprimir();
+
+private:
+    void pintar(QPrinter& printer);
 
 private slots:
     void removerArriendo();
