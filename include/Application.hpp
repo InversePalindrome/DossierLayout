@@ -8,6 +8,7 @@ InversePalindrome.com
 #pragma once
 
 #include "MainWindow.hpp"
+#include "LoginDialog.hpp"
 #include "ArriendosList.hpp"
 
 #include <QApplication>
@@ -23,6 +24,8 @@ public:
 
 private:
     ArriendosList arriendos;
-    MainWindow mainWindow;
+
     QSplashScreen splashScreen;
+    MainWindow mainWindow;
+    LoginDialog loginDialog;
 };

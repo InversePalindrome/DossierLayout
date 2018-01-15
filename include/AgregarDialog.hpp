@@ -10,7 +10,6 @@ InversePalindrome.com
 #include "Arriendo.hpp"
 
 #include <QDialog>
-#include <QGridLayout>
 #include <QLineEdit>
 
 
@@ -22,7 +21,6 @@ public:
     AgregarDialog(QWidget* parent);
 
 private:
-    QGridLayout* layout;
     QLineEdit* localEntry;
     QLineEdit* nombreEntry;
     QLineEdit* telefonoEntry;

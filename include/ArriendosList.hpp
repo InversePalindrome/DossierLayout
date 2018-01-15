@@ -10,6 +10,7 @@ InversePalindrome.com
 #include "Arriendo.hpp"
 
 #include <QObject>
+#include <QString>
 
 #include <set>
 #include <string>
@@ -23,18 +24,18 @@ struct CompareArriendo
     {
          return arriendo1.getLocal()< arriendo2.getLocal();
     }
-    bool operator()(const std::string& local, const Arriendo& arriendo) const
+    bool operator()(const QString& local, const Arriendo& arriendo) const
     {
          return local < arriendo.getLocal();
     }
-    bool operator()(const Arriendo& arriendo, const std::string& local) const
+    bool operator()(const Arriendo& arriendo, const QString& local) const
     {
          return arriendo.getLocal() < local;
     }
 };
 
 using Arriendos = std::set<Arriendo, CompareArriendo>;
-Q_DECLARE_METATYPE(Arriendos);
+Q_DECLARE_METATYPE(Arriendos)
 
 class ArriendosList : public QObject
 {
@@ -42,13 +43,14 @@ class ArriendosList : public QObject
 
 public:
     ArriendosList();
+    ArriendosList(const std::string& fileName);
     ~ArriendosList();
 
     void cargarArriendos(const std::string& fileName);
 
 public slots:
     void agregarArriendo(const Arriendo& arriendo);
-    void removerArriendo(const std::string& local);
+    void removerArriendo(const QString& local);
 
     void setArriendos(const Arriendos& arriendos);
 

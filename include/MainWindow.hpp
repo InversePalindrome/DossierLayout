@@ -35,4 +35,5 @@ signals:
     void guardarArriendos();
     void guardarDocumento(const QString& string);
     void imprimir();
+    void salir();
 };

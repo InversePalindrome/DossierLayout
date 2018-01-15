@@ -10,8 +10,9 @@ InversePalindrome.com
 #include "Arriendo.hpp"
 #include "ArriendosList.hpp"
 
-#include <QTableWidget>
+#include <QString>
 #include <QPrinter>
+#include <QTableWidget>
 
 
 class SpreadSheet : public QTableWidget
@@ -35,11 +36,12 @@ public slots:
 
 private:
     void pintar(QPrinter& printer);
+    QString formatearNumero(std::size_t numero);
 
 private slots:
     void removerArriendo();
 
 signals:
     void setArriendos(const Arriendos& arriendos);
-    void arriendoRemovido(const std::string& local);
+    void arriendoRemovido(const QString& local);
 };

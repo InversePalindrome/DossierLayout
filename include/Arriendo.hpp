@@ -7,7 +7,8 @@ InversePalindrome.com
 
 #pragma once
 
-#include <string>
+#include <QString>
+
 #include <cstddef>
 
 
@@ -15,28 +16,28 @@ class Arriendo
 {
 public:
     Arriendo();
-    Arriendo(const std::string& local, const std::string& nombre, const std::string& telefono, const std::string& correo,
+    Arriendo(const QString& local, const QString& nombre, const QString& telefono, const QString& correo,
              std::size_t precio, std::size_t IVA);
 
-    std::string getLocal() const;
-    std::string getNombre() const;
-    std::string getTelefono() const;
-    std::string getCorreo() const;
+    QString getLocal() const;
+    QString getNombre() const;
+    QString getTelefono() const;
+    QString getCorreo() const;
     std::size_t getPrecio() const;
     std::size_t getIVA() const;
 
-    void setLocal(const std::string& local);
-    void setNombre(const std::string& nombre);
-    void setTelefono(const std::string& telefono);
-    void setCorreo(const std::string& correo);
+    void setLocal(const QString& local);
+    void setNombre(const QString& nombre);
+    void setTelefono(const QString& telefono);
+    void setCorreo(const QString& correo);
     void setPrecio(std::size_t precio);
     void setIVA(std::size_t precio);
 
 private:
-    std::string local;
-    std::string nombre;
-    std::string telefono;
-    std::string correo;
+    QString local;
+    QString nombre;
+    QString telefono;
+    QString correo;
     std::size_t precio;
     std::size_t IVA;
 };
