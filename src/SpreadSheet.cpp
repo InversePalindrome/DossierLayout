@@ -14,10 +14,12 @@ InversePalindrome.com
 #include <QHeaderView>
 #include <QPushButton>
 #include <QApplication>
+#include <QTextStream>
 #include <QTableWidgetItem>
 #include <QPrintDialog>
 
-#include <sstream>
+#include <locale>
+#include <iomanip>
 
 
 SpreadSheet::SpreadSheet(QWidget* parent) :
@@ -62,8 +64,8 @@ void SpreadSheet::agregarArriendo(const Arriendo& arriendo)
 
     for(int column = 0; column < columnCount() - 1; ++column)
     {
-        const auto& category = horizontalHeaderItem(column)->text().toStdString();
-        std::string value;
+        const auto& category = horizontalHeaderItem(column)->text();
+        QString value;
         auto row = rowCount() - 2;
 
         if(category == "Local")
@@ -84,14 +86,14 @@ void SpreadSheet::agregarArriendo(const Arriendo& arriendo)
         }
         else if(category == "Precio")
         {
-            value = '$' + std::to_string(arriendo.getPrecio());
+            value = formatearNumero(arriendo.getPrecio());
         }
         else if(category == "IVA")
         {
-            value = '$' + std::to_string(arriendo.getIVA());
+            value = formatearNumero(arriendo.getIVA());
         }
 
-        setItem(row, column, new QTableWidgetItem(QString::fromStdString(value)));
+        setItem(row, column, new QTableWidgetItem(value));
     }
 
     auto* deleteButton = new QPushButton(QIcon(QApplication::style()->
@@ -112,46 +114,38 @@ void SpreadSheet::guardarArriendos()
 
         for(int column = 0; column < columnCount() - 1; ++column)
         {
-           const auto& category = horizontalHeaderItem(column)->text().toStdString();
+           const auto& category = horizontalHeaderItem(column)->text();
            auto* arriendoItem = item(row, column);
 
            if(category == "Local")
            {
-               arriendo.setLocal(arriendoItem->text().toStdString());
+               arriendo.setLocal(arriendoItem->text());
            }
            else if(category == "Nombre")
            {
-               arriendo.setNombre(arriendoItem->text().toStdString());
+               arriendo.setNombre(arriendoItem->text());
            }
            else if(category == "Telefono")
            {
-               arriendo.setTelefono(arriendoItem->text().toStdString());
+               arriendo.setTelefono(arriendoItem->text());
            }
            else if(category == "Correo")
            {
-               arriendo.setCorreo(arriendoItem->text().toStdString());
+               arriendo.setCorreo(arriendoItem->text());
            }
            else if(category == "Precio")
            {
-               std::istringstream iStream(arriendoItem->text().toStdString());
+               auto precio = arriendoItem->text();
+               precio.remove(0, 1);
 
-               char moneySign;
-               std::size_t precio = 0;
-
-               iStream >> moneySign >> precio;
-
-               arriendo.setPrecio(precio);
+               arriendo.setPrecio(precio.toULongLong());
            }
            else if(category == "IVA")
            {
-               std::istringstream iStream(arriendoItem->text().toStdString());
+               auto IVA = arriendoItem->text();
+               IVA.remove(0, 1);
 
-               char moneySign;
-               std::size_t IVA = 0;
-
-               iStream >> moneySign >> IVA;
-
-               arriendo.setPrecio(IVA);
+               arriendo.setIVA(IVA.toULongLong());
            }
         }
 
@@ -172,9 +166,9 @@ void SpreadSheet::cargarArriendos(const Arriendos& arriendos)
 void SpreadSheet::cambiarTotales(std::size_t precioTotal, std::size_t IVATotal)
 {
     item(rowCount() - 1, columnCount() - 3)->
-         setText(QString::fromStdString('$' + std::to_string(precioTotal)));
+         setText(formatearNumero(precioTotal));
     item(rowCount() - 1, columnCount() - 2)->
-         setText(QString::fromStdString('$' + std::to_string(IVATotal)));
+         setText(formatearNumero(IVATotal));
 }
 
 void SpreadSheet::guardarDocumento(const QString& fileName)
@@ -218,6 +212,11 @@ void SpreadSheet::pintar(QPrinter& printer)
     painter.end();
 }
 
+QString SpreadSheet::formatearNumero(std::size_t numero)
+{
+    return '$' + QLocale(QLocale::English).toString(numero);
+}
+
 void SpreadSheet::removerArriendo()
 {
     const auto* button = qobject_cast<QPushButton*>(sender());
@@ -226,7 +225,7 @@ void SpreadSheet::removerArriendo()
     {
         if(cellWidget(row, columnCount() - 1) == button)
         {
-            emit arriendoRemovido(item(row, 0)->text().toStdString());
+            emit arriendoRemovido(item(row, 0)->text());
 
             removeRow(row);
 

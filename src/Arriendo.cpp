@@ -14,8 +14,8 @@ Arriendo::Arriendo() :
 {
 }
 
-Arriendo::Arriendo(const std::string& local, const std::string& nombre, const std::string& telefono,
-          const std::string& correo, std::size_t precio, std::size_t IVA) :
+Arriendo::Arriendo(const QString& local, const QString& nombre, const QString& telefono,
+        const QString& correo, std::size_t precio, std::size_t IVA) :
     local(local),
     nombre(nombre),
     telefono(telefono),
@@ -25,22 +25,22 @@ Arriendo::Arriendo(const std::string& local, const std::string& nombre, const st
 {
 }
 
-std::string Arriendo::getLocal() const
+QString Arriendo::getLocal() const
 {
     return local;
 }
 
-std::string Arriendo::getNombre() const
+QString Arriendo::getNombre() const
 {
     return nombre;
 }
 
-std::string Arriendo::getTelefono() const
+QString Arriendo::getTelefono() const
 {
     return telefono;
 }
 
-std::string Arriendo::getCorreo() const
+QString Arriendo::getCorreo() const
 {
     return correo;
 }
@@ -55,22 +55,22 @@ std::size_t Arriendo::getIVA() const
     return IVA;
 }
 
-void Arriendo::setLocal(const std::string &local)
+void Arriendo::setLocal(const QString &local)
 {
     this->local = local;
 }
 
-void Arriendo::setNombre(const std::string& nombre)
+void Arriendo::setNombre(const QString& nombre)
 {
     this->nombre = nombre;
 }
 
-void Arriendo::setTelefono(const std::string& telefono)
+void Arriendo::setTelefono(const QString& telefono)
 {
     this->telefono = telefono;
 }
 
-void Arriendo::setCorreo(const std::string& correo)
+void Arriendo::setCorreo(const QString& correo)
 {
     this->correo = correo;
 }

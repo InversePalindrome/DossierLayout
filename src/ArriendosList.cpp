@@ -10,14 +10,22 @@ InversePalindrome.com
 #include <RapidXML/rapidxml.hpp>
 #include <RapidXML/rapidxml_print.hpp>
 
+#include <QTextStream>
+
 #include <fstream>
 #include <sstream>
 
 
 ArriendosList::ArriendosList() :
+    ArriendosList("")
+{
+}
+
+ArriendosList::ArriendosList(const std::string& fileName) :
     precioTotal(0),
     IVATotal(0)
 {
+    cargarArriendos(fileName);
 }
 
 ArriendosList::~ArriendosList()
@@ -35,10 +43,10 @@ ArriendosList::~ArriendosList()
     {
         auto* arriendoNode = doc.allocate_node(rapidxml::node_element, "Arriendo");
 
-        arriendoNode->append_attribute(doc.allocate_attribute("local", doc.allocate_string(arriendo.getLocal().c_str())));
-        arriendoNode->append_attribute(doc.allocate_attribute("nombre", doc.allocate_string(arriendo.getNombre().c_str())));
-        arriendoNode->append_attribute(doc.allocate_attribute("telefono", doc.allocate_string(arriendo.getTelefono().c_str())));
-        arriendoNode->append_attribute(doc.allocate_attribute("correo", doc.allocate_string(arriendo.getCorreo().c_str())));
+        arriendoNode->append_attribute(doc.allocate_attribute("local", doc.allocate_string(arriendo.getLocal().toStdString().c_str())));
+        arriendoNode->append_attribute(doc.allocate_attribute("nombre", doc.allocate_string(arriendo.getNombre().toStdString().c_str())));
+        arriendoNode->append_attribute(doc.allocate_attribute("telefono", doc.allocate_string(arriendo.getTelefono().toStdString().c_str())));
+        arriendoNode->append_attribute(doc.allocate_attribute("correo", doc.allocate_string(arriendo.getCorreo().toStdString().c_str())));
         arriendoNode->append_attribute(doc.allocate_attribute("precio", doc.allocate_string(std::to_string(arriendo.getPrecio()).c_str())));
         arriendoNode->append_attribute(doc.allocate_attribute("IVA", doc.allocate_string(std::to_string(arriendo.getIVA()).c_str())));
 
@@ -72,10 +80,11 @@ void ArriendosList::cargarArriendos(const std::string& fileName)
     {
         for(const auto* node = rootNode->first_node("Arriendo"); node; node = node->next_sibling())
         {
-            std::string local, nombre, telefono, correo;
+            QString local, nombre, telefono, correo;
             std::size_t precio = 0u, IVA = 0u;
 
-            std::stringstream stream;
+            QString data;
+            QTextStream stream(&data, QIODevice::ReadWrite);
             stream << node->first_attribute("local")->value() << ' ' << node->first_attribute("nombre")->value()
                    << ' ' << node->first_attribute("telefono")->value() << ' ' << node->first_attribute("correo")->value()
                    << ' ' << node->first_attribute("precio")->value() << ' ' << node->first_attribute("IVA")->value();
@@ -98,7 +107,7 @@ void ArriendosList::agregarArriendo(const Arriendo& arriendo)
     emit cambiaronTotales(precioTotal, IVATotal);
 }
 
-void ArriendosList::removerArriendo(const std::string& local)
+void ArriendosList::removerArriendo(const QString& local)
 {
     auto arriendoItr = arriendos.find(local);
 

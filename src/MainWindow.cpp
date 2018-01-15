@@ -34,10 +34,11 @@ MainWindow::MainWindow(ArriendosList& arriendos) :
     {
         emit guardarArriendos();
         emit guardarDocumento(QFileDialog::getSaveFileName
-             (this, "Agregue o cree un documento.", "", "Documents (*.pdf)"));
+             (this, "Guardar Como", "", "Documents (*.pdf)"));
     });
-
     archivo->addAction("Imprimir", [this](){ emit imprimir(); });
+
+    archivo->addAction("Salir", [this](){ emit salir(); });
 
     menuBar->addMenu(archivo);
     setMenuBar(menuBar);
@@ -64,6 +65,4 @@ MainWindow::MainWindow(ArriendosList& arriendos) :
     QObject::connect(&arriendos, &ArriendosList::cambiaronTotales, spreadSheet, &SpreadSheet::cambiarTotales);
     QObject::connect(spreadSheet, &SpreadSheet::arriendoRemovido, &arriendos, &ArriendosList::removerArriendo);
     QObject::connect(spreadSheet, &SpreadSheet::setArriendos, &arriendos, &ArriendosList::setArriendos);
-
-    arriendos.cargarArriendos("Arriendos.xml");
 }

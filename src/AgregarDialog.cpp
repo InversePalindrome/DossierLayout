@@ -9,13 +9,13 @@ InversePalindrome.com
 
 #include <QLabel>
 #include <QFont>
+#include <QPixmap>
 #include <QPushButton>
 #include <QGridLayout>
 
 
 AgregarDialog::AgregarDialog(QWidget* parent) :
     QDialog(parent),
-    layout(new QGridLayout(this)),
     localEntry(new QLineEdit()),
     nombreEntry(new QLineEdit()),
     telefonoEntry(new QLineEdit()),
@@ -55,6 +55,8 @@ AgregarDialog::AgregarDialog(QWidget* parent) :
 
     auto* agregarBoton = new QPushButton("Agregar");
 
+    auto* layout = new QGridLayout(this);
+
     layout->addWidget(localLabel, 0, 0, 1, 1);
     layout->addWidget(localEntry, 0, 1, 1, 1);
     layout->addWidget(nombreLabel, 1, 0, 1, 1);
@@ -76,10 +78,10 @@ AgregarDialog::AgregarDialog(QWidget* parent) :
 
 void AgregarDialog::agregoArriendo()
 {
-    const auto& local = localEntry->text().toStdString();
-    const auto& nombre = nombreEntry->text().toStdString();
-    const auto& telefono = telefonoEntry->text().toStdString();
-    const auto& correo = correoEntry->text().toStdString();
+    const auto& local = localEntry->text();
+    const auto& nombre = nombreEntry->text();
+    const auto& telefono = telefonoEntry->text();
+    const auto& correo = correoEntry->text();
     std::size_t precio = 0u;
     std::size_t IVA = 0u;
 
