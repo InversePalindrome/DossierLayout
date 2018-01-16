@@ -13,7 +13,6 @@ InversePalindrome.com
 #include <QString>
 
 #include <set>
-#include <string>
 
 
 struct CompareArriendo
@@ -43,10 +42,10 @@ class ArriendosList : public QObject
 
 public:
     ArriendosList();
-    ArriendosList(const std::string& fileName);
+    explicit ArriendosList(const QString& fileName);
     ~ArriendosList();
 
-    void cargarArriendos(const std::string& fileName);
+    void cargarArriendos(const QString& fileName);
 
 public slots:
     void agregarArriendo(const Arriendo& arriendo);
@@ -56,7 +55,7 @@ public slots:
 
 private:
     Arriendos arriendos;
-    std::string fileName;
+    QString fileName;
     std::size_t precioTotal;
     std::size_t IVATotal;
 

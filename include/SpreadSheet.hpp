@@ -20,7 +20,7 @@ class SpreadSheet : public QTableWidget
     Q_OBJECT
 
 public:
-    SpreadSheet(QWidget* parent);
+    explicit SpreadSheet(QWidget* parent);
 
     void agregarArriendo(const Arriendo& arriendo);
 

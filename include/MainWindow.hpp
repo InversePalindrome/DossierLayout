@@ -21,7 +21,9 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    MainWindow(ArriendosList& arriendos);
+    explicit MainWindow(ArriendosList& arriendos);
+
+    void setUsuario(const QString& usuario);
 
 private:
     QMenuBar* menuBar;
@@ -30,6 +32,7 @@ private:
     AgregarDialog* agregarDialog;
 
     ArriendosList& arriendos;
+    QString usuario;
 
 signals:
     void guardarArriendos();

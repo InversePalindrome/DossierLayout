@@ -18,7 +18,7 @@ class AgregarDialog : public QDialog
     Q_OBJECT
 
 public:
-    AgregarDialog(QWidget* parent);
+    explicit AgregarDialog(QWidget* parent);
 
 private:
     QLineEdit* localEntry;

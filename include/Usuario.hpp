@@ -10,4 +10,5 @@ InversePalindrome.com
 #include <QString>
 #include <QPair>
 
+
 using Usuario = QPair<QString, QString>;

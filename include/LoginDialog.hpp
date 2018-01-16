@@ -15,16 +15,16 @@ InversePalindrome.com
 #include <QDialog>
 #include <QString>
 
-#include <string>
-
 
 class LoginDialog : public QDialog
 {
     Q_OBJECT
 
 public:
-    LoginDialog(QWidget* parent);
+    explicit LoginDialog(QWidget* parent);
     ~LoginDialog();
+
+    void cargarUsuarios(const QString& fileName);
 
 public slots:
      void agregarUsuario(const Usuario& usuario);
@@ -34,11 +34,9 @@ private:
 
     SimpleCrypt crypto;
 
-    std::string fileName;
+    QString fileName;
     QMap<QString, QString> usuarios;
 
-    void cargarUsuarios(const std::string& fileName);
-
 signals:
-    void ingresoAceptado(const std::string& usuario);
+    void ingresoAceptado(const QString& usuario);
 };
