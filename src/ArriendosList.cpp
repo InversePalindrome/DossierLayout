@@ -7,13 +7,9 @@ InversePalindrome.com
 
 #include "ArriendosList.hpp"
 
-#include <RapidXML/rapidxml.hpp>
-#include <RapidXML/rapidxml_print.hpp>
-
+#include <QFile>
 #include <QTextStream>
-
-#include <fstream>
-#include <sstream>
+#include <QDomDocument>
 
 
 ArriendosList::ArriendosList() :
@@ -21,7 +17,7 @@ ArriendosList::ArriendosList() :
 {
 }
 
-ArriendosList::ArriendosList(const std::string& fileName) :
+ArriendosList::ArriendosList(const QString& fileName) :
     precioTotal(0),
     IVATotal(0)
 {
@@ -30,65 +26,82 @@ ArriendosList::ArriendosList(const std::string& fileName) :
 
 ArriendosList::~ArriendosList()
 {
-    rapidxml::xml_document<> doc;
+    QDomDocument doc;
 
-    auto* decl = doc.allocate_node(rapidxml::node_declaration);
-    decl->append_attribute(doc.allocate_attribute("version", "1.0"));
-    decl->append_attribute(doc.allocate_attribute("encoding", "UTF-8"));
-    doc.append_node(decl);
+    auto dec = doc.createProcessingInstruction("xml", "version=\"1.0\" encoding=\"UTF-8\"");
+    doc.appendChild(dec);
 
-    auto* arriendosNode = doc.allocate_node(rapidxml::node_element, "Arriendos");
+    auto arriendosElement = doc.createElement("Arriendos");
 
     for(const auto& arriendo : arriendos)
     {
-        auto* arriendoNode = doc.allocate_node(rapidxml::node_element, "Arriendo");
+        auto arriendoElement = doc.createElement("Arriendo");
 
-        arriendoNode->append_attribute(doc.allocate_attribute("local", doc.allocate_string(arriendo.getLocal().toStdString().c_str())));
-        arriendoNode->append_attribute(doc.allocate_attribute("nombre", doc.allocate_string(arriendo.getNombre().toStdString().c_str())));
-        arriendoNode->append_attribute(doc.allocate_attribute("telefono", doc.allocate_string(arriendo.getTelefono().toStdString().c_str())));
-        arriendoNode->append_attribute(doc.allocate_attribute("correo", doc.allocate_string(arriendo.getCorreo().toStdString().c_str())));
-        arriendoNode->append_attribute(doc.allocate_attribute("precio", doc.allocate_string(std::to_string(arriendo.getPrecio()).c_str())));
-        arriendoNode->append_attribute(doc.allocate_attribute("IVA", doc.allocate_string(std::to_string(arriendo.getIVA()).c_str())));
+        arriendoElement.setAttribute("local", arriendo.getLocal());
+        arriendoElement.setAttribute("nombre", arriendo.getNombre());
+        arriendoElement.setAttribute("telefono", arriendo.getTelefono());
+        arriendoElement.setAttribute("correo", arriendo.getCorreo());
+        arriendoElement.setAttribute("precio", QString::number(arriendo.getPrecio()));
+        arriendoElement.setAttribute("IVA", QString::number(arriendo.getIVA()));
 
-        arriendosNode->append_node(arriendoNode);
+        arriendosElement.appendChild(arriendoElement);
     }
 
-    doc.append_node(arriendosNode);
+    doc.appendChild(arriendosElement);
 
-    std::ofstream outFile(fileName);
+    QFile file(fileName);
 
-    outFile << doc;
+    if(!file.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+       return;
+    }
+    else
+    {
+        QTextStream stream(&file);
+        stream << doc.toString();
+        file.close();
+    }
 }
 
-void ArriendosList::cargarArriendos(const std::string& fileName)
+void ArriendosList::cargarArriendos(const QString& fileName)
 {
     this->fileName = fileName;
 
-    rapidxml::xml_document<> doc;
-    std::ifstream inFile(fileName);
-    std::ostringstream buffer;
+    QDomDocument doc;
+    QFile file(fileName);
 
-    buffer << inFile.rdbuf();
-    inFile.close();
-
-    std::string content(buffer.str());
-    doc.parse<0>(&content[0]);
-
-    const auto* rootNode = doc.first_node("Arriendos");
-
-    if(rootNode)
+    if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
-        for(const auto* node = rootNode->first_node("Arriendo"); node; node = node->next_sibling())
+        return;
+    }
+    else
+    {
+        if(!doc.setContent(&file))
         {
-            QString local, nombre, telefono, correo;
-            std::size_t precio = 0u, IVA = 0u;
+            return;
+        }
 
-            QString data;
-            QTextStream stream(&data, QIODevice::ReadWrite);
-            stream << node->first_attribute("local")->value() << ' ' << node->first_attribute("nombre")->value()
-                   << ' ' << node->first_attribute("telefono")->value() << ' ' << node->first_attribute("correo")->value()
-                   << ' ' << node->first_attribute("precio")->value() << ' ' << node->first_attribute("IVA")->value();
-            stream >> local >> nombre >> telefono >> correo >> precio >> IVA;
+        file.close();
+    }
+
+    auto arriendosElement = doc.firstChildElement("Arriendos");
+
+    auto arriendosList = arriendosElement.elementsByTagName("Arriendo");
+
+    for(int i = 0; i < arriendosList.count(); ++i)
+    {
+        auto arriendo = arriendosList.at(i);
+
+        if(arriendo.isElement())
+        {
+            auto arriendoElement = arriendo.toElement();
+
+            const auto& local = arriendoElement.attribute("local");
+            const auto& nombre = arriendoElement.attribute("nombre");
+            const auto& telefono = arriendoElement.attribute("telefono");
+            const auto& correo = arriendoElement.attribute("correo");
+            auto precio = arriendoElement.attribute("precio").toULongLong();
+            auto IVA = arriendoElement.attribute("IVA").toULongLong();
 
             agregarArriendo(Arriendo(local, nombre, telefono, correo, precio, IVA));
         }

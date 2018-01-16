@@ -7,19 +7,15 @@ InversePalindrome.com
 
 #include "LoginDialog.hpp"
 
-#include <RapidXML/rapidxml.hpp>
-#include <RapidXML/rapidxml_print.hpp>
-
 #include <QDir>
 #include <QFont>
+#include <QFile>
 #include <QLabel>
 #include <QLineEdit>
-#include <QPushButton>
 #include <QBoxLayout>
-
-
-#include <sstream>
-#include <fstream>
+#include <QPushButton>
+#include <QTextStream>
+#include <QDomDocument>
 
 
 LoginDialog::LoginDialog(QWidget* parent) :
@@ -77,10 +73,10 @@ LoginDialog::LoginDialog(QWidget* parent) :
         if(usuarios.count(usuarioEntry->text()) &&
            passwordEntry->text() == crypto.decryptToString(usuarios.value(usuarioEntry->text())))
         {
+           emit ingresoAceptado(usuarioEntry->text());
+
            usuarioEntry->clear();
            passwordEntry->clear();
-
-           emit ingresoAceptado(usuarioEntry->text().toStdString());
         }
     });
     QObject::connect(registrarBoton, &QPushButton::clicked,
@@ -96,34 +92,79 @@ LoginDialog::LoginDialog(QWidget* parent) :
 
 LoginDialog::~LoginDialog()
 {
-    rapidxml::xml_document<> doc;
+    QDomDocument doc;
 
-    auto* decl = doc.allocate_node(rapidxml::node_declaration);
-    decl->append_attribute(doc.allocate_attribute("version", "1.0"));
-    decl->append_attribute(doc.allocate_attribute("encoding", "UTF-8"));
-    doc.append_node(decl);
+    auto dec = doc.createProcessingInstruction("xml", "version=\"1.0\" encoding=\"UTF-8\"");
+    doc.appendChild(dec);
 
-    auto* usuariosNode = doc.allocate_node(rapidxml::node_element, "Usuarios");
+    auto usuariosElement = doc.createElement("Usuarios");
 
     auto usuario = usuarios.constBegin();
 
     while(usuario != usuarios.cend())
     {
-        auto* usuarioNode = doc.allocate_node(rapidxml::node_element, "Usuario");
+        auto usuarioElement = doc.createElement("Usuario");
 
-        usuarioNode->append_attribute(doc.allocate_attribute("Nombre", doc.allocate_string(usuario.key().toStdString().c_str())));
-        usuarioNode->append_attribute(doc.allocate_attribute("Password", doc.allocate_string(usuario.value().toStdString().c_str())));
+        usuarioElement.setAttribute("nombre", usuario.key());
+        usuarioElement.setAttribute("password", usuario.value());
 
-        usuariosNode->append_node(usuarioNode);
+        usuariosElement.appendChild(usuarioElement);
 
         ++usuario;
     }
 
-    doc.append_node(usuariosNode);
+    doc.appendChild(usuariosElement);
 
-    std::ofstream outFile(fileName);
+    QFile file(fileName);
 
-    outFile << doc;
+    if(!file.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+       return;
+    }
+    else
+    {
+        QTextStream stream(&file);
+        stream << doc.toString();
+        file.close();
+    }
+}
+
+void LoginDialog::cargarUsuarios(const QString& fileName)
+{
+    this->fileName = fileName;
+
+    QDomDocument doc;
+    QFile file(fileName);
+
+    if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        return;
+    }
+    else
+    {
+        if(!doc.setContent(&file))
+        {
+            return;
+        }
+
+        file.close();
+    }
+
+    auto usuariosElement = doc.firstChildElement("Usuarios");
+
+    auto usuariosList = usuariosElement.elementsByTagName("Usuario");
+
+    for(int i = 0; i < usuariosList.count(); ++i)
+    {
+        auto usuario = usuariosList.at(i);
+
+        if(usuario.isElement())
+        {
+            auto usuarioElement = usuario.toElement();
+
+            usuarios.insert(usuarioElement.attribute("nombre"), usuarioElement.attribute("password"));
+        }
+    }
 }
 
 void LoginDialog::agregarUsuario(const Usuario& usuario)
@@ -131,30 +172,4 @@ void LoginDialog::agregarUsuario(const Usuario& usuario)
     usuarios.insert(usuario.first, crypto.encryptToString(usuario.second));
 
     QDir().mkdir(usuario.first);
-}
-
-void LoginDialog::cargarUsuarios(const std::string& fileName)
-{
-    this->fileName = fileName;
-
-    rapidxml::xml_document<> doc;
-    std::ifstream inFile(fileName);
-    std::ostringstream buffer;
-
-    buffer << inFile.rdbuf();
-    inFile.close();
-
-    std::string content(buffer.str());
-    doc.parse<0>(&content[0]);
-
-    const auto* rootNode = doc.first_node("Usuarios");
-
-    if(rootNode)
-    {
-       for(const auto* node = rootNode->first_node("Usuario"); node; node = node->next_sibling())
-       {
-           usuarios.insert(QString::fromStdString(node->first_attribute("Nombre")->value()),
-                    QString::fromStdString(node->first_attribute("Password")->value()));
-       }
-    }
 }

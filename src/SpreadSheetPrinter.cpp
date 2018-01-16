@@ -31,7 +31,7 @@
 ****************************************************************************/
 
 
-#include "SpreadSheetPrinter.hpp".h"
+#include "SpreadSheetPrinter.hpp"
 
 #include <QAbstractItemModel>
 #include <QPainter>
@@ -111,7 +111,9 @@ bool SpreadSheetPrinter::printTable(const QAbstractItemModel* model, const QVect
         error = QString("wrong stretch");
         return false;
     }
+
     QVector<double> columnWidth;
+
     for (int i = 0; i < columnStretch.count(); ++i)
     {
         columnWidth.append(tableWidth / totalStretch * columnStretch[i]);
@@ -156,6 +158,11 @@ bool SpreadSheetPrinter::printTable(const QAbstractItemModel* model, const QVect
         {
             painter->setFont(contentFont);
             testSize.setFont(contentFont);
+        }
+        else if(j == model->rowCount() - 1)
+        {
+            painter->setFont(headersFont);
+            testSize.setFont(headersFont);
         }
 
         // --------------------------- row height counting ----------------------------
@@ -210,8 +217,7 @@ bool SpreadSheetPrinter::printTable(const QAbstractItemModel* model, const QVect
 
             painter->translate(-painter->transform().dx() + leftBlank, -painter->transform().dy() + headerHeight);
             painter->save();
-            painter->drawLine(0, 0, tableWidth,
-                              0); // first horizontal line
+            painter->drawLine(0, 0, tableWidth, 0); // first horizontal line
         }
 
         //------------------------------ content printing -------------------------------------------
@@ -223,7 +229,7 @@ bool SpreadSheetPrinter::printTable(const QAbstractItemModel* model, const QVect
             QString str;
             if(j >= 0)
             {
-                str = model->data(model->index(j,i), Qt::DisplayRole).toString();
+                str = model->data(model->index(j, i), Qt::DisplayRole).toString();
             } else
             {
                 str = headers.at(i);

@@ -18,9 +18,6 @@ InversePalindrome.com
 #include <QTableWidgetItem>
 #include <QPrintDialog>
 
-#include <locale>
-#include <iomanip>
-
 
 SpreadSheet::SpreadSheet(QWidget* parent) :
     QTableWidget(parent)
@@ -96,12 +93,12 @@ void SpreadSheet::agregarArriendo(const Arriendo& arriendo)
         setItem(row, column, new QTableWidgetItem(value));
     }
 
-    auto* deleteButton = new QPushButton(QIcon(QApplication::style()->
-                        standardIcon(QStyle::SP_TrashIcon)), "Delete", this);
+    auto* removerBoton = new QPushButton(QIcon(QApplication::style()->
+                        standardIcon(QStyle::SP_TrashIcon)), "Remover", this);
 
-    QObject::connect(deleteButton, &QPushButton::clicked, this, &SpreadSheet::removerArriendo);
+    QObject::connect(removerBoton, &QPushButton::clicked, this, &SpreadSheet::removerArriendo);
 
-    setIndexWidget(model()->index(rowCount() - 2, columnCount() - 1), deleteButton);
+    setIndexWidget(model()->index(rowCount() - 2, columnCount() - 1), removerBoton);
 }
 
 void SpreadSheet::guardarArriendos()
@@ -195,21 +192,37 @@ void SpreadSheet::imprimir()
 
 void SpreadSheet::pintar(QPrinter& printer)
 {
+    model()->insertColumn(0);
+
+    for(int row = 0; row < rowCount(); ++row)
+    {
+        if(row == rowCount() - 1)
+        {
+            model()->setData(model()->index(row, 0), "Total");
+        }
+        else
+        {
+            model()->setData(model()->index(row, 0), row + 1);
+        }
+    }
+
     QPainter painter;
     SpreadSheetPrinter spreadSheetPrinter(&painter, &printer);
 
     painter.begin(&printer);
 
     QVector<int> columnStretch;
-    columnStretch << 5 << 5 << 5 << 5 << 5 << 5;
+    columnStretch << 5 << 5 << 5 << 5 << 5 << 5 << 5;
 
     QVector<QString> headers;
-    headers << "Local" << "Nombre" << "Telefono" << "Correo" << "Precio" << "IVA";
+    headers << "" << "Local" << "Nombre" << "Telefono" << "Correo" << "Precio" << "IVA";
 
     spreadSheetPrinter.setHeadersFont(QFont("Arial", 10, QFont::Bold));
     spreadSheetPrinter.printTable(model(), columnStretch, headers);
 
     painter.end();
+
+    model()->removeColumn(0);
 }
 
 QString SpreadSheet::formatearNumero(std::size_t numero)

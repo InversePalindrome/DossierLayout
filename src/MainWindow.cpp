@@ -28,7 +28,7 @@ MainWindow::MainWindow(ArriendosList& arriendos) :
     archivo->addAction("Guardar", [this]()
     {
         emit guardarArriendos();
-        emit guardarDocumento("Arriendos.pdf");
+        emit guardarDocumento(usuario + "/Arriendos.pdf");
     });
     archivo->addAction("Guardar Como", [this]()
     {
@@ -37,8 +37,12 @@ MainWindow::MainWindow(ArriendosList& arriendos) :
              (this, "Guardar Como", "", "Documents (*.pdf)"));
     });
     archivo->addAction("Imprimir", [this](){ emit imprimir(); });
-
-    archivo->addAction("Salir", [this](){ emit salir(); });
+    archivo->addAction("Salir", [this]()
+    {
+        emit guardarArriendos();
+        emit guardarDocumento(usuario + "/Arriendos.pdf");
+        emit salir();
+    });
 
     menuBar->addMenu(archivo);
     setMenuBar(menuBar);
@@ -65,4 +69,9 @@ MainWindow::MainWindow(ArriendosList& arriendos) :
     QObject::connect(&arriendos, &ArriendosList::cambiaronTotales, spreadSheet, &SpreadSheet::cambiarTotales);
     QObject::connect(spreadSheet, &SpreadSheet::arriendoRemovido, &arriendos, &ArriendosList::removerArriendo);
     QObject::connect(spreadSheet, &SpreadSheet::setArriendos, &arriendos, &ArriendosList::setArriendos);
+}
+
+void MainWindow::setUsuario(const QString& usuario)
+{
+    this->usuario = usuario;
 }

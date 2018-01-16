@@ -19,6 +19,7 @@ Application::Application(int& argc, char** argv) :
     QObject::connect(&loginDialog, &LoginDialog::ingresoAceptado,
         [this](const auto& usuario)
     {
+        mainWindow.setUsuario(usuario);
         arriendos.cargarArriendos(usuario + "/Arriendos.xml");
 
         loginDialog.close();
