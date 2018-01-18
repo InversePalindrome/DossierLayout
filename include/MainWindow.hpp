@@ -8,12 +8,13 @@ InversePalindrome.com
 #pragma once
 
 #include "SpreadSheet.hpp"
-#include "ArriendosList.hpp"
-#include "AgregarDialog.hpp"
 
 #include <QMenuBar>
 #include <QToolBar>
+#include <QTabWidget>
 #include <QMainWindow>
+
+#include <unordered_map>
 
 
 class MainWindow : public QMainWindow
@@ -21,22 +22,18 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(ArriendosList& arriendos);
+    explicit MainWindow();
 
     void setUsuario(const QString& usuario);
 
 private:
     QMenuBar* menuBar;
     QToolBar* toolBar;
-    SpreadSheet* spreadSheet;
-    AgregarDialog* agregarDialog;
+    QTabWidget* tabBar;
 
-    ArriendosList& arriendos;
     QString usuario;
+    std::unordered_map<QString, SpreadSheet*> spreadSheets;
 
 signals:
-    void guardarArriendos();
-    void guardarDocumento(const QString& string);
-    void imprimir();
     void salir();
 };

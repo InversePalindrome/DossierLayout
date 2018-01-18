@@ -9,7 +9,6 @@ InversePalindrome.com
 
 #include "MainWindow.hpp"
 #include "LoginDialog.hpp"
-#include "ArriendosList.hpp"
 
 #include <QApplication>
 #include <QSplashScreen>
@@ -23,8 +22,6 @@ public:
     int run();
 
 private:
-    ArriendosList arriendos;
-
     QSplashScreen splashScreen;
     MainWindow mainWindow;
     LoginDialog loginDialog;
