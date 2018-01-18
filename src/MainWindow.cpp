@@ -7,68 +7,129 @@ InversePalindrome.com
 
 #include "MainWindow.hpp"
 
+#include <QDir>
 #include <QMenu>
 #include <QBoxLayout>
-#include <QApplication>
 #include <QGraphicsView>
+#include <QApplication>
 #include <QFileDialog>
+#include <QInputDialog>
+#include <QMessageBox>
 
 
-MainWindow::MainWindow(ArriendosList& arriendos) :
+MainWindow::MainWindow() :
     menuBar(new QMenuBar(this)),
     toolBar(new QToolBar(this)),
-    spreadSheet(new SpreadSheet(this)),
-    agregarDialog(new AgregarDialog(this)),
-    arriendos(arriendos)
+    tabBar(new QTabWidget(this))
 {
     setFixedSize(2048, 1536);
+    setMenuBar(menuBar);
+    addToolBar(toolBar);
+
+    tabBar->setTabsClosable(true);
+    tabBar->setFont(QFont("Arial", 11, QFont::Bold));
+    tabBar->setStyleSheet("QTabBar::tab { min-width: 200px; min-height : 60px; }");
 
     auto* archivo = new QMenu("Archivos", this);
 
     archivo->addAction("Guardar", [this]()
     {
-        emit guardarArriendos();
-        emit guardarDocumento(usuario + "/Arriendos.pdf");
+
     });
     archivo->addAction("Guardar Como", [this]()
     {
-        emit guardarArriendos();
-        emit guardarDocumento(QFileDialog::getSaveFileName
-             (this, "Guardar Como", "", "Documents (*.pdf)"));
+
     });
-    archivo->addAction("Imprimir", [this](){ emit imprimir(); });
+    archivo->addAction("Guardar Todo", [this]()
+    {
+
+    });
+    archivo->addAction("Imprimir", [this](){  });
     archivo->addAction("Salir", [this]()
     {
-        emit guardarArriendos();
-        emit guardarDocumento(usuario + "/Arriendos.pdf");
         emit salir();
     });
 
     menuBar->addMenu(archivo);
-    setMenuBar(menuBar);
+
+    auto* insertar = new QMenu("Insertar", this);
+
+    insertar->addAction("Categoria", [this]()
+    {
+        bool ok;
+        auto categoria = QInputDialog::getText(this, "Insertar Categoria", "Categoria", QLineEdit::Normal, "", &ok);
+
+        if(ok)
+        {
+           auto* spreadSheet = spreadSheets[tabBar->tabText(tabBar->currentIndex())];
+
+           if(spreadSheet)
+           {
+               spreadSheet->insertarCategoria(categoria);
+           }
+        }
+    });
+    insertar->addAction("Item", [this]()
+    {
+        bool ok;
+        auto item = QInputDialog::getText(this, "Insertar Item", "Item", QLineEdit::Normal, "", &ok);
+
+        if(ok)
+        {
+            auto* spreadSheet = spreadSheets[tabBar->tabText(tabBar->currentIndex())];
+
+            if(spreadSheet)
+            {
+                spreadSheet->insertarItem(item);
+            }
+        }
+    });
+
+    menuBar->addMenu(insertar);
 
     toolBar->addAction(QIcon(QApplication::style()->standardIcon(QStyle::SP_FileDialogNewFolder)), "",
-                     [this](){ agregarDialog->open(); });
+            [this]()
+    {
+        bool ok;
+        auto tabName = QInputDialog::getText(this, "Agregar SpreadSheet", "Nombre", QLineEdit::Normal, "", &ok);
 
-    addToolBar(toolBar);
+        if(ok)
+        {
+            auto* spreadSheet = new SpreadSheet(this);
 
-    auto* mainLayout = new QVBoxLayout();
-    mainLayout->addWidget(spreadSheet);
+            tabBar->addTab(spreadSheet, tabName);
+            spreadSheets.insert(tabName, spreadSheet);
+
+            QDir().mkdir(usuario + '/' + tabName);
+        }
+    });
+
+    auto* mainLayout = new QVBoxLayout(this);
+    mainLayout->addWidget(tabBar);
 
     auto* view = new QGraphicsView(this);
     view->setLayout(mainLayout);
-
     setCentralWidget(view);
 
-    QObject::connect(this, &MainWindow::guardarDocumento, spreadSheet, &SpreadSheet::guardarDocumento);
-    QObject::connect(this, &MainWindow::imprimir, spreadSheet, &SpreadSheet::imprimir);
-    QObject::connect(this, &MainWindow::guardarArriendos, spreadSheet, &SpreadSheet::guardarArriendos);
-    QObject::connect(agregarDialog, &AgregarDialog::agregarArriendo, &arriendos, &ArriendosList::agregarArriendo);
-    QObject::connect(agregarDialog, &AgregarDialog::agregarArriendo, spreadSheet, &SpreadSheet::agregarArriendo);
-    QObject::connect(&arriendos, &ArriendosList::enviarArriendos, spreadSheet, &SpreadSheet::cargarArriendos);
-    QObject::connect(&arriendos, &ArriendosList::cambiaronTotales, spreadSheet, &SpreadSheet::cambiarTotales);
-    QObject::connect(spreadSheet, &SpreadSheet::arriendoRemovido, &arriendos, &ArriendosList::removerArriendo);
-    QObject::connect(spreadSheet, &SpreadSheet::setArriendos, &arriendos, &ArriendosList::setArriendos);
+    QObject::connect(tabBar, &QTabWidget::tabCloseRequested,
+           [this](auto index)
+    {
+        const auto& spreadSheetName = tabBar->tabText(index);
+
+        QMessageBox message(this);
+        message.setText("Esta seguro de Remover " + spreadSheetName + " ?");
+        message.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+
+        auto button = message.exec();
+
+        switch(button)
+        {
+            case QMessageBox::Yes:
+            tabBar->removeTab(index);
+            QDir(usuario + '/' + spreadSheetName).removeRecursively();
+            break;
+        }
+    });
 }
 
 void MainWindow::setUsuario(const QString& usuario)

@@ -13,14 +13,12 @@ InversePalindrome.com
 Application::Application(int& argc, char** argv) :
     QApplication(argc, argv),
     splashScreen(QPixmap(":/Resources/InversePalindromeLogo.png")),
-    mainWindow(arriendos),
     loginDialog(nullptr)
 {
     QObject::connect(&loginDialog, &LoginDialog::ingresoAceptado,
         [this](const auto& usuario)
     {
         mainWindow.setUsuario(usuario);
-        arriendos.cargarArriendos(usuario + "/Arriendos.xml");
 
         loginDialog.close();
         mainWindow.show();
