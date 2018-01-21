@@ -99,12 +99,12 @@ LoginDialog::~LoginDialog()
 
     auto usuariosElement = doc.createElement("Usuarios");
 
-    for(const auto& [nombre, password] : usuarios)
+    for(auto usuarioItr = usuarios.constBegin(); usuarioItr != usuarios.constEnd(); ++usuarioItr)
     {
         auto usuarioElement = doc.createElement("Usuario");
 
-        usuarioElement.setAttribute("nombre", nombre);
-        usuarioElement.setAttribute("password", password);
+        usuarioElement.setAttribute("nombre", usuarioItr.key());
+        usuarioElement.setAttribute("password", usuarioItr.value());
 
         usuariosElement.appendChild(usuarioElement);
     }

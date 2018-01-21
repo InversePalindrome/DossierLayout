@@ -10,6 +10,7 @@ InversePalindrome.com
 
 #include <QFont>
 #include <QFile>
+#include <QtXlsx>
 #include <QStyle>
 #include <QPainter>
 #include <QHeaderView>
@@ -19,94 +20,82 @@ InversePalindrome.com
 #include <QTableWidgetItem>
 #include <QPrintDialog>
 #include <QDomDocument>
-
+#include <qDebug>
 
 SpreadSheet::SpreadSheet(QWidget* parent) :
-    QTableWidget(parent)
+    QTableWidget(parent),
+    indexCategoriaSeleccionada(-1),
+    indexItemSeleccionado(-1)
 {
-    QFont headerFont("Arial", 10);
-    verticalHeader()->setFont(headerFont);
-    horizontalHeader()->setFont(headerFont);
+    QObject::connect(horizontalHeader(), &QHeaderView::sectionClicked, this, &SpreadSheet::categoriaSeleccionada);
+    QObject::connect(verticalHeader(), &QHeaderView::sectionClicked, this, &SpreadSheet::itemSeleccionado);
+//    QObject::connect(this, &SpreadSheet::)
 }
 
 SpreadSheet::~SpreadSheet()
 {
-    QDomDocument doc;
-
-    auto dec = doc.createProcessingInstruction("xml", "version=\"1.0\" encoding=\"UTF-8\"");
-    doc.appendChild(dec);
-
-    auto spreadSheetElement = doc.createElement("SpreadSheet");
-
-    QStringList categories;
-
-    auto categoriesElement = doc.createElement("Categories");
+    QXlsx::Document doc;
+    QXlsx::Format headerFormat;
+    headerFormat.setFontBold(true);
 
     for(int column = 0; column < columnCount(); ++column)
     {
-        categories.push_back(horizontalHeaderItem(column)->text());
-        categoriesElement.appendChild(doc.createElement(categories.back()));
-    }
-
-    spreadSheetElement.appendChild(categoriesElement);
-
-    QStringList items;
-
-    for(int row = 0; row < rowCount(); ++row)
-    {
-        items.push_back(verticalHeaderItem(row)->text());
+        doc.write(1, column + 2, horizontalHeaderItem(column)->text(), headerFormat);
     }
 
     for(int row = 0; row < rowCount(); ++row)
     {
-        auto itemElement = doc.createElement("Item");
+        doc.write(row + 2, 1, verticalHeaderItem(row)->text(), headerFormat);
+    }
 
+    for(int row = 0; row < rowCount(); ++row)
+    {
         for(int column = 0; column < columnCount(); ++column)
         {
-           itemElement.setAttribute(categories.at(column), item(row, column)->text());
+            doc.write(row + 2, column + 2, item(row, column)->text());
         }
-
-        itemElement.setAttribute("name", items.at(row));
-
-        spreadSheetElement.appendChild(itemElement);
     }
 
-    doc.appendChild(spreadSheetElement);
-
-    QFile file(fileName);
-
-    if(!file.open(QIODevice::WriteOnly | QIODevice::Text))
-    {
-        return;
-    }
-    else
-    {
-        QTextStream stream(&file);
-        stream << doc.toString();
-        file.close();
-    }
+    doc.saveAs(fileName);
 }
 
 void SpreadSheet::cargarSpreadSheet(const QString& fileName)
 {
-    this->fileName = fileName;
+   this->fileName = fileName;
 
-    QDomDocument doc;
-    QFile file(fileName);
+   QXlsx::Document doc(fileName);
 
-    if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
-    {
-        return;
-    }
-    else
-    {
-        if(!doc.setContent(&file))
-        {
-          return;
-        }
+   QStringList horizontalHeaders;
 
-        file.close();
-    }
+   setRowCount(doc.dimension().lastRow() - 1);
+   setColumnCount(doc.dimension().lastColumn() - 1);
+
+   for(int column = 2; column <= doc.dimension().lastColumn(); ++column)
+   {
+       horizontalHeaders.push_back(doc.read(1, column).toString());
+   }
+
+   QStringList verticalHeaders;
+
+   for(int row = 2; row <= doc.dimension().lastRow(); ++row)
+   {
+       verticalHeaders.push_back(doc.read(row, 1).toString());
+   }
+
+   setHorizontalHeaderLabels(horizontalHeaders);
+   setVerticalHeaderLabels(verticalHeaders);
+
+   QFont headerFont("Arial", 10, QFont::Bold);
+   horizontalHeader()->setFont(headerFont);
+   verticalHeader()->setFont(headerFont);
+
+   for(int row = 2; row <= doc.dimension().lastRow(); ++row)
+   {
+       for(int column = 2; column <= doc.dimension().lastColumn(); ++column)
+       {
+           setItem(row - 2, column - 2, new QTableWidgetItem(doc.read(row, column).toString()));
+       }
+   }
 }
 
 void SpreadSheet::insertarCategoria(QString categoria)
@@ -141,4 +130,31 @@ void SpreadSheet::insertarItem(QString item)
     {
         setItem(rowCount() - 1, column, new QTableWidgetItem());
     }
+}
+
+void SpreadSheet::removerCategoriaSeleccionada()
+{
+   removeColumn(indexCategoriaSeleccionada);
+   indexCategoriaSeleccionada = -1;
+}
+
+void SpreadSheet::removerItemSeleccionado()
+{
+   removeRow(indexItemSeleccionado);
+   indexItemSeleccionado = -1;
+}
+
+void SpreadSheet::setFileName(const QString& fileName)
+{
+    this->fileName = fileName;
+}
+
+void SpreadSheet::categoriaSeleccionada(int index)
+{
+   indexCategoriaSeleccionada = index;
+}
+
+void SpreadSheet::itemSeleccionado(int index)
+{
+    indexItemSeleccionado = index;
 }

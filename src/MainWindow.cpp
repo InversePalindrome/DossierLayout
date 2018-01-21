@@ -20,7 +20,8 @@ InversePalindrome.com
 MainWindow::MainWindow() :
     menuBar(new QMenuBar(this)),
     toolBar(new QToolBar(this)),
-    tabBar(new QTabWidget(this))
+    tabBar(new QTabWidget(this)),
+    spreadSheets(this)
 {
     setFixedSize(2048, 1536);
     setMenuBar(menuBar);
@@ -30,7 +31,13 @@ MainWindow::MainWindow() :
     tabBar->setFont(QFont("Arial", 11, QFont::Bold));
     tabBar->setStyleSheet("QTabBar::tab { min-width: 200px; min-height : 60px; }");
 
-    auto* archivo = new QMenu("Archivos", this);
+    auto* view = new QGraphicsView(this);
+
+    setCentralWidget(view);
+    centralWidget()->setLayout(new QVBoxLayout());
+    centralWidget()->layout()->addWidget(tabBar);
+
+    auto* archivo = new QMenu("Archivo", this);
 
     archivo->addAction("Guardar", [this]()
     {
@@ -57,7 +64,7 @@ MainWindow::MainWindow() :
     insertar->addAction("Categoria", [this]()
     {
         bool ok;
-        auto categoria = QInputDialog::getText(this, "Insertar Categoria", "Categoria", QLineEdit::Normal, "", &ok);
+        const auto& categoria = QInputDialog::getText(this, "Insertar Categoria", "Categoria", QLineEdit::Normal, "", &ok);
 
         if(ok)
         {
@@ -72,7 +79,7 @@ MainWindow::MainWindow() :
     insertar->addAction("Item", [this]()
     {
         bool ok;
-        auto item = QInputDialog::getText(this, "Insertar Item", "Item", QLineEdit::Normal, "", &ok);
+        const auto& item = QInputDialog::getText(this, "Insertar Item", "Item", QLineEdit::Normal, "", &ok);
 
         if(ok)
         {
@@ -87,37 +94,46 @@ MainWindow::MainWindow() :
 
     menuBar->addMenu(insertar);
 
+    auto* remover = new QMenu("Remover", this);
+
+    remover->addAction("Categoria",
+            [this]()
+    {
+        spreadSheets[tabBar->tabText(tabBar->currentIndex())]->removerCategoriaSeleccionada();
+    });
+
+    remover->addAction("Item",
+            [this]()
+    {
+        spreadSheets[tabBar->tabText(tabBar->currentIndex())]->removerItemSeleccionado();
+    });
+
+    menuBar->addMenu(remover);
+
     toolBar->addAction(QIcon(QApplication::style()->standardIcon(QStyle::SP_FileDialogNewFolder)), "",
             [this]()
     {
         bool ok;
-        auto tabName = QInputDialog::getText(this, "Agregar SpreadSheet", "Nombre", QLineEdit::Normal, "", &ok);
+        const auto& nombre = QInputDialog::getText(this, "Agregar SpreadSheet", "Nombre", QLineEdit::Normal, "", &ok);
 
         if(ok)
         {
             auto* spreadSheet = new SpreadSheet(this);
 
-            tabBar->addTab(spreadSheet, tabName);
-            spreadSheets.insert(tabName, spreadSheet);
+            tabBar->addTab(spreadSheet, nombre);
+            spreadSheets.agregarSpreadSheet(nombre, spreadSheet);
 
-            QDir().mkdir(usuario + '/' + tabName);
+            QDir().mkdir(usuario + '/' + nombre);
         }
     });
-
-    auto* mainLayout = new QVBoxLayout(this);
-    mainLayout->addWidget(tabBar);
-
-    auto* view = new QGraphicsView(this);
-    view->setLayout(mainLayout);
-    setCentralWidget(view);
 
     QObject::connect(tabBar, &QTabWidget::tabCloseRequested,
            [this](auto index)
     {
-        const auto& spreadSheetName = tabBar->tabText(index);
+        const auto& nombre = tabBar->tabText(index);
 
         QMessageBox message(this);
-        message.setText("Esta seguro de Remover " + spreadSheetName + " ?");
+        message.setText("Esta seguro de Remover " + nombre + " ?");
         message.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
 
         auto button = message.exec();
@@ -126,13 +142,21 @@ MainWindow::MainWindow() :
         {
             case QMessageBox::Yes:
             tabBar->removeTab(index);
-            QDir(usuario + '/' + spreadSheetName).removeRecursively();
+            spreadSheets.removerSpreadSheet(nombre);
+            QDir(usuario + '/' + nombre).removeRecursively();
             break;
         }
     });
 }
 
-void MainWindow::setUsuario(const QString& usuario)
+void MainWindow::cargarUsuario(const QString& usuario)
 {
     this->usuario = usuario;
+
+    spreadSheets.cargarSpreadSheets(usuario);
+
+    for(auto spreadSheetItr = spreadSheets.cbegin(); spreadSheetItr != spreadSheets.cend(); ++spreadSheetItr)
+    {
+        tabBar->addTab(spreadSheetItr.value(), spreadSheetItr.key());
+    }
 }

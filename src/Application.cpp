@@ -18,7 +18,7 @@ Application::Application(int& argc, char** argv) :
     QObject::connect(&loginDialog, &LoginDialog::ingresoAceptado,
         [this](const auto& usuario)
     {
-        mainWindow.setUsuario(usuario);
+        mainWindow.cargarUsuario(usuario);
 
         loginDialog.close();
         mainWindow.show();
