@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT += core gui xml printsupport
+QT += core gui xml printsupport xlsx
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -31,7 +31,8 @@ SOURCES += \
     SpreadSheetPrinter.cpp \
     LoginDialog.cpp \
     RegistrarDialog.cpp \
-    SimpleCrypt.cpp
+    SimpleCrypt.cpp \
+    SpreadSheetList.cpp
 
 HEADERS += \
     MainWindow.hpp \
@@ -41,7 +42,8 @@ HEADERS += \
     LoginDialog.hpp \
     RegistrarDialog.hpp \
     SimpleCrypt.hpp \
-    Usuario.hpp
+    Usuario.hpp \
+    SpreadSheetList.hpp
 
 FORMS += \
         mainwindow.ui
