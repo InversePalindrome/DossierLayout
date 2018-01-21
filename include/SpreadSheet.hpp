@@ -25,8 +25,19 @@ public:
     void insertarCategoria(QString categoria);
     void insertarItem(QString item);
 
+    void removerCategoriaSeleccionada();
+    void removerItemSeleccionado();
+
+    void setFileName(const QString& fileName);
+
+public slots:
+    void categoriaSeleccionada(int index);
+    void itemSeleccionado(int index);
+
 private:
     QString fileName;
+    int indexCategoriaSeleccionada;
+    int indexItemSeleccionado;
 
     void pintar(QPrinter& printer);
 };

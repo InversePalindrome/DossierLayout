@@ -7,14 +7,13 @@ InversePalindrome.com
 
 #pragma once
 
-#include "SpreadSheet.hpp"
+#include "SpreadSheetList.hpp"
 
+#include <QString>
 #include <QMenuBar>
 #include <QToolBar>
 #include <QTabWidget>
 #include <QMainWindow>
-
-#include <unordered_map>
 
 
 class MainWindow : public QMainWindow
@@ -24,7 +23,7 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow();
 
-    void setUsuario(const QString& usuario);
+    void cargarUsuario(const QString& usuario);
 
 private:
     QMenuBar* menuBar;
@@ -32,7 +31,7 @@ private:
     QTabWidget* tabBar;
 
     QString usuario;
-    std::unordered_map<QString, SpreadSheet*> spreadSheets;
+    SpreadSheetList spreadSheets;
 
 signals:
     void salir();
