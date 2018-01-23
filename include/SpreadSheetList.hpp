@@ -18,16 +18,16 @@ using SpreadSheets = QMap<QString, SpreadSheet*>;
 class SpreadSheetList
 {
 public:
-    SpreadSheetList(QWidget* parent);
+    explicit SpreadSheetList(QWidget* parent);
     ~SpreadSheetList();
 
-    void cargarSpreadSheets(const QString& usuario);
+    void loadSpreadSheets(const QString& user);
 
-    void agregarSpreadSheet(const QString& nombre, SpreadSheet* spreadSheet);
-    void removerSpreadSheet(const QString& nombre);
+    void addSpreadSheet(const QString& name, SpreadSheet* spreadSheet);
+    void removeSpreadSheet(const QString& name);
 
-    SpreadSheet* operator[](const QString& nombre);
-    SpreadSheet* operator[](const QString& nombre) const;
+    SpreadSheet* operator[](const QString& name);
+    SpreadSheet* operator[](const QString& name) const;
 
     SpreadSheets::iterator begin();
     SpreadSheets::iterator end();
@@ -35,7 +35,7 @@ public:
     SpreadSheets::const_iterator cend() const;
 
 private:
-    QString usuario;
+    QString user;
     SpreadSheets spreadSheets;
 
     QWidget* parent;

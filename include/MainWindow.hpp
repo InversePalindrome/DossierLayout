@@ -21,18 +21,20 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow();
+    MainWindow();
 
-    void cargarUsuario(const QString& usuario);
+    void loadUser(const QString& user);
 
 private:
     QMenuBar* menuBar;
     QToolBar* toolBar;
     QTabWidget* tabBar;
 
-    QString usuario;
+    QString user;
     SpreadSheetList spreadSheets;
 
+    SpreadSheet* getCurrentSpreadSheet();
+
 signals:
-    void salir();
+    void exit();
 };

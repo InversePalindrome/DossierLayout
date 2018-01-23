@@ -8,7 +8,6 @@ InversePalindrome.com
 #pragma once
 
 #include <QString>
-#include <QPrinter>
 #include <QTableWidget>
 
 
@@ -20,24 +19,28 @@ public:
     explicit SpreadSheet(QWidget* parent);
     ~SpreadSheet();
 
-    void cargarSpreadSheet(const QString& fileName);
+    void loadSpreadSheet(const QString& fileName);
+    void saveSpreadSheet(const QString& fileName);
 
-    void insertarCategoria(QString categoria);
-    void insertarItem(QString item);
+    void print();
 
-    void removerCategoriaSeleccionada();
-    void removerItemSeleccionado();
+    void insertCategory(QString categoria);
+    void insertItem(QString item);
+
+    void removeSelectedCategory();
+    void removeSelectedItem();
 
     void setFileName(const QString& fileName);
 
 public slots:
-    void categoriaSeleccionada(int index);
-    void itemSeleccionado(int index);
+    void categorySelcted(int index);
+    void itemSelected(int index);
 
 private:
     QString fileName;
-    int indexCategoriaSeleccionada;
-    int indexItemSeleccionado;
 
-    void pintar(QPrinter& printer);
+    int selectedCategoryIndex;
+    int selectedItemIndex;
+
+    void saveToExcel(const QString& fileName);
 };

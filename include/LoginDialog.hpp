@@ -7,9 +7,9 @@ InversePalindrome.com
 
 #pragma once
 
-#include "Usuario.hpp"
+#include "User.hpp"
 #include "SimpleCrypt.hpp"
-#include "RegistrarDialog.hpp"
+#include "RegisterDialog.hpp"
 
 #include <QMap>
 #include <QDialog>
@@ -24,19 +24,19 @@ public:
     explicit LoginDialog(QWidget* parent);
     ~LoginDialog();
 
-    void cargarUsuarios(const QString& fileName);
+    void loadUser(const QString& fileName);
 
 public slots:
-     void agregarUsuario(const Usuario& usuario);
+     void addUser(const User& user);
 
 private:
-    RegistrarDialog* registrarDialog;
+    RegisterDialog* registerDialog;
 
     SimpleCrypt crypto;
 
     QString fileName;
-    QMap<QString, QString> usuarios;
+    QMap<QString, QString> users;
 
 signals:
-    void ingresoAceptado(const QString& usuario);
+    void loginAccepted(const QString& user);
 };
