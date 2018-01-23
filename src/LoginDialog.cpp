@@ -20,7 +20,7 @@ InversePalindrome.com
 
 LoginDialog::LoginDialog(QWidget* parent) :
     QDialog(parent),
-    registrarDialog(new RegistrarDialog(this)),
+    registerDialog(new RegisterDialog(this)),
     crypto(0x8540abc21e6c485d)
 {
     setFixedSize(600, 600);
@@ -36,10 +36,10 @@ LoginDialog::LoginDialog(QWidget* parent) :
     QFont labelFont("Arial", 12, QFont::Bold);
     QFont entryFont("Arial", 12);
 
-    auto* usuarioLabel = new QLabel("Usuario");
-    auto* usuarioEntry = new QLineEdit();
-    usuarioLabel->setFont(labelFont);
-    usuarioEntry->setFont(entryFont);
+    auto* userLabel = new QLabel("Usuario");
+    auto* userEntry = new QLineEdit();
+    userLabel->setFont(labelFont);
+    userEntry->setFont(entryFont);
 
     auto* passwordLabel = new QLabel("Contraseña");
     auto* passwordEntry = new QLineEdit();
@@ -47,47 +47,47 @@ LoginDialog::LoginDialog(QWidget* parent) :
     passwordEntry->setFont(entryFont);
     passwordEntry->setEchoMode(QLineEdit::Password);
 
-    auto* ingresarBoton = new QPushButton("Ingresar");
-    auto* registrarBoton = new QPushButton("Registrar");
+    auto* loginButton = new QPushButton("Ingresar");
+    auto* registerButton = new QPushButton("Registrar");
 
-    auto* botonLayout = new QHBoxLayout();
-    botonLayout->addWidget(ingresarBoton);
-    botonLayout->addWidget(registrarBoton);
+    auto* layoutButton = new QHBoxLayout();
+    layoutButton->addWidget(loginButton);
+    layoutButton->addWidget(registerButton);
 
     auto* layout = new QVBoxLayout(this);
 
     layout->addSpacing(15);
     layout->addWidget(logoLabel, 0, Qt::AlignCenter);
     layout->addSpacing(15);
-    layout->addWidget(usuarioLabel);
-    layout->addWidget(usuarioEntry);
+    layout->addWidget(userLabel);
+    layout->addWidget(userEntry);
     layout->addWidget(passwordLabel);
     layout->addWidget(passwordEntry);
-    layout->addLayout(botonLayout);
+    layout->addLayout(layoutButton);
 
     setLayout(layout);
 
-    QObject::connect(ingresarBoton, &QPushButton::clicked,
-       [this, usuarioEntry, passwordEntry]()
+    QObject::connect(loginButton, &QPushButton::clicked,
+       [this, userEntry, passwordEntry]()
     {
-        if(usuarios.count(usuarioEntry->text()) &&
-           passwordEntry->text() == crypto.decryptToString(usuarios.value(usuarioEntry->text())))
+        if(users.count(userEntry->text()) &&
+           passwordEntry->text() == crypto.decryptToString(users.value(userEntry->text())))
         {
-           emit ingresoAceptado(usuarioEntry->text());
+           emit loginAccepted(userEntry->text());
 
-           usuarioEntry->clear();
+           userEntry->clear();
            passwordEntry->clear();
         }
     });
-    QObject::connect(registrarBoton, &QPushButton::clicked,
+    QObject::connect(registerButton, &QPushButton::clicked,
        [this]()
     {
         close();
-        registrarDialog->open();
+        registerDialog->open();
     });
-    QObject::connect(registrarDialog, &RegistrarDialog::registrarUsuario, this, &LoginDialog::agregarUsuario);
+    QObject::connect(registerDialog, &RegisterDialog::registerUser, this, &LoginDialog::addUser);
 
-    cargarUsuarios("usuarios.xml");
+    loadUser("usuarios.xml");
 }
 
 LoginDialog::~LoginDialog()
@@ -97,19 +97,19 @@ LoginDialog::~LoginDialog()
     auto dec = doc.createProcessingInstruction("xml", "version=\"1.0\" encoding=\"UTF-8\"");
     doc.appendChild(dec);
 
-    auto usuariosElement = doc.createElement("Usuarios");
+    auto usersElement = doc.createElement("Users");
 
-    for(auto usuarioItr = usuarios.constBegin(); usuarioItr != usuarios.constEnd(); ++usuarioItr)
+    for(auto usuarioItr = users.constBegin(); usuarioItr != users.constEnd(); ++usuarioItr)
     {
-        auto usuarioElement = doc.createElement("Usuario");
+        auto userElement = doc.createElement("User");
 
-        usuarioElement.setAttribute("nombre", usuarioItr.key());
-        usuarioElement.setAttribute("password", usuarioItr.value());
+        userElement.setAttribute("name", usuarioItr.key());
+        userElement.setAttribute("password", usuarioItr.value());
 
-        usuariosElement.appendChild(usuarioElement);
+        usersElement.appendChild(userElement);
     }
 
-    doc.appendChild(usuariosElement);
+    doc.appendChild(usersElement);
 
     QFile file(fileName);
 
@@ -125,7 +125,7 @@ LoginDialog::~LoginDialog()
     }
 }
 
-void LoginDialog::cargarUsuarios(const QString& fileName)
+void LoginDialog::loadUser(const QString& fileName)
 {
     this->fileName = fileName;
 
@@ -146,26 +146,26 @@ void LoginDialog::cargarUsuarios(const QString& fileName)
         file.close();
     }
 
-    auto usuariosElement = doc.firstChildElement("Usuarios");
+    auto usersElement = doc.firstChildElement("Users");
 
-    auto usuariosList = usuariosElement.elementsByTagName("Usuario");
+    auto usersList = usersElement.elementsByTagName("User");
 
-    for(int i = 0; i < usuariosList.count(); ++i)
+    for(int i = 0; i < usersList.count(); ++i)
     {
-        auto usuario = usuariosList.at(i);
+        auto user = usersList.at(i);
 
-        if(usuario.isElement())
+        if(user.isElement())
         {
-            auto usuarioElement = usuario.toElement();
+            auto userElement = user.toElement();
 
-            usuarios.insert(usuarioElement.attribute("nombre"), usuarioElement.attribute("password"));
+            users.insert(userElement.attribute("name"), userElement.attribute("password"));
         }
     }
 }
 
-void LoginDialog::agregarUsuario(const Usuario& usuario)
+void LoginDialog::addUser(const User& user)
 {
-    usuarios.insert(usuario.first, crypto.encryptToString(usuario.second));
+    users.insert(user.first, crypto.encryptToString(user.second));
 
-    QDir().mkdir(usuario.first);
+    QDir().mkdir(user.first);
 }

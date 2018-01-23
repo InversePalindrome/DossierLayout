@@ -29,14 +29,14 @@ SpreadSheetList::~SpreadSheetList()
     for(auto spreadSheetItr = spreadSheets.constBegin(); spreadSheetItr != spreadSheets.constEnd(); ++spreadSheetItr)
     {
         auto spreadSheetElement = doc.createElement("SpreadSheet");
-        spreadSheetElement.setAttribute("nombre", spreadSheetItr.key());
+        spreadSheetElement.setAttribute("name", spreadSheetItr.key());
 
         spreadSheetsElement.appendChild(spreadSheetElement);
     }
 
     doc.appendChild(spreadSheetsElement);
 
-    QFile file(usuario + "/SpreadSheets.xml");
+    QFile file(user + "/SpreadSheets.xml");
 
     if(!file.open(QIODevice::WriteOnly | QIODevice::Text))
     {
@@ -50,9 +50,9 @@ SpreadSheetList::~SpreadSheetList()
     }
 }
 
-void SpreadSheetList::cargarSpreadSheets(const QString& usuario)
+void SpreadSheetList::loadSpreadSheets(const QString& usuario)
 {
-    this->usuario = usuario;
+    this->user = usuario;
 
     QDomDocument doc;
     QFile file(usuario + "/SpreadSheets.xml");
@@ -83,35 +83,35 @@ void SpreadSheetList::cargarSpreadSheets(const QString& usuario)
         {
             auto spreadSheetElement = spreadSheetNode.toElement();
 
-            const auto& spreadSheetNombre = spreadSheetElement.attribute("nombre");
+            const auto& spreadSheetNombre = spreadSheetElement.attribute("name");
 
             auto* spreadSheet = new SpreadSheet(parent);
-            spreadSheet->cargarSpreadSheet(usuario + '/' + spreadSheetNombre + "/SpreadSheet.xlsx");
+            spreadSheet->loadSpreadSheet(usuario + '/' + spreadSheetNombre + "/SpreadSheet.xlsx");
 
             spreadSheets.insert(spreadSheetNombre, spreadSheet);
         }
     }
 }
 
-void SpreadSheetList::agregarSpreadSheet(const QString& nombre, SpreadSheet* spreadSheet)
+void SpreadSheetList::addSpreadSheet(const QString& name, SpreadSheet* spreadSheet)
 {
-    spreadSheet->setFileName(usuario + '/' + nombre + "/SpreadSheet.xlsx");
-    spreadSheets.insert(nombre, spreadSheet);
+    spreadSheet->setFileName(user + '/' + name + "/SpreadSheet.xlsx");
+    spreadSheets.insert(name, spreadSheet);
 }
 
-void SpreadSheetList::removerSpreadSheet(const QString& nombre)
+void SpreadSheetList::removeSpreadSheet(const QString& name)
 {
-    spreadSheets.remove(nombre);
+    spreadSheets.remove(name);
 }
 
-SpreadSheet* SpreadSheetList::operator[](const QString& nombre)
+SpreadSheet* SpreadSheetList::operator[](const QString& name)
 {
-    return spreadSheets[nombre];
+    return spreadSheets[name];
 }
 
-SpreadSheet* SpreadSheetList::operator[](const QString& nombre) const
+SpreadSheet* SpreadSheetList::operator[](const QString& name) const
 {
-    return spreadSheets[nombre];
+    return spreadSheets[name];
 }
 
 SpreadSheets::iterator SpreadSheetList::begin()

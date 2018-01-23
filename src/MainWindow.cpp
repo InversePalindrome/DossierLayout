@@ -39,22 +39,26 @@ MainWindow::MainWindow() :
 
     auto* archivo = new QMenu("Archivo", this);
 
-    archivo->addAction("Guardar", [this]()
+    archivo->addAction("Abrir", [this]()
     {
-
+        getCurrentSpreadSheet()->loadSpreadSheet(QFileDialog::
+           getOpenFileName(this, "Abrir", "", "Excel (*.xlsx)"));
     });
     archivo->addAction("Guardar Como", [this]()
     {
-
+        getCurrentSpreadSheet()->saveSpreadSheet(QFileDialog::
+          getSaveFileName(this, "Guardar Como", "", "SpreadSheet (*.pdf .xlsx)"));
     });
-    archivo->addAction("Guardar Todo", [this]()
+    archivo->addAction("Imprimir", [this]()
     {
-
+        if(getCurrentSpreadSheet())
+        {
+            getCurrentSpreadSheet()->print();
+        }
     });
-    archivo->addAction("Imprimir", [this](){  });
     archivo->addAction("Salir", [this]()
     {
-        emit salir();
+        emit exit();
     });
 
     menuBar->addMenu(archivo);
@@ -64,16 +68,11 @@ MainWindow::MainWindow() :
     insertar->addAction("Categoria", [this]()
     {
         bool ok;
-        const auto& categoria = QInputDialog::getText(this, "Insertar Categoria", "Categoria", QLineEdit::Normal, "", &ok);
+        const auto& category = QInputDialog::getText(this, "Insertar Categoria", "Categoria", QLineEdit::Normal, "", &ok);
 
-        if(ok)
+        if(ok && getCurrentSpreadSheet())
         {
-           auto* spreadSheet = spreadSheets[tabBar->tabText(tabBar->currentIndex())];
-
-           if(spreadSheet)
-           {
-               spreadSheet->insertarCategoria(categoria);
-           }
+           getCurrentSpreadSheet()->insertCategory(category);
         }
     });
     insertar->addAction("Item", [this]()
@@ -81,59 +80,60 @@ MainWindow::MainWindow() :
         bool ok;
         const auto& item = QInputDialog::getText(this, "Insertar Item", "Item", QLineEdit::Normal, "", &ok);
 
-        if(ok)
+        if(ok && getCurrentSpreadSheet())
         {
-            auto* spreadSheet = spreadSheets[tabBar->tabText(tabBar->currentIndex())];
-
-            if(spreadSheet)
-            {
-                spreadSheet->insertarItem(item);
-            }
+           getCurrentSpreadSheet()->insertItem(item);
         }
     });
 
     menuBar->addMenu(insertar);
 
-    auto* remover = new QMenu("Remover", this);
+    auto* remove = new QMenu("Remover", this);
 
-    remover->addAction("Categoria",
+    remove->addAction("Categoria",
             [this]()
     {
-        spreadSheets[tabBar->tabText(tabBar->currentIndex())]->removerCategoriaSeleccionada();
+        if(getCurrentSpreadSheet())
+        {
+           getCurrentSpreadSheet()->removeSelectedCategory();
+        }
     });
 
-    remover->addAction("Item",
+    remove->addAction("Item",
             [this]()
     {
-        spreadSheets[tabBar->tabText(tabBar->currentIndex())]->removerItemSeleccionado();
+        if(getCurrentSpreadSheet())
+        {
+           getCurrentSpreadSheet()->removeSelectedItem();
+        }
     });
 
-    menuBar->addMenu(remover);
+    menuBar->addMenu(remove);
 
     toolBar->addAction(QIcon(QApplication::style()->standardIcon(QStyle::SP_FileDialogNewFolder)), "",
             [this]()
     {
         bool ok;
-        const auto& nombre = QInputDialog::getText(this, "Agregar SpreadSheet", "Nombre", QLineEdit::Normal, "", &ok);
+        const auto& name = QInputDialog::getText(this, "Agregar SpreadSheet", "Nombre", QLineEdit::Normal, "", &ok);
 
         if(ok)
         {
             auto* spreadSheet = new SpreadSheet(this);
 
-            tabBar->addTab(spreadSheet, nombre);
-            spreadSheets.agregarSpreadSheet(nombre, spreadSheet);
+            tabBar->addTab(spreadSheet, name);
+            spreadSheets.addSpreadSheet(name, spreadSheet);
 
-            QDir().mkdir(usuario + '/' + nombre);
+            QDir().mkdir(user + '/' + name);
         }
     });
 
     QObject::connect(tabBar, &QTabWidget::tabCloseRequested,
            [this](auto index)
     {
-        const auto& nombre = tabBar->tabText(index);
+        const auto& name = tabBar->tabText(index);
 
         QMessageBox message(this);
-        message.setText("Esta seguro de Remover " + nombre + " ?");
+        message.setText("Esta seguro de Remover " + name + " ?");
         message.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
 
         auto button = message.exec();
@@ -142,21 +142,26 @@ MainWindow::MainWindow() :
         {
             case QMessageBox::Yes:
             tabBar->removeTab(index);
-            spreadSheets.removerSpreadSheet(nombre);
-            QDir(usuario + '/' + nombre).removeRecursively();
+            spreadSheets.removeSpreadSheet(name);
+            QDir(user + '/' + name).removeRecursively();
             break;
         }
     });
 }
 
-void MainWindow::cargarUsuario(const QString& usuario)
+void MainWindow::loadUser(const QString& user)
 {
-    this->usuario = usuario;
+    this->user = user;
 
-    spreadSheets.cargarSpreadSheets(usuario);
+    spreadSheets.loadSpreadSheets(user);
 
     for(auto spreadSheetItr = spreadSheets.cbegin(); spreadSheetItr != spreadSheets.cend(); ++spreadSheetItr)
     {
         tabBar->addTab(spreadSheetItr.value(), spreadSheetItr.key());
     }
+}
+
+SpreadSheet* MainWindow::getCurrentSpreadSheet()
+{
+    return spreadSheets[tabBar->tabText(tabBar->currentIndex())];
 }

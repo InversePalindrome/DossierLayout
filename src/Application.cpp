@@ -12,22 +12,23 @@ InversePalindrome.com
 
 Application::Application(int& argc, char** argv) :
     QApplication(argc, argv),
-    splashScreen(QPixmap(":/Resources/InversePalindromeLogo.png")),
-    loginDialog(nullptr)
+    splashScreen(new QSplashScreen(QPixmap(":/Resources/InversePalindromeLogo.png"))),
+    mainWindow(new MainWindow()),
+    loginDialog(new LoginDialog(mainWindow))
 {
-    QObject::connect(&loginDialog, &LoginDialog::ingresoAceptado,
-        [this](const auto& usuario)
+    QObject::connect(loginDialog, &LoginDialog::loginAccepted,
+        [this](const auto& user)
     {
-        mainWindow.cargarUsuario(usuario);
+        mainWindow->loadUser(user);
 
-        loginDialog.close();
-        mainWindow.show();
+        loginDialog->close();
+        mainWindow->show();
     });
-    QObject::connect(&mainWindow, &MainWindow::salir,
+    QObject::connect(mainWindow, &MainWindow::exit,
         [this]()
     {
-        mainWindow.close();
-        loginDialog.show();
+        mainWindow->close();
+        loginDialog->show();
     });
 }
 
@@ -35,11 +36,11 @@ int Application::run()
 {
     auto splashTime = 3u;
 
-    splashScreen.show();
+    splashScreen->show();
     thread()->sleep(splashTime);
-    loginDialog.show();
+    loginDialog->show();
 
-    splashScreen.finish(&loginDialog);
+    splashScreen->finish(loginDialog);
 
     return exec();
 }
