@@ -37,7 +37,7 @@ MainWindow::MainWindow() :
     centralWidget()->setLayout(new QVBoxLayout());
     centralWidget()->layout()->addWidget(tabBar);
 
-    auto* archivo = new QMenu("Archivo", this);
+    auto* archivo = menuBar->addMenu("Archivo");
 
     archivo->addAction("Abrir", [this]()
     {
@@ -56,14 +56,13 @@ MainWindow::MainWindow() :
             getCurrentSpreadSheet()->print();
         }
     });
+    archivo->addSeparator();
     archivo->addAction("Salir", [this]()
     {
         emit exit();
     });
 
-    menuBar->addMenu(archivo);
-
-    auto* insertar = new QMenu("Insertar", this);
+    auto* insertar = menuBar->addMenu("Insertar");
 
     insertar->addAction("Categoria", [this]()
     {
@@ -86,9 +85,7 @@ MainWindow::MainWindow() :
         }
     });
 
-    menuBar->addMenu(insertar);
-
-    auto* remove = new QMenu("Remover", this);
+    auto* remove = menuBar->addMenu("Remover");
 
     remove->addAction("Categoria",
             [this]()
@@ -107,8 +104,6 @@ MainWindow::MainWindow() :
            getCurrentSpreadSheet()->removeSelectedItem();
         }
     });
-
-    menuBar->addMenu(remove);
 
     toolBar->addAction(QIcon(QApplication::style()->standardIcon(QStyle::SP_FileDialogNewFolder)), "",
             [this]()
