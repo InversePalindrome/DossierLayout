@@ -22,7 +22,7 @@ public:
     int run();
 
 private:
-    QSplashScreen* splashScreen;
-    MainWindow* mainWindow;
-    LoginDialog* loginDialog;
+    QSplashScreen splashScreen;
+    MainWindow mainWindow;
+    LoginDialog loginDialog;
 };

@@ -43,4 +43,7 @@ private:
     int selectedItemIndex;
 
     void saveToExcel(const QString& fileName);
+
+private slots:
+    void openContextMenu(const QPoint& position);
 };
