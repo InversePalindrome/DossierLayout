@@ -1,19 +1,15 @@
 /*
 Copyright (c) 2018 InversePalindrome
-Inverbienes - LoginDialog.hpp
+DossierTable - LoginDialog.hpp
 InversePalindrome.com
 */
 
 
 #pragma once
 
-#include "User.hpp"
-#include "SimpleCrypt.hpp"
-#include "RegisterDialog.hpp"
-
-#include <QMap>
 #include <QDialog>
 #include <QString>
+#include <QLineEdit>
 
 
 class LoginDialog : public QDialog
@@ -22,21 +18,14 @@ class LoginDialog : public QDialog
 
 public:
     explicit LoginDialog(QWidget* parent);
-    ~LoginDialog();
-
-    void loadUser(const QString& fileName);
-
-public slots:
-     void addUser(const User& user);
 
 private:
-    RegisterDialog* registerDialog;
+    QLineEdit* userEntry;
+    QLineEdit* passwordEntry;
 
-    SimpleCrypt crypto;
-
-    QString fileName;
-    QMap<QString, QString> users;
+    virtual void closeEvent(QCloseEvent* event) override;
 
 signals:
-    void loginAccepted(const QString& user);
+    void registerUser();
+    void loginUser(const QString& user, const QString& password);
 };

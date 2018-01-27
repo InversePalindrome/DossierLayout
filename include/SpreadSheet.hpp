@@ -1,6 +1,6 @@
 /*
 Copyright (c) 2018 InversePalindrome
-Inverbienes - SpreadSheet.hpp
+DossierTable - SpreadSheet.hpp
 InversePalindrome.com
 */
 
@@ -29,6 +29,12 @@ public:
 
     void removeSelectedCategory();
     void removeSelectedItem();
+
+    QString getSelectedSum() const;
+    QString getSelectedAverage() const;
+    QString getSelectedMin() const;
+    QString getSelectedMax() const;
+    QString getSelectedCount() const;
 
     void setFileName(const QString& fileName);
 

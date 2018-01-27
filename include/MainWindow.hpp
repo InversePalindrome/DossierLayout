@@ -1,6 +1,6 @@
 /*
 Copyright (c) 2018 InversePalindrome
-Inverbienes - MainWindow.hpp
+DossierTable - MainWindow.hpp
 InversePalindrome.com
 */
 
