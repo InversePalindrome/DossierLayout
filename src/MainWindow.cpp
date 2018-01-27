@@ -1,6 +1,6 @@
 /*
 Copyright (c) 2018 InversePalindrome
-Inverbienes - MainWindow.cpp
+DossierTable - MainWindow.cpp
 InversePalindrome.com
 */
 
@@ -8,13 +8,17 @@ InversePalindrome.com
 #include "MainWindow.hpp"
 
 #include <QDir>
+#include <QIcon>
 #include <QMenu>
+#include <QLabel>
 #include <QBoxLayout>
-#include <QGraphicsView>
-#include <QApplication>
+#include <QClipboard>
+#include <QToolButton>
 #include <QFileDialog>
-#include <QInputDialog>
 #include <QMessageBox>
+#include <QInputDialog>
+#include <QApplication>
+#include <QGraphicsView>
 
 
 MainWindow::MainWindow() :
@@ -25,11 +29,19 @@ MainWindow::MainWindow() :
 {
     setFixedSize(2048, 1536);
     setMenuBar(menuBar);
+    setContextMenuPolicy(Qt::NoContextMenu);
     addToolBar(toolBar);
+
+    auto* addButton = new QToolButton();
+    addButton->setText("+");
+
+    tabBar->addTab(new QLabel(), QString());
+    tabBar->setTabEnabled(0, false);
+    tabBar->tabBar()->setTabButton(0, QTabBar::RightSide, addButton);
 
     tabBar->setTabsClosable(true);
     tabBar->setFont(QFont("Arial", 11, QFont::Bold));
-    tabBar->setStyleSheet("QTabBar::tab { min-width: 200px; min-height : 60px; }");
+    tabBar->setStyleSheet("QTabBar::tab { min-width: 100px; min-height : 60px; }");
 
     auto* view = new QGraphicsView(this);
 
@@ -105,8 +117,37 @@ MainWindow::MainWindow() :
         }
     });
 
-    toolBar->addAction(QIcon(QApplication::style()->standardIcon(QStyle::SP_FileDialogNewFolder)), "",
-            [this]()
+    auto* clipboard = QApplication::clipboard();
+
+    auto* operationsMenu = new QMenu();
+    operationsMenu->addAction("Sum", [this, clipboard]()
+    {
+        clipboard->setText(getCurrentSpreadSheet()->getSelectedSum());
+    });
+    operationsMenu->addAction("Average", [this, clipboard]()
+    {
+        clipboard->setText(getCurrentSpreadSheet()->getSelectedAverage());
+    });
+    operationsMenu->addAction("Min", [this, clipboard]()
+    {
+        clipboard->setText(getCurrentSpreadSheet()->getSelectedMin());
+    });
+    operationsMenu->addAction("Max", [this, clipboard]()
+    {
+        clipboard->setText(getCurrentSpreadSheet()->getSelectedMax());
+    });
+    operationsMenu->addAction("Count", [this, clipboard]
+    {
+        clipboard->setText(getCurrentSpreadSheet()->getSelectedCount());
+    });
+
+    auto* operationButton = new QToolButton();
+    operationButton->setMenu(operationsMenu);
+    operationButton->setPopupMode(QToolButton::InstantPopup);
+    operationButton->setIcon(QIcon(":/Resources/Sigma.png"));
+    toolBar->addWidget(operationButton);
+
+    QObject::connect(addButton, &QToolButton::clicked, [this]()
     {
         bool ok;
         const auto& name = QInputDialog::getText(this, "Agregar SpreadSheet", "Nombre", QLineEdit::Normal, "", &ok);
@@ -121,9 +162,7 @@ MainWindow::MainWindow() :
             QDir().mkdir(user + '/' + name);
         }
     });
-
-    QObject::connect(tabBar, &QTabWidget::tabCloseRequested,
-           [this](auto index)
+    QObject::connect(tabBar, &QTabWidget::tabCloseRequested, [this](auto index)
     {
         const auto& name = tabBar->tabText(index);
 

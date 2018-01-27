@@ -1,23 +1,28 @@
 /*
 Copyright (c) 2018 InversePalindrome
-Inverbienes - SpreadSheet.cpp
+DossierTable - SpreadSheet.cpp
 InversePalindrome.com
 */
 
 
 #include "SpreadSheet.hpp"
+#include "AlignmentUtility.hpp"
 
 #include <QFont>
 #include <QFile>
 #include <QMenu>
 #include <QtXlsx>
+#include <QLocale>
 #include <QPainter>
 #include <QPrinter>
+#include <QTextStream>
 #include <QHeaderView>
 #include <QFontDialog>
 #include <QPrintDialog>
 #include <QColorDialog>
 #include <QTableWidgetItem>
+
+#include <limits>
 
 
 SpreadSheet::SpreadSheet(QWidget* parent) :
@@ -89,6 +94,8 @@ void SpreadSheet::loadSpreadSheet(const QString& fileName)
            auto* item = new QTableWidgetItem(cell->value().toString());
            item->setFont(cell->format().font());
            item->setTextColor(cell->format().fontColor());
+           item->setTextAlignment(Utility::ExcelToQtAlignment
+           (qMakePair(cell->format().horizontalAlignment(), cell->format().verticalAlignment())));
            item->setBackgroundColor(cell->format().patternBackgroundColor());
 
            setItem(row - 2, column - 2, item);
@@ -193,6 +200,91 @@ void SpreadSheet::removeSelectedItem()
     selectedItemIndex = -1;
 }
 
+QString SpreadSheet::getSelectedSum() const
+{
+    const auto& selectedCells = selectedItems();
+
+    double sum = 0.;
+
+    for(const auto& cell : selectedCells)
+    {
+        bool ok;
+        auto number = cell->text().toDouble(&ok);
+
+        if(ok)
+        {
+            sum += number;
+        }
+    }
+
+    return QString::number(sum);
+}
+
+QString SpreadSheet::getSelectedAverage() const
+{
+    return QString::number(getSelectedSum().toDouble() / getSelectedCount().toULongLong());
+}
+
+QString SpreadSheet::getSelectedMin() const
+{
+    const auto& selectedCells = selectedItems();
+
+    double min = std::numeric_limits<double>::max();
+
+    for(const auto& cell : selectedCells)
+    {
+        bool ok;
+        auto number = cell->text().toDouble(&ok);
+
+        if(ok && number < min)
+        {
+            min = number;
+        }
+    }
+
+    return QString::number(min);
+}
+
+QString SpreadSheet::getSelectedMax() const
+{
+    const auto& selectedCells = selectedItems();
+
+    double max = std::numeric_limits<double>::min();
+
+    for(const auto& cell : selectedCells)
+    {
+        bool ok;
+        auto number = cell->text().toDouble(&ok);
+
+        if(ok && number > max)
+        {
+            max = number;
+        }
+    }
+
+    return QString::number(max);
+}
+
+QString SpreadSheet::getSelectedCount() const
+{
+    const auto& selectedCells = selectedItems();
+
+    std::size_t count = 0.;
+
+    for(const auto& cell : selectedCells)
+    {
+        bool ok;
+        cell->text().toDouble(&ok);
+
+        if(ok)
+        {
+            ++count;
+        }
+    }
+
+    return QString::number(count);
+}
+
 void SpreadSheet::setFileName(const QString& fileName)
 {
     this->fileName = fileName;
@@ -243,6 +335,8 @@ void SpreadSheet::saveToExcel(const QString& fileName)
             QXlsx::Format format;
             format.setFont(cell->font());
             format.setFontColor(cell->textColor());
+            format.setHorizontalAlignment(Utility::QtToExcelAlignment(cell->textAlignment()).first);
+            format.setVerticalAlignment(Utility::QtToExcelAlignment(cell->textAlignment()).second);
             format.setPatternBackgroundColor(cell->backgroundColor());
 
             doc.write(row + 2, column + 2, cell->text(), format);
@@ -281,6 +375,11 @@ void SpreadSheet::openContextMenu(const QPoint& position)
 
     auto* menu = new QMenu(this);
 
+    menu->addAction("Font", [this, cell]()
+    {
+        cell->setFont(QFontDialog::getFont(nullptr, cell->font(), this));
+    });
+
     auto* color = menu->addMenu("Color");
     auto* backgroundColor = color->addAction("Background", [this, cell]()
     {
@@ -290,13 +389,56 @@ void SpreadSheet::openContextMenu(const QPoint& position)
     {
         cell->setTextColor(QColorDialog::getColor(Qt::black, this, "Text Color"));
     });
-    menu->addAction("Font", [this, cell]()
+
+    auto* format = menu->addMenu("Format");
+    format->addAction("Currency", [cell]()
     {
-        cell->setFont(QFontDialog::getFont(nullptr, cell->font(), this));
+        bool ok;
+        auto number = cell->text().toLongLong(&ok);
+
+        if(ok)
+        {
+           cell->setText(QLocale().toCurrencyString(number));
+        }
     });
+    format->addAction("Percentage", [cell]()
+    {
+        bool ok;
+        auto number = cell->text().toDouble(&ok);
+
+        if(ok)
+        {
+           number *= 100.;
+
+           cell->setText(QString::number(number) + '%');
+        }
+    });
+    format->addAction("Scientific", [cell]()
+    {
+        bool ok;
+        auto number = cell->text().toDouble(&ok);
+
+        if(ok)
+        {
+           QString scientificNumber;
+           QTextStream oStream(&scientificNumber);
+           oStream.setRealNumberPrecision(2);
+           oStream << scientific << number;
+           cell->setText(scientificNumber);
+        }
+    });
+
+    auto* alignment = menu->addMenu("Alignment");
+    alignment->addAction("Left", [cell](){ cell->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter); });
+    alignment->addAction("Right", [cell](){ cell->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter); });
+    alignment->addAction("Top", [cell](){ cell->setTextAlignment(Qt::AlignTop | Qt::AlignHCenter); });
+    alignment->addAction("Bottom", [cell](){ cell->setTextAlignment(Qt::AlignBottom | Qt::AlignHCenter); });
+    alignment->addAction("Center", [cell](){ cell->setTextAlignment(Qt::AlignCenter); });
 
     if(isHeader)
     {
+        format->setEnabled(false);
+        alignment->setEnabled(false);
         backgroundColor->setEnabled(false);
     }
 

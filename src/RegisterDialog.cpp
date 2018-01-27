@@ -1,6 +1,6 @@
 /*
 Copyright (c) 2018 InversePalindrome
-Inverbienes - RegisterDialog.cpp
+DossierTable - RegisterDialog.cpp
 InversePalindrome.com
 */
 
@@ -9,8 +9,9 @@ InversePalindrome.com
 
 #include <QFont>
 #include <QLabel>
-#include <QPushButton>
 #include <QBoxLayout>
+#include <QMessageBox>
+#include <QPushButton>
 
 
 RegisterDialog::RegisterDialog(QWidget* parent) :
@@ -53,42 +54,26 @@ RegisterDialog::RegisterDialog(QWidget* parent) :
 
     setLayout(layout);
 
-    QObject::connect(rePasswordEntry, &QLineEdit::textEdited,
-        [this]()
-    {
-         bool isPasswordValid = passwordEntry->text() == rePasswordEntry->text();
-
-         if(isPasswordValid)
-           {
-              passwordEntry->setStyleSheet("QLineEdit { background: rgb(0, 255, 0); selection-background-color: rgb(255, 255, 255); }");
-              rePasswordEntry->setStyleSheet("QLineEdit { background: rgb(0, 255, 0); selection-background-color: rgb(255, 255, 255); }");
-           }
-         else
-           {
-              passwordEntry->setStyleSheet("QLineEdit { background: rgb(255, 0, 0); selection-background-color: rgb(255, 255, 255); }");
-              rePasswordEntry->setStyleSheet("QLineEdit { background: rgb(255, 0, 0); selection-background-color: rgb(255, 255, 255); }");
-           }
-   });
    QObject::connect(registerButton, &QPushButton::clicked,
         [this]()
     {
-        bool isPasswordValid = !passwordEntry->text().isEmpty() && passwordEntry->text() == rePasswordEntry->text();
-
-        if(isPasswordValid)
+        if(passwordEntry->text() == rePasswordEntry->text())
         {
-            emit registerUser({userEntry->text(), passwordEntry->text()});
-
-            closeEvent(nullptr);
+            emit registerUser(userEntry->text(), passwordEntry->text());
+        }
+        else
+        {
+            QMessageBox errorMessage(QMessageBox::Critical, "Error", "Passwords do not match!", QMessageBox::NoButton, this);
+            errorMessage.exec();
         }
     });
 }
 
-void RegisterDialog::closeEvent(QCloseEvent*)
+void RegisterDialog::closeEvent(QCloseEvent* event)
 {
     userEntry->clear();
     passwordEntry->clear();
     rePasswordEntry->clear();
 
-    close();
-    qobject_cast<QWidget*>(parent())->show();
+    QWidget::closeEvent(event);
 }

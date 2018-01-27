@@ -1,6 +1,6 @@
 /*
 Copyright (c) 2018 InversePalindrome
-Inverbienes - SpreadSheetList.cpp
+DossierTable - SpreadSheetList.cpp
 InversePalindrome.com
 */
 

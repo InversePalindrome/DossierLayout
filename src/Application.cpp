@@ -1,6 +1,6 @@
 /*
 Copyright (c) 2018 InversePalindrome
-Inverbienes - Application.cpp
+DossierTable - Application.cpp
 InversePalindrome.com
 */
 
@@ -8,26 +8,49 @@ InversePalindrome.com
 #include "Application.hpp"
 
 #include <QThread>
+#include <QMessageBox>
 
 
 Application::Application(int& argc, char** argv) :
     QApplication(argc, argv),
+    users("Usuarios.xml"),
     splashScreen(QPixmap(":/Resources/InversePalindromeLogo.png")),
-    loginDialog(&mainWindow)
+    loginDialog(&mainWindow),
+    registerDialog(&mainWindow)
 {
-    QObject::connect(&loginDialog, &LoginDialog::loginAccepted,
-        [this](const auto& user)
+    QObject::connect(&users, &Users::userAdded, [this]()
     {
-        mainWindow.loadUser(user);
+        registerDialog.close();
+        loginDialog.show();
+    });
+    QObject::connect(&users, &Users::loginAccepted,
+        [this](auto valid, const auto& user)
+    {
+        if(valid)
+        {
+           mainWindow.loadUser(user);
 
-        loginDialog.close();
-        mainWindow.show();
+           loginDialog.close();
+           mainWindow.show();
+        }
+        else
+        {
+            QMessageBox errorMessage(QMessageBox::Critical, "Error", "Invalid Username or Password", QMessageBox::NoButton, &loginDialog);
+            errorMessage.exec();
+        }
     });
     QObject::connect(&mainWindow, &MainWindow::exit,
         [this]()
     {
         mainWindow.close();
         loginDialog.show();
+    });
+    QObject::connect(&registerDialog, &RegisterDialog::registerUser, &users, &Users::isRegistrationValid);
+    QObject::connect(&loginDialog, &LoginDialog::loginUser, &users, &Users::isLoginValid);
+    QObject::connect(&loginDialog, &LoginDialog::registerUser, [this]()
+    {
+        loginDialog.close();
+        registerDialog.show();
     });
 }
 
