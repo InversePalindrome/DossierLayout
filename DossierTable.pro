@@ -31,7 +31,9 @@ SOURCES += \
     RegisterDialog.cpp \
     SimpleCrypt.cpp \
     SpreadSheet.cpp \
-    SpreadSheetList.cpp
+    SpreadSheetList.cpp \
+    Users.cpp \
+    AlignmentUtility.cpp
 
 HEADERS += \
     MainWindow.hpp \
@@ -41,10 +43,13 @@ HEADERS += \
     SimpleCrypt.hpp \
     SpreadSheet.hpp \
     SpreadSheetList.hpp \
-    User.hpp
+    Users.hpp \
+    AlignmentUtility.hpp
 
 FORMS += \
         MainWIndow.ui
 
 RESOURCES += \
     resources.qrc
+
+DISTFILES +=
