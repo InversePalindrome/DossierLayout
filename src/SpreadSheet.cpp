@@ -15,6 +15,7 @@ InversePalindrome.com
 #include <QLocale>
 #include <QPainter>
 #include <QPrinter>
+#include <QSettings>
 #include <QTextStream>
 #include <QHeaderView>
 #include <QFontDialog>
@@ -25,8 +26,9 @@ InversePalindrome.com
 #include <limits>
 
 
-SpreadSheet::SpreadSheet(QWidget* parent) :
+SpreadSheet::SpreadSheet(QWidget* parent, const QString& directory) :
     QTableWidget(parent),
+    directory(directory),
     selectedCategoryIndex(-1),
     selectedItemIndex(-1)
 {
@@ -42,7 +44,7 @@ SpreadSheet::SpreadSheet(QWidget* parent) :
    horizontalHeader()->setDragEnabled(true);
    horizontalHeader()->setDragDropMode(DragDropMode::InternalMove);
 
-   QObject::connect(horizontalHeader(), &QHeaderView::sectionClicked, this, &SpreadSheet::categorySelcted);
+   QObject::connect(horizontalHeader(), &QHeaderView::sectionClicked, this, &SpreadSheet::categorySelected);
    QObject::connect(horizontalHeader(), &QHeaderView::customContextMenuRequested, this, &SpreadSheet::openContextMenu);
    QObject::connect(verticalHeader(), &QHeaderView::sectionClicked, this, &SpreadSheet::itemSelected);
    QObject::connect(verticalHeader(), &QHeaderView::customContextMenuRequested, this, &SpreadSheet::openContextMenu);
@@ -51,14 +53,16 @@ SpreadSheet::SpreadSheet(QWidget* parent) :
 
 SpreadSheet::~SpreadSheet()
 {
-   saveToExcel(fileName);
+   QSettings settings(directory + "Headers.ini", QSettings::IniFormat);
+   settings.setValue("Horizontal", horizontalHeader()->saveState());
+   settings.setValue("Vertical", verticalHeader()->saveState());
+
+   saveToExcel(directory + "SpreadSheet.xlsx");
 }
 
 void SpreadSheet::loadSpreadSheet(const QString& fileName)
 {
-   this->fileName = fileName;
-
-   QXlsx::Document doc(fileName);
+   QXlsx::Document doc(directory + fileName);
 
    setRowCount(doc.dimension().lastRow() - 1);
    setColumnCount(doc.dimension().lastColumn() - 1);
@@ -101,6 +105,10 @@ void SpreadSheet::loadSpreadSheet(const QString& fileName)
            setItem(row - 2, column - 2, item);
        }
    }
+
+   QSettings settings(directory + "Headers.ini", QSettings::IniFormat);
+   horizontalHeader()->restoreState(settings.value("Horizontal").toByteArray());
+   verticalHeader()->restoreState(settings.value("Vertical").toByteArray());
 }
 
 void SpreadSheet::saveSpreadSheet(const QString& fileName)
@@ -285,12 +293,12 @@ QString SpreadSheet::getSelectedCount() const
     return QString::number(count);
 }
 
-void SpreadSheet::setFileName(const QString& fileName)
+void SpreadSheet::setDirectory(const QString& directory)
 {
-    this->fileName = fileName;
+    this->directory = directory;
 }
 
-void SpreadSheet::categorySelcted(int index)
+void SpreadSheet::categorySelected(int index)
 {
     selectedCategoryIndex = index;
 }
@@ -304,6 +312,8 @@ void SpreadSheet::saveToExcel(const QString& fileName)
 {
     QXlsx::Document doc;
 
+    horizontalHeader()->saveState();
+    verticalHeader()->saveState();
     for(int column = 0; column < columnCount(); ++column)
     {
         const auto* cell = horizontalHeaderItem(column);

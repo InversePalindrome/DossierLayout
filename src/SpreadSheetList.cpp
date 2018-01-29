@@ -83,20 +83,20 @@ void SpreadSheetList::loadSpreadSheets(const QString& usuario)
         {
             auto spreadSheetElement = spreadSheetNode.toElement();
 
-            const auto& spreadSheetNombre = spreadSheetElement.attribute("name");
+            const auto& name = spreadSheetElement.attribute("name");
 
-            auto* spreadSheet = new SpreadSheet(parent);
-            spreadSheet->loadSpreadSheet(usuario + '/' + spreadSheetNombre + "/SpreadSheet.xlsx");
-
-            spreadSheets.insert(spreadSheetNombre, spreadSheet);
+            addSpreadSheet(name)->loadSpreadSheet("SpreadSheet.xlsx");
         }
     }
 }
 
-void SpreadSheetList::addSpreadSheet(const QString& name, SpreadSheet* spreadSheet)
+SpreadSheet* SpreadSheetList::addSpreadSheet(const QString& name)
 {
-    spreadSheet->setFileName(user + '/' + name + "/SpreadSheet.xlsx");
+    auto* spreadSheet = new SpreadSheet(parent, user + '/' + name + '/');
+
     spreadSheets.insert(name, spreadSheet);
+
+    return spreadSheet;
 }
 
 void SpreadSheetList::removeSpreadSheet(const QString& name)

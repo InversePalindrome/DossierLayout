@@ -154,10 +154,9 @@ MainWindow::MainWindow() :
 
         if(ok)
         {
-            auto* spreadSheet = new SpreadSheet(this);
+            auto* spreadSheet = spreadSheets.addSpreadSheet(name);
 
             tabBar->addTab(spreadSheet, name);
-            spreadSheets.addSpreadSheet(name, spreadSheet);
 
             QDir().mkdir(user + '/' + name);
         }
