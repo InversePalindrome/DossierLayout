@@ -15,8 +15,10 @@ class SpreadSheet : public QTableWidget
 {
     Q_OBJECT
 
+    using ItemList = QList<QTableWidgetItem*>;
+
 public:
-    explicit SpreadSheet(QWidget* parent);
+    SpreadSheet(QWidget* parent, const QString& directory);
     ~SpreadSheet();
 
     void loadSpreadSheet(const QString& fileName);
@@ -36,19 +38,19 @@ public:
     QString getSelectedMax() const;
     QString getSelectedCount() const;
 
-    void setFileName(const QString& fileName);
+    void setDirectory(const QString& directory);
 
 public slots:
-    void categorySelcted(int index);
+    void categorySelected(int index);
     void itemSelected(int index);
 
 private:
-    QString fileName;
+    QString directory;
 
     int selectedCategoryIndex;
     int selectedItemIndex;
 
-    void saveToExcel(const QString& fileName);
+    void saveToExcel(const QString& directory);
 
 private slots:
     void openContextMenu(const QPoint& position);

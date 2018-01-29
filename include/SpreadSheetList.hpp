@@ -23,7 +23,7 @@ public:
 
     void loadSpreadSheets(const QString& user);
 
-    void addSpreadSheet(const QString& name, SpreadSheet* spreadSheet);
+    SpreadSheet* addSpreadSheet(const QString& name);
     void removeSpreadSheet(const QString& name);
 
     SpreadSheet* operator[](const QString& name);
