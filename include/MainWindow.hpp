@@ -14,6 +14,7 @@ InversePalindrome.com
 #include <QToolBar>
 #include <QTabWidget>
 #include <QMainWindow>
+#include <QGraphicsView>
 
 
 class MainWindow : public QMainWindow
@@ -26,6 +27,7 @@ public:
     void loadUser(const QString& user);
 
 private:
+    QGraphicsView* view;
     QMenuBar* menuBar;
     QToolBar* toolBar;
     QTabWidget* tabBar;

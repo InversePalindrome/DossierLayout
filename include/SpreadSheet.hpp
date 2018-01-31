@@ -26,11 +26,17 @@ public:
 
     void print();
 
-    void insertCategory(QString categoria);
-    void insertItem(QString item);
+    void insertColumn(QString columnName);
+    void insertRow(QString rowName);
 
-    void removeSelectedCategory();
-    void removeSelectedItem();
+    void removeColumn();
+    void removeRow();
+
+    void sortSelectedColumn(Qt::SortOrder order);
+    void sortSelectedRow(Qt::SortOrder order);
+
+    void mergeSelected();
+    void splitSelected();
 
     QString getSelectedSum() const;
     QString getSelectedAverage() const;
@@ -41,17 +47,25 @@ public:
     void setDirectory(const QString& directory);
 
 public slots:
-    void categorySelected(int index);
-    void itemSelected(int index);
+    void columnSelected(int index);
+    void rowSelected(int index);
 
 private:
     QString directory;
 
-    int selectedCategoryIndex;
-    int selectedItemIndex;
+    int selectedColumnIndex;
+    int selectedRowIndex;
 
     void saveToExcel(const QString& directory);
 
+    ItemList takeColumn(int column);
+    ItemList takeRow(int row);
+
+    void setColumn(int column, const ItemList& items);
+    void setRow(int row, const ItemList& items);
+
 private slots:
-    void openContextMenu(const QPoint& position);
+    void openHeaderMenu(const QPoint& position);
+    void openCellMenu(const QPoint& position);
+    void editHeader(int logicalIndex);
 };
