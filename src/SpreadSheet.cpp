@@ -6,6 +6,7 @@ InversePalindrome.com
 
 
 #include "SpreadSheet.hpp"
+#include "CellComparator.hpp"
 #include "AlignmentUtility.hpp"
 
 #include <QFont>
@@ -16,6 +17,7 @@ InversePalindrome.com
 #include <QPainter>
 #include <QPrinter>
 #include <QSettings>
+#include <QLineEdit>
 #include <QTextStream>
 #include <QHeaderView>
 #include <QFontDialog>
@@ -29,10 +31,11 @@ InversePalindrome.com
 SpreadSheet::SpreadSheet(QWidget* parent, const QString& directory) :
     QTableWidget(parent),
     directory(directory),
-    selectedCategoryIndex(-1),
-    selectedItemIndex(-1)
+    selectedColumnIndex(-1),
+    selectedRowIndex(-1)
 {
    setContextMenuPolicy(Qt::CustomContextMenu);
+   setSelectionMode(QAbstractItemView::ContiguousSelection);
 
    verticalHeader()->setContextMenuPolicy(Qt::CustomContextMenu);
    verticalHeader()->setSectionsMovable(true);
@@ -44,11 +47,13 @@ SpreadSheet::SpreadSheet(QWidget* parent, const QString& directory) :
    horizontalHeader()->setDragEnabled(true);
    horizontalHeader()->setDragDropMode(DragDropMode::InternalMove);
 
-   QObject::connect(horizontalHeader(), &QHeaderView::sectionClicked, this, &SpreadSheet::categorySelected);
-   QObject::connect(horizontalHeader(), &QHeaderView::customContextMenuRequested, this, &SpreadSheet::openContextMenu);
-   QObject::connect(verticalHeader(), &QHeaderView::sectionClicked, this, &SpreadSheet::itemSelected);
-   QObject::connect(verticalHeader(), &QHeaderView::customContextMenuRequested, this, &SpreadSheet::openContextMenu);
-   QObject::connect(this, &SpreadSheet::customContextMenuRequested, this, &SpreadSheet::openContextMenu);
+   QObject::connect(horizontalHeader(), &QHeaderView::sectionClicked, this, &SpreadSheet::columnSelected);
+   QObject::connect(horizontalHeader(), &QHeaderView::customContextMenuRequested, this, &SpreadSheet::openHeaderMenu);
+   QObject::connect(horizontalHeader(), &QHeaderView::sectionDoubleClicked, this, &SpreadSheet::editHeader);
+   QObject::connect(verticalHeader(), &QHeaderView::sectionClicked, this, &SpreadSheet::rowSelected);
+   QObject::connect(verticalHeader(), &QHeaderView::customContextMenuRequested, this, &SpreadSheet::openHeaderMenu);
+   QObject::connect(verticalHeader(), &QHeaderView::sectionDoubleClicked, this, &SpreadSheet::editHeader);
+   QObject::connect(this, &SpreadSheet::customContextMenuRequested, this, &SpreadSheet::openCellMenu);
 }
 
 SpreadSheet::~SpreadSheet()
@@ -106,6 +111,11 @@ void SpreadSheet::loadSpreadSheet(const QString& fileName)
        }
    }
 
+   for(const auto& mergedCell : doc.currentWorksheet()->mergedCells())
+   {
+       setSpan(mergedCell.firstRow() - 2, mergedCell.firstColumn() - 2, mergedCell.columnCount(), mergedCell.rowCount());
+   }
+
    QSettings settings(directory + "Headers.ini", QSettings::IniFormat);
    horizontalHeader()->restoreState(settings.value("Horizontal").toByteArray());
    verticalHeader()->restoreState(settings.value("Vertical").toByteArray());
@@ -148,18 +158,18 @@ void SpreadSheet::print()
     }
 }
 
-void SpreadSheet::insertCategory(QString category)
+void SpreadSheet::insertColumn(QString columnName)
 { 
-    insertColumn(columnCount());
+    QTableWidget::insertColumn(columnCount());
 
-    if(category.isEmpty())
+    if(columnName.isEmpty())
     {
-        category = QString::number(columnCount());
+        columnName = QString::number(columnCount());
     }
 
     QFont defaultHeaderFont("Arial", 10, QFont::Bold);
 
-    auto* header = new QTableWidgetItem(category);
+    auto* header = new QTableWidgetItem(columnName);
     header->setFont(defaultHeaderFont);
     setHorizontalHeaderItem(columnCount() - 1, header);
 
@@ -172,18 +182,18 @@ void SpreadSheet::insertCategory(QString category)
     }
 }
 
-void SpreadSheet::insertItem(QString item)
+void SpreadSheet::insertRow(QString rowName)
 {
-    insertRow(rowCount());
+    QTableWidget::insertRow(rowCount());
 
-    if(item.isEmpty())
+    if(rowName.isEmpty())
     {
-        item = QString::number(rowCount());
+        rowName = QString::number(rowCount());
     }
 
     QFont defaultHeaderFont("Arial", 10, QFont::Bold);
 
-    auto* header = new QTableWidgetItem(item);
+    auto* header = new QTableWidgetItem(rowName);
     header->setFont(defaultHeaderFont);
     setVerticalHeaderItem(rowCount() - 1, header);
 
@@ -196,25 +206,93 @@ void SpreadSheet::insertItem(QString item)
     }
 }
 
-void SpreadSheet::removeSelectedCategory()
+void SpreadSheet::removeColumn()
 {
-    removeColumn(selectedCategoryIndex);
-    selectedCategoryIndex = -1;
+    QTableWidget::removeColumn(selectedColumnIndex);
+    selectedColumnIndex = -1;
 }
 
-void SpreadSheet::removeSelectedItem()
+void SpreadSheet::removeRow()
 {
-    removeRow(selectedItemIndex);
-    selectedItemIndex = -1;
+    QTableWidget::insertRow(selectedRowIndex);
+    selectedRowIndex = -1;
+}
+
+void SpreadSheet::sortSelectedColumn(Qt::SortOrder order)
+{
+   auto columnItems = takeColumn(selectedColumnIndex);
+
+   if(order == Qt::AscendingOrder)
+   {
+       std::sort(columnItems.begin(), columnItems.end(), CellComparator());
+   }
+   else
+   {
+       std::sort(columnItems.rbegin(), columnItems.rend(), CellComparator());
+   }
+
+   setColumn(selectedColumnIndex, columnItems);
+}
+
+void SpreadSheet::sortSelectedRow(Qt::SortOrder order)
+{
+   auto rowItems = takeRow(selectedRowIndex);
+
+   if(order == Qt::AscendingOrder)
+   {
+       std::sort(rowItems.begin(), rowItems.end(), CellComparator());
+   }
+   else
+   {
+       std::sort(rowItems.rbegin(), rowItems.rend(), CellComparator());
+   }
+
+   setRow(selectedRowIndex, rowItems);
+}
+
+void SpreadSheet::mergeSelected()
+{
+   int top = rowCount();
+   int left = columnCount();
+   int bottom = 0;
+   int right = 0;
+
+   for(const auto& index : selectedIndexes())
+   {
+       if(top > index.row())
+       {
+          top = index.row();
+       }
+       if(left > index.column())
+       {
+          left = index.column();
+       }
+       if(bottom < index.row())
+       {
+          bottom = index.row();
+       }
+       if(right < index.column())
+       {
+          right = index.column();
+       }
+    }
+
+    setSpan(top, left, bottom - top + 1, right - left + 1);
+}
+
+void SpreadSheet::splitSelected()
+{
+    for(const auto& index : selectedIndexes())
+    {
+        setSpan(index.row(), index.column(), 1, 1);
+    }
 }
 
 QString SpreadSheet::getSelectedSum() const
 {
-    const auto& selectedCells = selectedItems();
-
     double sum = 0.;
 
-    for(const auto& cell : selectedCells)
+    for(const auto& cell : selectedItems())
     {
         bool ok;
         auto number = cell->text().toDouble(&ok);
@@ -235,11 +313,9 @@ QString SpreadSheet::getSelectedAverage() const
 
 QString SpreadSheet::getSelectedMin() const
 {
-    const auto& selectedCells = selectedItems();
-
     double min = std::numeric_limits<double>::max();
 
-    for(const auto& cell : selectedCells)
+    for(const auto& cell : selectedItems())
     {
         bool ok;
         auto number = cell->text().toDouble(&ok);
@@ -255,11 +331,9 @@ QString SpreadSheet::getSelectedMin() const
 
 QString SpreadSheet::getSelectedMax() const
 {
-    const auto& selectedCells = selectedItems();
-
     double max = std::numeric_limits<double>::min();
 
-    for(const auto& cell : selectedCells)
+    for(const auto& cell : selectedItems())
     {
         bool ok;
         auto number = cell->text().toDouble(&ok);
@@ -275,11 +349,9 @@ QString SpreadSheet::getSelectedMax() const
 
 QString SpreadSheet::getSelectedCount() const
 {
-    const auto& selectedCells = selectedItems();
-
     std::size_t count = 0.;
 
-    for(const auto& cell : selectedCells)
+    for(const auto& cell : selectedItems())
     {
         bool ok;
         cell->text().toDouble(&ok);
@@ -298,22 +370,20 @@ void SpreadSheet::setDirectory(const QString& directory)
     this->directory = directory;
 }
 
-void SpreadSheet::categorySelected(int index)
+void SpreadSheet::columnSelected(int index)
 {
-    selectedCategoryIndex = index;
+    selectedColumnIndex = index;
 }
 
-void SpreadSheet::itemSelected(int index)
+void SpreadSheet::rowSelected(int index)
 {
-    selectedItemIndex = index;
+    selectedRowIndex = index;
 }
 
 void SpreadSheet::saveToExcel(const QString& fileName)
 {
     QXlsx::Document doc;
 
-    horizontalHeader()->saveState();
-    verticalHeader()->saveState();
     for(int column = 0; column < columnCount(); ++column)
     {
         const auto* cell = horizontalHeaderItem(column);
@@ -336,6 +406,8 @@ void SpreadSheet::saveToExcel(const QString& fileName)
         doc.write(row + 2, 1, cell->text(), format);
     }
 
+    QList<QRect> mergedCells;
+
     for(int row = 0; row < rowCount(); ++row)
     {
         for(int column = 0; column < columnCount(); ++column)
@@ -350,38 +422,114 @@ void SpreadSheet::saveToExcel(const QString& fileName)
             format.setPatternBackgroundColor(cell->backgroundColor());
 
             doc.write(row + 2, column + 2, cell->text(), format);
+
+            if(columnSpan(row, column) > 0 || rowSpan(row, column) > 0)
+            {
+                bool alreadyExists = false;
+
+                for(const auto& mergedCell : mergedCells)
+                {
+                    if(mergedCell.contains(column, row))
+                    {
+                        alreadyExists = true;
+                        break;
+                    }
+                }
+
+                if(!alreadyExists)
+                {
+                    mergedCells  << QRect(column, row, columnSpan(row, column), rowSpan(row, column));
+                }
+            }
         }
+    }
+
+    for(const auto& mergedCell : mergedCells)
+    {
+        doc.mergeCells(QXlsx::CellRange(mergedCell.top() + 2, mergedCell.left() + 2, mergedCell.bottom() + 2, mergedCell.right() + 2));
     }
 
     doc.saveAs(fileName);
 }
 
-void SpreadSheet::openContextMenu(const QPoint& position)
+SpreadSheet::ItemList SpreadSheet::takeColumn(int column)
 {
-    auto* table = qobject_cast<SpreadSheet*>(sender());
-    auto* header = qobject_cast<QHeaderView*>(sender());
+    ItemList items;
 
-    QTableWidgetItem* cell;
-
-    bool isHeader = false;
-
-    if(table)
+    for(int row = 0; row < rowCount(); ++row)
     {
-       cell = itemAt(position);
+        items << takeItem(row, column);
     }
-    else if(header)
-    {
-       if(header->orientation() == Qt::Horizontal)
-       {
-           cell = horizontalHeaderItem(header->logicalIndexAt(position));
-       }
-       else
-       {
-           cell = verticalHeaderItem(header->logicalIndexAt(position));
-       }
 
-       isHeader = true;
+    return items;
+}
+
+SpreadSheet::ItemList SpreadSheet::takeRow(int row)
+{
+    ItemList items;
+
+    for(int column = 0; column < columnCount(); ++column)
+    {
+        items << takeItem(row, column);
     }
+
+    return items;
+}
+
+void SpreadSheet::setColumn(int column, const ItemList& items)
+{
+    for(int row = 0; row < items.size(); ++row)
+    {
+        setItem(row, column, items.at(row));
+    }
+}
+
+void SpreadSheet::setRow(int row, const ItemList& items)
+{
+    for(int column = 0; column < items.size(); ++column)
+    {
+        setItem(row, column, items.at(column));
+    }
+}
+
+void SpreadSheet::openHeaderMenu(const QPoint& position)
+{
+     auto* header = qobject_cast<QHeaderView*>(sender());
+
+     QTableWidgetItem* cell;
+
+     if(header->orientation() == Qt::Horizontal)
+     {
+         cell = horizontalHeaderItem(header->logicalIndexAt(position));
+     }
+     else
+     {
+         cell = verticalHeaderItem(header->logicalIndexAt(position));
+     }
+
+     auto* menu = new QMenu(this);
+
+     menu->addAction("Font", [this, cell]()
+     {
+         cell->setFont(QFontDialog::getFont(nullptr, cell->font(), this));
+     });
+
+     menu->addAction("Text Color", [this, cell]()
+     {
+         cell->setTextColor(QColorDialog::getColor(Qt::black, this, "Text Color"));
+     });
+
+     auto* alignment = menu->addMenu("Alignment");
+     alignment->addAction("Left", [cell](){ cell->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter); });
+     alignment->addAction("Right", [cell](){ cell->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter); });
+     alignment->addAction("Center", [cell](){ cell->setTextAlignment(Qt::AlignCenter); });
+
+     menu->exec(mapToGlobal(position));
+}
+
+void SpreadSheet::openCellMenu(const QPoint& position)
+{
+    auto* cell = itemAt(position);
 
     auto* menu = new QMenu(this);
 
@@ -391,7 +539,7 @@ void SpreadSheet::openContextMenu(const QPoint& position)
     });
 
     auto* color = menu->addMenu("Color");
-    auto* backgroundColor = color->addAction("Background", [this, cell]()
+    color->addAction("Background", [this, cell]()
     {
         cell->setBackgroundColor(QColorDialog::getColor(Qt::white, this, "Background Color"));
     });
@@ -445,12 +593,46 @@ void SpreadSheet::openContextMenu(const QPoint& position)
     alignment->addAction("Bottom", [cell](){ cell->setTextAlignment(Qt::AlignBottom | Qt::AlignHCenter); });
     alignment->addAction("Center", [cell](){ cell->setTextAlignment(Qt::AlignCenter); });
 
-    if(isHeader)
+    menu->exec(mapToGlobal(position));
+}
+
+void SpreadSheet::editHeader(int logicalIndex)
+{
+    auto* header = qobject_cast<QHeaderView*>(sender());
+
+    QRect rect;
+
+    if(header->orientation() == Qt::Horizontal)
     {
-        format->setEnabled(false);
-        alignment->setEnabled(false);
-        backgroundColor->setEnabled(false);
+        rect.setLeft(header->sectionPosition(logicalIndex));
+        rect.setWidth(header->sectionSize(logicalIndex));
+        rect.setTop(0);
+        rect.setHeight(header->height());
+    }
+    else
+    {
+        rect.setTop(header->sectionPosition(logicalIndex));
+        rect.setHeight(header->sectionSize(logicalIndex));
+        rect.setLeft(0);
+        rect.setWidth(header->width());
     }
 
-    menu->exec(mapToGlobal(position));
+    rect.adjust(1, 1, -1, -1);
+
+    auto* headerEditor = new QLineEdit(header->viewport());
+    headerEditor->move(rect.topLeft());
+    headerEditor->resize(rect.size());
+    headerEditor->setFrame(false);
+    headerEditor->setText(header->model()->headerData(logicalIndex, header->orientation()).toString());
+    headerEditor->setFocus();
+    headerEditor->show();
+
+    auto setData = [logicalIndex, header, headerEditor]()
+    {
+       header->model()->setHeaderData(logicalIndex, header->orientation(), headerEditor->text());
+       headerEditor->deleteLater();
+    };
+
+    QObject::connect(headerEditor, &QLineEdit::returnPressed, setData);
+    QObject::connect(headerEditor, &QLineEdit::editingFinished, setData);
 }

@@ -22,15 +22,20 @@ InversePalindrome.com
 
 
 MainWindow::MainWindow() :
+    view(new QGraphicsView(this)),
     menuBar(new QMenuBar(this)),
     toolBar(new QToolBar(this)),
     tabBar(new QTabWidget(this)),
     spreadSheets(this)
 {
     setFixedSize(2048, 1536);
+    setCentralWidget(view);
     setMenuBar(menuBar);
     setContextMenuPolicy(Qt::NoContextMenu);
     addToolBar(toolBar);
+
+    centralWidget()->setLayout(new QVBoxLayout());
+    centralWidget()->layout()->addWidget(tabBar);
 
     auto* addButton = new QToolButton();
     addButton->setText("+");
@@ -40,80 +45,79 @@ MainWindow::MainWindow() :
     tabBar->tabBar()->setTabButton(0, QTabBar::RightSide, addButton);
 
     tabBar->setTabsClosable(true);
+    tabBar->setMovable(true);
     tabBar->setFont(QFont("Arial", 11, QFont::Bold));
     tabBar->setStyleSheet("QTabBar::tab { min-width: 100px; min-height : 60px; }");
 
-    auto* view = new QGraphicsView(this);
+    auto* File = menuBar->addMenu("File");
 
-    setCentralWidget(view);
-    centralWidget()->setLayout(new QVBoxLayout());
-    centralWidget()->layout()->addWidget(tabBar);
-
-    auto* archivo = menuBar->addMenu("Archivo");
-
-    archivo->addAction("Abrir", [this]()
+    File->addAction("Open", [this]()
     {
         getCurrentSpreadSheet()->loadSpreadSheet(QFileDialog::
-           getOpenFileName(this, "Abrir", "", "Excel (*.xlsx)"));
+           getOpenFileName(this, "Open", "", "Excel (*.xlsx)"));
     });
-    archivo->addAction("Guardar Como", [this]()
+    File->addAction("Save as", [this]()
     {
         getCurrentSpreadSheet()->saveSpreadSheet(QFileDialog::
           getSaveFileName(this, "Guardar Como", "", "SpreadSheet (*.pdf .xlsx)"));
     });
-    archivo->addAction("Imprimir", [this]()
+    File->addAction("Print", [this]()
     {
         if(getCurrentSpreadSheet())
         {
             getCurrentSpreadSheet()->print();
         }
     });
-    archivo->addSeparator();
-    archivo->addAction("Salir", [this]()
+    File->addSeparator();
+    File->addAction("Exit", [this]()
     {
         emit exit();
     });
 
-    auto* insertar = menuBar->addMenu("Insertar");
+    auto* insert = menuBar->addMenu("Insert");
 
-    insertar->addAction("Categoria", [this]()
+    insert->addAction("Column", [this]()
     {
-        bool ok;
-        const auto& category = QInputDialog::getText(this, "Insertar Categoria", "Categoria", QLineEdit::Normal, "", &ok);
+        auto* insertDialog = new QInputDialog(this);
+        insertDialog->setFixedSize(500, 200);
+        insertDialog->setWindowTitle("Insert Column");
+        insertDialog->setLabelText("Column Name");
 
-        if(ok && getCurrentSpreadSheet())
+        if(insertDialog->exec() == QDialog::Accepted && getCurrentSpreadSheet())
         {
-           getCurrentSpreadSheet()->insertCategory(category);
+            getCurrentSpreadSheet()->insertColumn(insertDialog->textValue());
         }
     });
-    insertar->addAction("Item", [this]()
+    insert->addAction("Row", [this]()
     {
-        bool ok;
-        const auto& item = QInputDialog::getText(this, "Insertar Item", "Item", QLineEdit::Normal, "", &ok);
+        auto* insertDialog = new QInputDialog(this);
+        insertDialog->setFixedSize(500, 200);
+        insertDialog->setWindowTitle("Insert Row");
+        insertDialog->setLabelText("Row Name");
 
-        if(ok && getCurrentSpreadSheet())
+        if(insertDialog->exec() == QDialog::Accepted && getCurrentSpreadSheet())
         {
-           getCurrentSpreadSheet()->insertItem(item);
+           getCurrentSpreadSheet()->insertRow(insertDialog->textValue());
         }
     });
 
-    auto* remove = menuBar->addMenu("Remover");
+    auto* remove = menuBar->addMenu("Remove");
 
-    remove->addAction("Categoria",
+    remove->addAction("Column",
             [this]()
     {
         if(getCurrentSpreadSheet())
         {
-           getCurrentSpreadSheet()->removeSelectedCategory();
+           getCurrentSpreadSheet()->removeColumn();
         }
     });
 
-    remove->addAction("Item",
+    remove->addAction("Row",
             [this]()
     {
         if(getCurrentSpreadSheet())
         {
-           getCurrentSpreadSheet()->removeSelectedItem();
+           getCurrentSpreadSheet()->removeRow();
         }
     });
 
@@ -143,22 +147,97 @@ MainWindow::MainWindow() :
 
     auto* operationButton = new QToolButton();
     operationButton->setMenu(operationsMenu);
+    operationButton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
     operationButton->setPopupMode(QToolButton::InstantPopup);
     operationButton->setIcon(QIcon(":/Resources/Sigma.png"));
+    operationButton->setText("Calculate  ");
+
+    toolBar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
     toolBar->addWidget(operationButton);
+    toolBar->addSeparator();
+
+    auto* sortMenu = new QMenu();
+    auto* columnSort = sortMenu->addMenu("Column");
+    columnSort->addAction("Ascending", [this]()
+    {
+        if(getCurrentSpreadSheet())
+        {
+           getCurrentSpreadSheet()->sortSelectedColumn(Qt::AscendingOrder);
+        }
+    });
+    columnSort->addAction("Descending", [this]()
+    {
+        if(getCurrentSpreadSheet())
+        {
+           getCurrentSpreadSheet()->sortSelectedColumn(Qt::DescendingOrder);
+        }
+    });
+    auto* rowSort = sortMenu->addMenu("Row");
+    rowSort->addAction("Ascending", [this]()
+    {
+        if(getCurrentSpreadSheet())
+        {
+           getCurrentSpreadSheet()->sortSelectedRow(Qt::AscendingOrder);
+        }
+    });
+    rowSort->addAction("Descending", [this]()
+    {
+        if(getCurrentSpreadSheet())
+        {
+           getCurrentSpreadSheet()->sortSelectedRow(Qt::DescendingOrder);
+        }
+    });
+
+    auto* sortButton = new QToolButton();
+    sortButton->setMenu(sortMenu);
+    sortButton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+    sortButton->setPopupMode(QToolButton::InstantPopup);
+    sortButton->setIcon(QIcon(":/Resources/Sort.png"));
+    sortButton->setText("Sort  ");
+
+    toolBar->addWidget(sortButton);
+    toolBar->addSeparator();
+    toolBar->addAction(QIcon(":/Resources/Merge.png"), "Merge", [this]()
+    {
+        if(getCurrentSpreadSheet())
+        {
+           getCurrentSpreadSheet()->mergeSelected();
+        }
+    });
+    toolBar->addAction(QIcon(":/Resources/Split.png"), "Split", [this]()
+    {
+        if(getCurrentSpreadSheet())
+        {
+           getCurrentSpreadSheet()->splitSelected();
+        }
+    });
 
     QObject::connect(addButton, &QToolButton::clicked, [this]()
     {
-        bool ok;
-        const auto& name = QInputDialog::getText(this, "Agregar SpreadSheet", "Nombre", QLineEdit::Normal, "", &ok);
+        auto* insertDialog = new QInputDialog(this);
+        insertDialog->setFixedSize(600, 200);
+        insertDialog->setWindowTitle("Add SpreadSheet");
+        insertDialog->setLabelText("SpreadSheet Name");
 
-        if(ok)
+        if(insertDialog->exec() == QDialog::Accepted)
         {
-            auto* spreadSheet = spreadSheets.addSpreadSheet(name);
+            const auto& name = insertDialog->textValue();
 
-            tabBar->addTab(spreadSheet, name);
+            if(name.isEmpty())
+            {
+                QMessageBox message(this);
+                message.setWindowTitle("Error");
+                message.setText("No name specified!");
+                message.exec();
+            }
+            else
+            {
+                auto* spreadSheet = spreadSheets.addSpreadSheet(name);
 
-            QDir().mkdir(user + '/' + name);
+                tabBar->addTab(spreadSheet, name);
+
+                QDir().mkdir(user + '/' + name);
+            }
         }
     });
     QObject::connect(tabBar, &QTabWidget::tabCloseRequested, [this](auto index)
@@ -166,12 +245,11 @@ MainWindow::MainWindow() :
         const auto& name = tabBar->tabText(index);
 
         QMessageBox message(this);
-        message.setText("Esta seguro de Remover " + name + " ?");
+        message.setWindowTitle("Error");
+        message.setText("Are you sure about removing " + name + " ?");
         message.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
 
-        auto button = message.exec();
-
-        switch(button)
+        switch(message.exec())
         {
             case QMessageBox::Yes:
             tabBar->removeTab(index);

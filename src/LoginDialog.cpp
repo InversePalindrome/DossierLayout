@@ -19,7 +19,7 @@ LoginDialog::LoginDialog(QWidget* parent) :
     passwordEntry(new QLineEdit())
 {
     setFixedSize(600, 600);
-    setWindowTitle("Iniciar Sesion");
+    setWindowTitle("Login");
 
     auto* logoLabel = new QLabel();
 
@@ -31,17 +31,17 @@ LoginDialog::LoginDialog(QWidget* parent) :
     QFont labelFont("Arial", 12, QFont::Bold);
     QFont entryFont("Arial", 12);
 
-    auto* userLabel = new QLabel("Usuario");
+    auto* userLabel = new QLabel("User");
     userLabel->setFont(labelFont);
     userEntry->setFont(entryFont);
 
-    auto* passwordLabel = new QLabel("Contraseña");
+    auto* passwordLabel = new QLabel("Password");
     passwordLabel->setFont(labelFont);
     passwordEntry->setFont(entryFont);
     passwordEntry->setEchoMode(QLineEdit::Password);
 
-    auto* loginButton = new QPushButton("Ingresar");
-    auto* registerButton = new QPushButton("Registrar");
+    auto* loginButton = new QPushButton("Login");
+    auto* registerButton = new QPushButton("Register");
 
     auto* layoutButton = new QHBoxLayout();
     layoutButton->addWidget(loginButton);

@@ -20,27 +20,27 @@ RegisterDialog::RegisterDialog(QWidget* parent) :
     passwordEntry(new QLineEdit()),
     rePasswordEntry(new QLineEdit())
 {
-    setWindowTitle("Registrar Usuario");
+    setWindowTitle("Register User");
     resize(600, 400);
 
     QFont labelFont("Arial", 12, QFont::Bold);
     QFont entryFont("Arial", 12);
 
-    auto* userLabel = new QLabel("Usuario");
+    auto* userLabel = new QLabel("User");
     userLabel->setFont(labelFont);
     userEntry->setFont(entryFont);
 
-    auto* passwordLabel = new QLabel("Contraseña");
+    auto* passwordLabel = new QLabel("Password");
     passwordLabel->setFont(labelFont);
     passwordEntry->setFont(entryFont);
     passwordEntry->setEchoMode(QLineEdit::Password);
 
-    auto* rePasswordLabel = new QLabel("Re-Contraseña");
+    auto* rePasswordLabel = new QLabel("Re-Password");
     rePasswordLabel->setFont(labelFont);
     rePasswordEntry->setFont(entryFont);
     rePasswordEntry->setEchoMode(QLineEdit::Password);
 
-    auto* registerButton = new QPushButton("Registrar");
+    auto* registerButton = new QPushButton("Register");
 
     auto* layout = new QVBoxLayout();
 
