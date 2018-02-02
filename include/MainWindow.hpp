@@ -7,8 +7,7 @@ InversePalindrome.com
 
 #pragma once
 
-#include "SpreadSheetList.hpp"
-
+#include <QList>
 #include <QString>
 #include <QMenuBar>
 #include <QToolBar>
@@ -24,7 +23,9 @@ class MainWindow : public QMainWindow
 public:
     MainWindow();
 
-    void loadUser(const QString& user);
+    virtual void closeEvent(QCloseEvent* event) override;
+
+    void load(const QString& user);
 
 private:
     QGraphicsView* view;
@@ -33,10 +34,32 @@ private:
     QTabWidget* tabBar;
 
     QString user;
-    SpreadSheetList spreadSheets;
+    QList<QMetaObject::Connection> connections;
 
-    SpreadSheet* getCurrentSpreadSheet();
+    bool spreadSheetExists(const QString& name) const;
 
 signals:
+    void loadSpreadSheet(const QString& fileName);
+    void saveSpreadSheet(const QString& fileName);
+    void print();
+
+    void insertColumn(const QString& columnName);
+    void insertRow(const QString& rowName);
+
+    void removeColumn();
+    void removeRow();
+
+    void getSum();
+    void getAverage();
+    void getMin();
+    void getMax();
+    void getCount();
+
+    void sortColumn(Qt::SortOrder order);
+    void sortRow(Qt::SortOrder order);
+
+    void merge();
+    void split();
+
     void exit();
 };

@@ -37,6 +37,9 @@ private:
     SimpleCrypt crypto;
 
 signals:
-    void userAdded();
-    void loginAccepted(bool valid, const QString& user);
+    void userRegistered();
+    void userAlreadyExists(const QString& user);
+
+    void loginAccepted(const QString& user);
+    void loginFailed();
 };

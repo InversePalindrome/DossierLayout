@@ -16,7 +16,7 @@ class RegisterDialog : public QDialog
     Q_OBJECT
 
 public:
-   explicit RegisterDialog(QWidget* parent);
+   RegisterDialog();
 
 private:
     QLineEdit* userEntry;

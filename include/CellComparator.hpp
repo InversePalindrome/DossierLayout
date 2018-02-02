@@ -12,5 +12,5 @@ InversePalindrome.com
 
 struct CellComparator
 {
-    bool operator()(QTableWidgetItem* first, QTableWidgetItem* second);
+    bool operator()(QTableWidgetItem* first, QTableWidgetItem* second) const;
 };

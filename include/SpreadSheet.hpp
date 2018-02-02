@@ -7,8 +7,8 @@ InversePalindrome.com
 
 #pragma once
 
-#include <QString>
 #include <QTableWidget>
+#include <QClipboard>
 
 
 class SpreadSheet : public QTableWidget
@@ -21,6 +21,7 @@ public:
     SpreadSheet(QWidget* parent, const QString& directory);
     ~SpreadSheet();
 
+public slots:
     void loadSpreadSheet(const QString& fileName);
     void saveSpreadSheet(const QString& fileName);
 
@@ -32,29 +33,24 @@ public:
     void removeColumn();
     void removeRow();
 
-    void sortSelectedColumn(Qt::SortOrder order);
-    void sortSelectedRow(Qt::SortOrder order);
+    void sortColumn(Qt::SortOrder order);
+    void sortRow(Qt::SortOrder order);
 
-    void mergeSelected();
-    void splitSelected();
+    void merge();
+    void split();
 
-    QString getSelectedSum() const;
-    QString getSelectedAverage() const;
-    QString getSelectedMin() const;
-    QString getSelectedMax() const;
-    QString getSelectedCount() const;
-
-    void setDirectory(const QString& directory);
-
-public slots:
-    void columnSelected(int index);
-    void rowSelected(int index);
+    double getSum();
+    double getAverage();
+    double getMin();
+    double getMax();
+    std::size_t getCount();
 
 private:
     QString directory;
+    QClipboard* clipboard;
 
-    int selectedColumnIndex;
-    int selectedRowIndex;
+    int selectedColumn;
+    int selectedRow;
 
     void saveToExcel(const QString& directory);
 
@@ -68,4 +64,7 @@ private slots:
     void openHeaderMenu(const QPoint& position);
     void openCellMenu(const QPoint& position);
     void editHeader(int logicalIndex);
+
+    void columnSelected(int index);
+    void rowSelected(int index);
 };
