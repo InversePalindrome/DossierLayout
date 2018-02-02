@@ -14,8 +14,7 @@ InversePalindrome.com
 #include <QPushButton>
 
 
-RegisterDialog::RegisterDialog(QWidget* parent) :
-    QDialog(parent),
+RegisterDialog::RegisterDialog() :
     userEntry(new QLineEdit()),
     passwordEntry(new QLineEdit()),
     rePasswordEntry(new QLineEdit())
@@ -57,14 +56,24 @@ RegisterDialog::RegisterDialog(QWidget* parent) :
    QObject::connect(registerButton, &QPushButton::clicked,
         [this]()
     {
-        if(passwordEntry->text() == rePasswordEntry->text())
+        if(userEntry->text().isEmpty())
         {
-            emit registerUser(userEntry->text(), passwordEntry->text());
+            QMessageBox errorMessage(QMessageBox::Critical, "Error", "Username is empty!", QMessageBox::NoButton, this);
+            errorMessage.exec();
         }
-        else
+        else if(passwordEntry->text().isEmpty() || rePasswordEntry->text().isEmpty())
+        {
+            QMessageBox errorMessage(QMessageBox::Critical, "Error", "Password is empty!", QMessageBox::NoButton, this);
+            errorMessage.exec();
+        }
+        else if(passwordEntry->text().compare(rePasswordEntry->text(), Qt::CaseInsensitive) != 0)
         {
             QMessageBox errorMessage(QMessageBox::Critical, "Error", "Passwords do not match!", QMessageBox::NoButton, this);
             errorMessage.exec();
+        }
+        else
+        {
+            emit registerUser(userEntry->text(), passwordEntry->text());
         }
     });
 }

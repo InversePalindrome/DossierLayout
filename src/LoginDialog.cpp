@@ -13,8 +13,7 @@ InversePalindrome.com
 #include <QPushButton>
 
 
-LoginDialog::LoginDialog(QWidget* parent) :
-    QDialog(parent),
+LoginDialog::LoginDialog() :
     userEntry(new QLineEdit()),
     passwordEntry(new QLineEdit())
 {
@@ -60,16 +59,11 @@ LoginDialog::LoginDialog(QWidget* parent) :
 
     setLayout(layout);
 
-    QObject::connect(loginButton, &QPushButton::clicked,
-       [this]()
+    QObject::connect(loginButton, &QPushButton::clicked, [this]()
     {
         emit loginUser(userEntry->text(), passwordEntry->text());
     });
-    QObject::connect(registerButton, &QPushButton::clicked,
-       [this]()
-    {
-        emit registerUser();
-    });
+    QObject::connect(registerButton, &QPushButton::clicked, [this](){ emit registerUser(); });
 }
 
 void LoginDialog::closeEvent(QCloseEvent* event)

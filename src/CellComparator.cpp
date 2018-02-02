@@ -8,7 +8,7 @@ InversePalindrome.com
 #include "CellComparator.hpp"
 
 
-bool CellComparator::operator()(QTableWidgetItem* first, QTableWidgetItem* second)
+bool CellComparator::operator()(QTableWidgetItem* first, QTableWidgetItem* second) const
 {
     if(!first || !second)
     {

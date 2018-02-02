@@ -23,7 +23,7 @@ InversePalindrome.com
 #include <QFontDialog>
 #include <QPrintDialog>
 #include <QColorDialog>
-#include <QTableWidgetItem>
+#include <QApplication>
 
 #include <limits>
 
@@ -31,8 +31,9 @@ InversePalindrome.com
 SpreadSheet::SpreadSheet(QWidget* parent, const QString& directory) :
     QTableWidget(parent),
     directory(directory),
-    selectedColumnIndex(-1),
-    selectedRowIndex(-1)
+    clipboard(QApplication::clipboard()),
+    selectedColumn(-1),
+    selectedRow(-1)
 {
    setContextMenuPolicy(Qt::CustomContextMenu);
    setSelectionMode(QAbstractItemView::ContiguousSelection);
@@ -54,6 +55,8 @@ SpreadSheet::SpreadSheet(QWidget* parent, const QString& directory) :
    QObject::connect(verticalHeader(), &QHeaderView::customContextMenuRequested, this, &SpreadSheet::openHeaderMenu);
    QObject::connect(verticalHeader(), &QHeaderView::sectionDoubleClicked, this, &SpreadSheet::editHeader);
    QObject::connect(this, &SpreadSheet::customContextMenuRequested, this, &SpreadSheet::openCellMenu);
+
+   loadSpreadSheet(directory + "SpreadSheet.xlsx");
 }
 
 SpreadSheet::~SpreadSheet()
@@ -67,7 +70,7 @@ SpreadSheet::~SpreadSheet()
 
 void SpreadSheet::loadSpreadSheet(const QString& fileName)
 {
-   QXlsx::Document doc(directory + fileName);
+   QXlsx::Document doc(fileName);
 
    setRowCount(doc.dimension().lastRow() - 1);
    setColumnCount(doc.dimension().lastColumn() - 1);
@@ -208,19 +211,19 @@ void SpreadSheet::insertRow(QString rowName)
 
 void SpreadSheet::removeColumn()
 {
-    QTableWidget::removeColumn(selectedColumnIndex);
-    selectedColumnIndex = -1;
+    QTableWidget::removeColumn(selectedColumn);
+    selectedColumn = -1;
 }
 
 void SpreadSheet::removeRow()
 {
-    QTableWidget::insertRow(selectedRowIndex);
-    selectedRowIndex = -1;
+    QTableWidget::insertRow(selectedRow);
+    selectedRow = -1;
 }
 
-void SpreadSheet::sortSelectedColumn(Qt::SortOrder order)
+void SpreadSheet::sortColumn(Qt::SortOrder order)
 {
-   auto columnItems = takeColumn(selectedColumnIndex);
+   auto columnItems = takeColumn(selectedColumn);
 
    if(order == Qt::AscendingOrder)
    {
@@ -231,12 +234,12 @@ void SpreadSheet::sortSelectedColumn(Qt::SortOrder order)
        std::sort(columnItems.rbegin(), columnItems.rend(), CellComparator());
    }
 
-   setColumn(selectedColumnIndex, columnItems);
+   setColumn(selectedColumn, columnItems);
 }
 
-void SpreadSheet::sortSelectedRow(Qt::SortOrder order)
+void SpreadSheet::sortRow(Qt::SortOrder order)
 {
-   auto rowItems = takeRow(selectedRowIndex);
+   auto rowItems = takeRow(selectedRow);
 
    if(order == Qt::AscendingOrder)
    {
@@ -247,10 +250,10 @@ void SpreadSheet::sortSelectedRow(Qt::SortOrder order)
        std::sort(rowItems.rbegin(), rowItems.rend(), CellComparator());
    }
 
-   setRow(selectedRowIndex, rowItems);
+   setRow(selectedRow, rowItems);
 }
 
-void SpreadSheet::mergeSelected()
+void SpreadSheet::merge()
 {
    int top = rowCount();
    int left = columnCount();
@@ -280,7 +283,7 @@ void SpreadSheet::mergeSelected()
     setSpan(top, left, bottom - top + 1, right - left + 1);
 }
 
-void SpreadSheet::splitSelected()
+void SpreadSheet::split()
 {
     for(const auto& index : selectedIndexes())
     {
@@ -288,7 +291,7 @@ void SpreadSheet::splitSelected()
     }
 }
 
-QString SpreadSheet::getSelectedSum() const
+double SpreadSheet::getSum()
 {
     double sum = 0.;
 
@@ -303,15 +306,21 @@ QString SpreadSheet::getSelectedSum() const
         }
     }
 
-    return QString::number(sum);
+    clipboard->setText(QString::number(sum));
+
+    return sum;
 }
 
-QString SpreadSheet::getSelectedAverage() const
+double SpreadSheet::getAverage()
 {
-    return QString::number(getSelectedSum().toDouble() / getSelectedCount().toULongLong());
+    double average = getSum() / static_cast<double>(getCount());
+
+    clipboard->setText(QString::number(average));
+
+    return average;
 }
 
-QString SpreadSheet::getSelectedMin() const
+double SpreadSheet::getMin()
 {
     double min = std::numeric_limits<double>::max();
 
@@ -326,10 +335,12 @@ QString SpreadSheet::getSelectedMin() const
         }
     }
 
-    return QString::number(min);
+    clipboard->setText(QString::number(min));
+
+    return min;
 }
 
-QString SpreadSheet::getSelectedMax() const
+double SpreadSheet::getMax()
 {
     double max = std::numeric_limits<double>::min();
 
@@ -344,10 +355,12 @@ QString SpreadSheet::getSelectedMax() const
         }
     }
 
-    return QString::number(max);
+    clipboard->setText(QString::number(max));
+
+    return max;
 }
 
-QString SpreadSheet::getSelectedCount() const
+std::size_t SpreadSheet::getCount()
 {
     std::size_t count = 0.;
 
@@ -362,22 +375,19 @@ QString SpreadSheet::getSelectedCount() const
         }
     }
 
-    return QString::number(count);
-}
+    clipboard->setText(QString::number(count));
 
-void SpreadSheet::setDirectory(const QString& directory)
-{
-    this->directory = directory;
+    return count;
 }
 
 void SpreadSheet::columnSelected(int index)
 {
-    selectedColumnIndex = index;
+    selectedColumn = index;
 }
 
 void SpreadSheet::rowSelected(int index)
 {
-    selectedRowIndex = index;
+    selectedRow = index;
 }
 
 void SpreadSheet::saveToExcel(const QString& fileName)
@@ -508,12 +518,10 @@ void SpreadSheet::openHeaderMenu(const QPoint& position)
      }
 
      auto* menu = new QMenu(this);
-
      menu->addAction("Font", [this, cell]()
      {
          cell->setFont(QFontDialog::getFont(nullptr, cell->font(), this));
      });
-
      menu->addAction("Text Color", [this, cell]()
      {
          cell->setTextColor(QColorDialog::getColor(Qt::black, this, "Text Color"));

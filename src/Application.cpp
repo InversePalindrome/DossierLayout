@@ -14,30 +14,30 @@ InversePalindrome.com
 Application::Application(int& argc, char** argv) :
     QApplication(argc, argv),
     users("Usuarios.xml"),
-    splashScreen(QPixmap(":/Resources/InversePalindromeLogo.png")),
-    loginDialog(&mainWindow),
-    registerDialog(&mainWindow)
+    splashScreen(QPixmap(":/Resources/InversePalindromeLogo.png"))
 {
-    QObject::connect(&users, &Users::userAdded, [this]()
+    QObject::connect(&users, &Users::userRegistered, [this]()
     {
         registerDialog.close();
         loginDialog.show();
     });
-    QObject::connect(&users, &Users::loginAccepted,
-        [this](auto valid, const auto& user)
+    QObject::connect(&users, &Users::userAlreadyExists, [this](const auto& user)
     {
-        if(valid)
-        {
-           mainWindow.loadUser(user);
+        QMessageBox errorMessage(QMessageBox::Critical, "Error", "User " + user + " already exists!", QMessageBox::NoButton, &loginDialog);
+        errorMessage.exec();
+    });
+    QObject::connect(&users, &Users::loginAccepted,
+        [this](const auto& user)
+    {
+        loginDialog.close();
 
-           loginDialog.close();
-           mainWindow.show();
-        }
-        else
-        {
-            QMessageBox errorMessage(QMessageBox::Critical, "Error", "Invalid Username or Password", QMessageBox::NoButton, &loginDialog);
-            errorMessage.exec();
-        }
+        mainWindow.load(user);
+        mainWindow.show();
+    });
+    QObject::connect(&users, &Users::loginFailed, [this]()
+    {
+        QMessageBox errorMessage(QMessageBox::Critical, "Error", "Invalid Username or Password", QMessageBox::NoButton, &loginDialog);
+        errorMessage.exec();
     });
     QObject::connect(&mainWindow, &MainWindow::exit,
         [this]()
