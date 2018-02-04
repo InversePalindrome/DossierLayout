@@ -50,21 +50,21 @@ MainWindow::MainWindow() :
     tabBar->setStyleSheet("QTabBar::tab { min-width: 100px; min-height : 60px; }");
 
     auto* file = menuBar->addMenu("File");
-    file->addAction(QIcon(":/Resources/Open.png"), "Open", [this]()
+    file->addAction(QIcon(":/Resources/Open.png"), "Open", [this]
     {
         emit loadSpreadSheet(QFileDialog::getOpenFileName(this, "Open", "", "Excel (*.xlsx)"));
     }, QKeySequence::Open);
-    file->addAction(QIcon(":/Resources/Download.png"), "Save as", [this]()
+    file->addAction(QIcon(":/Resources/Download.png"), "Save as", [this]
     {
         emit saveSpreadSheet(QFileDialog::getSaveFileName(this, "Guardar Como", "", "SpreadSheet (*.pdf .xlsx)"));
     }, QKeySequence::Save);
     file->addSeparator();
-    file->addAction(QIcon(":/Resources/Print.png"), "Print", [this]() { emit print(); }, QKeySequence::Print);
+    file->addAction(QIcon(":/Resources/Print.png"), "Print", [this] { emit print(); }, QKeySequence::Print);
     file->addSeparator();
-    file->addAction(QIcon(":/Resources/Exit.png"), "Exit", [this](){ emit exit(); }, QKeySequence("Esc"));
+    file->addAction(QIcon(":/Resources/Exit.png"), "Exit", [this] { emit exit(); }, QKeySequence("Esc"));
 
     auto* insert = menuBar->addMenu("Insert");
-    insert->addAction(QIcon(":/Resources/AddColumn.png"),"Column", [this]()
+    insert->addAction(QIcon(":/Resources/AddColumn.png"),"Column", [this]
     {
         auto* insertDialog = new QInputDialog(this);
         insertDialog->setFixedSize(500, 200);
@@ -76,7 +76,7 @@ MainWindow::MainWindow() :
             emit insertColumn(insertDialog->textValue());
         }
     });
-    insert->addAction(QIcon(":/Resources/AddRow.png"), "Row", [this]()
+    insert->addAction(QIcon(":/Resources/AddRow.png"), "Row", [this]
     {
         auto* insertDialog = new QInputDialog(this);
         insertDialog->setFixedSize(500, 200);
@@ -90,15 +90,15 @@ MainWindow::MainWindow() :
     });
 
     auto* remove = menuBar->addMenu("Remove");
-    remove->addAction(QIcon(":/Resources/RemoveColumn.png"), "Column", [this]() { emit removeColumn(); });
-    remove->addAction(QIcon(":/Resources/RemoveRow.png"), "Row", [this]() { emit removeRow(); });
+    remove->addAction(QIcon(":/Resources/RemoveColumn.png"), "Column", [this] { emit removeColumn(); });
+    remove->addAction(QIcon(":/Resources/RemoveRow.png"), "Row", [this] { emit removeRow(); });
 
     auto* operationsMenu = new QMenu();
-    operationsMenu->addAction("Sum", [this]() { emit getSum(); });
-    operationsMenu->addAction("Average", [this]() { emit getAverage(); });
-    operationsMenu->addAction("Min", [this]() { emit getMin(); });
-    operationsMenu->addAction("Max", [this]() { emit getMax(); });
-    operationsMenu->addAction("Count", [this]() { emit getCount(); });
+    operationsMenu->addAction("Sum", [this] { emit getSum(); });
+    operationsMenu->addAction("Average", [this] { emit getAverage(); });
+    operationsMenu->addAction("Min", [this] { emit getMin(); });
+    operationsMenu->addAction("Max", [this] { emit getMax(); });
+    operationsMenu->addAction("Count", [this] { emit getCount(); });
 
     auto* operationButton = new QToolButton();
     operationButton->setMenu(operationsMenu);
@@ -113,12 +113,12 @@ MainWindow::MainWindow() :
 
     auto* sortMenu = new QMenu();
     auto* columnSort = sortMenu->addMenu("Column");
-    columnSort->addAction("Ascending", [this]() { emit sortColumn(Qt::AscendingOrder); });
-    columnSort->addAction("Descending", [this](){ emit sortColumn(Qt::DescendingOrder); });
+    columnSort->addAction("Ascending", [this] { emit sortColumn(Qt::AscendingOrder); });
+    columnSort->addAction("Descending", [this] { emit sortColumn(Qt::DescendingOrder); });
 
     auto* rowSort = sortMenu->addMenu("Row");
-    rowSort->addAction("Ascending", [this]() { emit sortRow(Qt::AscendingOrder); });
-    rowSort->addAction("Descending", [this]() { emit sortRow(Qt::DescendingOrder); });
+    rowSort->addAction("Ascending", [this] { emit sortRow(Qt::AscendingOrder); });
+    rowSort->addAction("Descending", [this] { emit sortRow(Qt::DescendingOrder); });
 
     auto* sortButton = new QToolButton();
     sortButton->setMenu(sortMenu);
@@ -129,10 +129,10 @@ MainWindow::MainWindow() :
 
     toolBar->addWidget(sortButton);
     toolBar->addSeparator();
-    toolBar->addAction(QIcon(":/Resources/Merge.png"), "Merge", [this](){ emit merge(); });
-    toolBar->addAction(QIcon(":/Resources/Split.png"), "Split", [this]() { emit split(); });
+    toolBar->addAction(QIcon(":/Resources/Merge.png"), "Merge", [this] { emit merge(); });
+    toolBar->addAction(QIcon(":/Resources/Split.png"), "Split", [this] { emit split(); });
 
-    QObject::connect(addButton, &QToolButton::clicked, [this]()
+    QObject::connect(addButton, &QToolButton::clicked, [this]
     {
         auto* insertDialog = new QInputDialog(this);
         insertDialog->setFixedSize(600, 200);

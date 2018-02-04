@@ -19,11 +19,12 @@ LoginDialog::LoginDialog() :
 {
     setFixedSize(600, 600);
     setWindowTitle("Login");
+    setWindowFlags(Qt::Window | Qt::WindowCloseButtonHint | Qt::WindowTitleHint);
 
     auto* logoLabel = new QLabel();
 
-    QPixmap logoPicture(":/Resources/InverbienesLogo.png");
-    logoPicture = logoPicture.scaledToHeight(200);
+    QPixmap logoPicture(":/Resources/LoginTitle.png");
+    logoPicture = logoPicture.scaledToHeight(240);
 
     logoLabel->setPixmap(logoPicture);
 
@@ -59,11 +60,11 @@ LoginDialog::LoginDialog() :
 
     setLayout(layout);
 
-    QObject::connect(loginButton, &QPushButton::clicked, [this]()
+    QObject::connect(loginButton, &QPushButton::clicked, [this]
     {
         emit loginUser(userEntry->text(), passwordEntry->text());
     });
-    QObject::connect(registerButton, &QPushButton::clicked, [this](){ emit registerUser(); });
+    QObject::connect(registerButton, &QPushButton::clicked, [this] { emit registerUser(); });
 }
 
 void LoginDialog::closeEvent(QCloseEvent* event)

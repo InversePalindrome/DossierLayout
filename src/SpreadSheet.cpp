@@ -6,7 +6,6 @@ InversePalindrome.com
 
 
 #include "SpreadSheet.hpp"
-#include "CellComparator.hpp"
 #include "AlignmentUtility.hpp"
 
 #include <QFont>
@@ -48,10 +47,10 @@ SpreadSheet::SpreadSheet(QWidget* parent, const QString& directory) :
    horizontalHeader()->setDragEnabled(true);
    horizontalHeader()->setDragDropMode(DragDropMode::InternalMove);
 
-   QObject::connect(horizontalHeader(), &QHeaderView::sectionClicked, this, &SpreadSheet::columnSelected);
+   QObject::connect(horizontalHeader(), &QHeaderView::sectionClicked, [this](auto index) { selectedColumn = index;});
    QObject::connect(horizontalHeader(), &QHeaderView::customContextMenuRequested, this, &SpreadSheet::openHeaderMenu);
    QObject::connect(horizontalHeader(), &QHeaderView::sectionDoubleClicked, this, &SpreadSheet::editHeader);
-   QObject::connect(verticalHeader(), &QHeaderView::sectionClicked, this, &SpreadSheet::rowSelected);
+   QObject::connect(verticalHeader(), &QHeaderView::sectionClicked, [this](auto index) { selectedRow = index; });
    QObject::connect(verticalHeader(), &QHeaderView::customContextMenuRequested, this, &SpreadSheet::openHeaderMenu);
    QObject::connect(verticalHeader(), &QHeaderView::sectionDoubleClicked, this, &SpreadSheet::editHeader);
    QObject::connect(this, &SpreadSheet::customContextMenuRequested, this, &SpreadSheet::openCellMenu);
@@ -77,7 +76,7 @@ void SpreadSheet::loadSpreadSheet(const QString& fileName)
 
    for(int column = 2; column <= doc.dimension().lastColumn(); ++column)
    {
-       auto* cell = doc.cellAt(1, column);
+       const auto* cell = doc.cellAt(1, column);
 
        auto* item = new QTableWidgetItem(cell->value().toString());
        item->setFont(cell->format().font());
@@ -88,7 +87,7 @@ void SpreadSheet::loadSpreadSheet(const QString& fileName)
 
    for(int row = 2; row <= doc.dimension().lastRow(); ++row)
    {
-       auto* cell = doc.cellAt(row, 1);
+       const auto* cell = doc.cellAt(row, 1);
 
        auto* item = new QTableWidgetItem(cell->value().toString());
        item->setFont(cell->format().font());
@@ -101,7 +100,7 @@ void SpreadSheet::loadSpreadSheet(const QString& fileName)
    {
        for(int column = 2; column <= doc.dimension().lastColumn(); ++column)
        {
-           auto* cell = doc.cellAt(row, column);
+           const auto* cell = doc.cellAt(row, column);
 
            auto* item = new QTableWidgetItem(cell->value().toString());
            item->setFont(cell->format().font());
@@ -227,11 +226,11 @@ void SpreadSheet::sortColumn(Qt::SortOrder order)
 
    if(order == Qt::AscendingOrder)
    {
-       std::sort(columnItems.begin(), columnItems.end(), CellComparator());
+       std::sort(columnItems.begin(), columnItems.end(), &SpreadSheet::compareCells);
    }
    else
    {
-       std::sort(columnItems.rbegin(), columnItems.rend(), CellComparator());
+       std::sort(columnItems.rbegin(), columnItems.rend(), &SpreadSheet::compareCells);
    }
 
    setColumn(selectedColumn, columnItems);
@@ -243,11 +242,11 @@ void SpreadSheet::sortRow(Qt::SortOrder order)
 
    if(order == Qt::AscendingOrder)
    {
-       std::sort(rowItems.begin(), rowItems.end(), CellComparator());
+       std::sort(rowItems.begin(), rowItems.end(), &SpreadSheet::compareCells);
    }
    else
    {
-       std::sort(rowItems.rbegin(), rowItems.rend(), CellComparator());
+       std::sort(rowItems.rbegin(), rowItems.rend(), &SpreadSheet::compareCells);
    }
 
    setRow(selectedRow, rowItems);
@@ -297,13 +296,7 @@ double SpreadSheet::getSum()
 
     for(const auto& cell : selectedItems())
     {
-        bool ok;
-        auto number = cell->text().toDouble(&ok);
-
-        if(ok)
-        {
-            sum += number;
-        }
+        sum += cell->data(Qt::UserRole).toDouble();
     }
 
     clipboard->setText(QString::number(sum));
@@ -326,10 +319,9 @@ double SpreadSheet::getMin()
 
     for(const auto& cell : selectedItems())
     {
-        bool ok;
-        auto number = cell->text().toDouble(&ok);
+        auto number = cell->data(Qt::UserRole).toDouble();
 
-        if(ok && number < min)
+        if(number < min)
         {
             min = number;
         }
@@ -346,10 +338,9 @@ double SpreadSheet::getMax()
 
     for(const auto& cell : selectedItems())
     {
-        bool ok;
-        auto number = cell->text().toDouble(&ok);
+        auto number = cell->data(Qt::UserRole).toDouble();
 
-        if(ok && number > max)
+        if(number > max)
         {
             max = number;
         }
@@ -362,32 +353,11 @@ double SpreadSheet::getMax()
 
 std::size_t SpreadSheet::getCount()
 {
-    std::size_t count = 0.;
-
-    for(const auto& cell : selectedItems())
-    {
-        bool ok;
-        cell->text().toDouble(&ok);
-
-        if(ok)
-        {
-            ++count;
-        }
-    }
+    std::size_t count = selectedItems().size();
 
     clipboard->setText(QString::number(count));
 
     return count;
-}
-
-void SpreadSheet::columnSelected(int index)
-{
-    selectedColumn = index;
-}
-
-void SpreadSheet::rowSelected(int index)
-{
-    selectedRow = index;
 }
 
 void SpreadSheet::saveToExcel(const QString& fileName)
@@ -502,6 +472,11 @@ void SpreadSheet::setRow(int row, const ItemList& items)
     }
 }
 
+bool SpreadSheet::compareCells(const QTableWidgetItem* item1, const QTableWidgetItem* item2)
+{
+    return item1->data(Qt::UserRole).toDouble() < item2->data(Qt::UserRole).toDouble();
+}
+
 void SpreadSheet::openHeaderMenu(const QPoint& position)
 {
      auto* header = qobject_cast<QHeaderView*>(sender());
@@ -518,19 +493,19 @@ void SpreadSheet::openHeaderMenu(const QPoint& position)
      }
 
      auto* menu = new QMenu(this);
-     menu->addAction("Font", [this, cell]()
+     menu->addAction("Font", [this, cell]
      {
          cell->setFont(QFontDialog::getFont(nullptr, cell->font(), this));
      });
-     menu->addAction("Text Color", [this, cell]()
+     menu->addAction("Text Color", [this, cell]
      {
          cell->setTextColor(QColorDialog::getColor(Qt::black, this, "Text Color"));
      });
 
      auto* alignment = menu->addMenu("Alignment");
-     alignment->addAction("Left", [cell](){ cell->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter); });
-     alignment->addAction("Right", [cell](){ cell->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter); });
-     alignment->addAction("Center", [cell](){ cell->setTextAlignment(Qt::AlignCenter); });
+     alignment->addAction("Left", [cell] { cell->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter); });
+     alignment->addAction("Right", [cell] { cell->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter); });
+     alignment->addAction("Center", [cell] { cell->setTextAlignment(Qt::AlignCenter); });
 
      menu->exec(mapToGlobal(position));
 }
@@ -541,65 +516,54 @@ void SpreadSheet::openCellMenu(const QPoint& position)
 
     auto* menu = new QMenu(this);
 
-    menu->addAction("Font", [this, cell]()
+    menu->addAction("Font", [this, cell]
     {
         cell->setFont(QFontDialog::getFont(nullptr, cell->font(), this));
     });
 
     auto* color = menu->addMenu("Color");
-    color->addAction("Background", [this, cell]()
+    color->addAction("Background", [this, cell]
     {
         cell->setBackgroundColor(QColorDialog::getColor(Qt::white, this, "Background Color"));
     });
-    color->addAction("Text", [this, cell]()
+    color->addAction("Text", [this, cell]
     {
         cell->setTextColor(QColorDialog::getColor(Qt::black, this, "Text Color"));
     });
 
     auto* format = menu->addMenu("Format");
-    format->addAction("Currency", [cell]()
+    format->addAction("Currency", [cell]
     {
-        bool ok;
-        auto number = cell->text().toLongLong(&ok);
-
-        if(ok)
-        {
-           cell->setText(QLocale().toCurrencyString(number));
-        }
+        cell->setText(QLocale().toCurrencyString(cell->data(Qt::UserRole).toLongLong()));
     });
-    format->addAction("Percentage", [cell]()
+    format->addAction("Percentage", [cell]
     {
-        bool ok;
-        auto number = cell->text().toDouble(&ok);
+        auto number = cell->data(Qt::UserRole).toDouble() * 100.;
 
-        if(ok)
-        {
-           number *= 100.;
-
-           cell->setText(QString::number(number) + '%');
-        }
+        cell->setText(QString::number(number) + '%');
     });
-    format->addAction("Scientific", [cell]()
+    format->addAction("Scientific", [cell]
     {
-        bool ok;
-        auto number = cell->text().toDouble(&ok);
+        auto number = cell->data(Qt::UserRole).toDouble();
 
-        if(ok)
-        {
-           QString scientificNumber;
-           QTextStream oStream(&scientificNumber);
-           oStream.setRealNumberPrecision(2);
-           oStream << scientific << number;
-           cell->setText(scientificNumber);
-        }
+        QString scientificNumber;
+        QTextStream oStream(&scientificNumber);
+        oStream.setRealNumberPrecision(2);
+        oStream << scientific << number;
+        cell->setData(Qt::UserRole + 1, "FormatChange");
+        cell->setText(scientificNumber);
+    });
+    format->addAction("Number", [cell]
+    {
+        cell->setText(cell->data(Qt::UserRole).toString());
     });
 
     auto* alignment = menu->addMenu("Alignment");
-    alignment->addAction("Left", [cell](){ cell->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter); });
-    alignment->addAction("Right", [cell](){ cell->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter); });
-    alignment->addAction("Top", [cell](){ cell->setTextAlignment(Qt::AlignTop | Qt::AlignHCenter); });
-    alignment->addAction("Bottom", [cell](){ cell->setTextAlignment(Qt::AlignBottom | Qt::AlignHCenter); });
-    alignment->addAction("Center", [cell](){ cell->setTextAlignment(Qt::AlignCenter); });
+    alignment->addAction("Left", [cell] { cell->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter); });
+    alignment->addAction("Right", [cell] { cell->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter); });
+    alignment->addAction("Top", [cell] { cell->setTextAlignment(Qt::AlignTop | Qt::AlignHCenter); });
+    alignment->addAction("Bottom", [cell] { cell->setTextAlignment(Qt::AlignBottom | Qt::AlignHCenter); });
+    alignment->addAction("Center", [cell] { cell->setTextAlignment(Qt::AlignCenter); });
 
     menu->exec(mapToGlobal(position));
 }
@@ -635,7 +599,7 @@ void SpreadSheet::editHeader(int logicalIndex)
     headerEditor->setFocus();
     headerEditor->show();
 
-    auto setData = [logicalIndex, header, headerEditor]()
+    auto setData = [logicalIndex, header, headerEditor]
     {
        header->model()->setHeaderData(logicalIndex, header->orientation(), headerEditor->text());
        headerEditor->deleteLater();

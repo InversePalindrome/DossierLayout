@@ -19,8 +19,9 @@ RegisterDialog::RegisterDialog() :
     passwordEntry(new QLineEdit()),
     rePasswordEntry(new QLineEdit())
 {
+    setFixedSize(600, 600);
     setWindowTitle("Register User");
-    resize(600, 400);
+    setWindowFlags(Qt::Window | Qt::WindowCloseButtonHint | Qt::WindowTitleHint);
 
     QFont labelFont("Arial", 12, QFont::Bold);
     QFont entryFont("Arial", 12);
@@ -53,8 +54,7 @@ RegisterDialog::RegisterDialog() :
 
     setLayout(layout);
 
-   QObject::connect(registerButton, &QPushButton::clicked,
-        [this]()
+   QObject::connect(registerButton, &QPushButton::clicked, [this]
     {
         if(userEntry->text().isEmpty())
         {
@@ -83,6 +83,8 @@ void RegisterDialog::closeEvent(QCloseEvent* event)
     userEntry->clear();
     passwordEntry->clear();
     rePasswordEntry->clear();
+
+    emit windowClosed();
 
     QWidget::closeEvent(event);
 }
