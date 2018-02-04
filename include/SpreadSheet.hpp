@@ -60,11 +60,10 @@ private:
     void setColumn(int column, const ItemList& items);
     void setRow(int row, const ItemList& items);
 
+    static bool compareCells(const QTableWidgetItem* item1, const QTableWidgetItem* item2);
+
 private slots:
     void openHeaderMenu(const QPoint& position);
     void openCellMenu(const QPoint& position);
     void editHeader(int logicalIndex);
-
-    void columnSelected(int index);
-    void rowSelected(int index);
 };

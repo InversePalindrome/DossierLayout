@@ -27,4 +27,5 @@ private:
 
 signals:
     void registerUser(const QString& user, const QString& password);
+    void windowClosed();
 };
