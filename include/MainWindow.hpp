@@ -7,6 +7,9 @@ InversePalindrome.com
 
 #pragma once
 
+#include "Table.hpp"
+#include "Tree.hpp"
+
 #include <QList>
 #include <QString>
 #include <QMenuBar>
@@ -36,7 +39,10 @@ private:
     QString user;
     QList<QMetaObject::Connection> connections;
 
-    bool spreadSheetExists(const QString& name) const;
+    void setupTableFunctions(Table* table);
+    void setupTreeFunctions(Tree* tree);
+
+    bool dataStructureExists(const QString& name) const;
 
 signals:
     void loadSpreadSheet(const QString& fileName);
