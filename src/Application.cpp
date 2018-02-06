@@ -14,7 +14,7 @@ InversePalindrome.com
 Application::Application(int& argc, char** argv) :
     QApplication(argc, argv),
     users("Usuarios.xml"),
-    splashScreen(QPixmap(":/Resources/InversePalindromeLogo.png"))
+    splashScreen(QPixmap(":/Resources/InversePalindromeLogo.jpg"))
 {
     QObject::connect(&users, &Users::userRegistered, [this]
     {
@@ -55,7 +55,7 @@ Application::Application(int& argc, char** argv) :
 
 int Application::run()
 {
-    auto splashTime = 3u;
+    auto splashTime = 4u;
 
     splashScreen.show();
     thread()->sleep(splashTime);

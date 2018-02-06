@@ -23,8 +23,8 @@ RegisterDialog::RegisterDialog() :
     setWindowTitle("Register User");
     setWindowFlags(Qt::Window | Qt::WindowCloseButtonHint | Qt::WindowTitleHint);
 
-    QFont labelFont("Arial", 12, QFont::Bold);
-    QFont entryFont("Arial", 12);
+    QFont labelFont("Arial", 11, QFont::Bold);
+    QFont entryFont("Arial", 11);
 
     auto* userLabel = new QLabel("User");
     userLabel->setFont(labelFont);
@@ -54,7 +54,7 @@ RegisterDialog::RegisterDialog() :
 
     setLayout(layout);
 
-   QObject::connect(registerButton, &QPushButton::clicked, [this]
+    QObject::connect(registerButton, &QPushButton::clicked, [this]
     {
         if(userEntry->text().isEmpty())
         {

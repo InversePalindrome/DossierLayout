@@ -6,7 +6,7 @@ InversePalindrome.com
 
 
 #include "MainWindow.hpp"
-#include "SpreadSheet.hpp"
+#include "AddDataStructureDialog.hpp"
 
 #include <QDir>
 #include <QIcon>
@@ -29,10 +29,10 @@ MainWindow::MainWindow() :
     tabBar(new QTabWidget(this))
 {
     setFixedSize(2048, 1536);
-    setCentralWidget(view);
     setMenuBar(menuBar);
-    setContextMenuPolicy(Qt::NoContextMenu);
     addToolBar(toolBar);
+    setCentralWidget(view);
+    setContextMenuPolicy(Qt::NoContextMenu);
 
     centralWidget()->setLayout(new QVBoxLayout());
     centralWidget()->layout()->addWidget(tabBar);
@@ -43,11 +43,188 @@ MainWindow::MainWindow() :
     tabBar->addTab(new QLabel(), QString());
     tabBar->setTabEnabled(0, false);
     tabBar->tabBar()->setTabButton(0, QTabBar::RightSide, addButton);
-
     tabBar->setTabsClosable(true);
     tabBar->setMovable(true);
     tabBar->setFont(QFont("Arial", 11, QFont::Bold));
     tabBar->setStyleSheet("QTabBar::tab { min-width: 100px; min-height : 60px; }");
+
+    auto* addDialog = new AddDataStructureDialog(this);
+
+    QObject::connect(addButton, &QToolButton::clicked, [addDialog]
+    {
+        addDialog->show();
+    });
+    QObject::connect(addDialog, &AddDataStructureDialog::addDataStructure, [this](const auto& type, const auto& name)
+    {
+        if(name.isEmpty())
+        {
+            QMessageBox message(QMessageBox::Critical, "Error", "No Data Structure name specified!", QMessageBox::NoButton, this);
+            message.exec();
+        }
+        else if(dataStructureExists(name))
+        {
+            QMessageBox message(QMessageBox::Critical, "Error", "Data Structure '" + name + "' already exists!", QMessageBox::NoButton, this);
+            message.exec();
+        }
+        else
+        {
+            if(type == "Table")
+            {
+               tabBar->addTab(new Table(this, user + '/' + name + '/'), QIcon(":/Resources/Table.png"), name);
+            }
+            else if(type == "Tree")
+            {
+               tabBar->addTab(new Tree(this, user + '/' + name + '/'), QIcon(":/Resources/Tree.png"), name);
+            }
+
+            QDir().mkdir(user + '/' + name);
+        }
+    });
+    QObject::connect(tabBar, &QTabWidget::tabCloseRequested, [this](auto index)
+    {
+        const auto& name = tabBar->tabText(index);
+
+        QMessageBox message(QMessageBox::Critical, "Error", "Are you sure about removing " + name + " ?", QMessageBox::Yes | QMessageBox::No, this);
+
+        if(message.exec() == QMessageBox::Yes)
+        {
+            tabBar->removeTab(index);
+            QDir(user + '/' + name).removeRecursively();
+        }
+    });
+    QObject::connect(tabBar, &QTabWidget::currentChanged, [this](auto index)
+    {
+        for(const auto& connection : connections)
+        {
+            QObject::disconnect(connection);
+        }
+
+        connections.clear();
+
+        auto* table = qobject_cast<Table*>(tabBar->widget(index));
+        auto* tree = qobject_cast<Tree*>(tabBar->widget(index));
+
+        if(table)
+        {
+            setupTableFunctions(table);
+        }
+        else if(tree)
+        {
+            setupTreeFunctions(tree);
+        }
+    });
+}
+
+void MainWindow::closeEvent(QCloseEvent* event)
+{
+    QDomDocument doc;
+
+    auto dec = doc.createProcessingInstruction("xml", "version=\"1.0\" encoding=\"UTF-8\"");
+    doc.appendChild(dec);
+
+    auto dataStructuresElement = doc.createElement("DataStructures");
+
+    for(int i = 1; i < tabBar->count(); ++i)
+    {
+        auto dataStructureElement = doc.createElement("DataStructure");
+
+        const auto* table = qobject_cast<Table*>(tabBar->widget(i));
+        const auto* tree = qobject_cast<Tree*>(tabBar->widget(i));
+
+        if(table)
+        {
+            dataStructureElement.setAttribute("type", "Table");
+        }
+        else if(tree)
+        {
+            dataStructureElement.setAttribute("type", "Tree");
+        }
+
+        dataStructureElement.setAttribute("name", tabBar->tabText(i));
+
+        dataStructuresElement.appendChild(dataStructureElement);
+    }
+
+    doc.appendChild(dataStructuresElement);
+
+    QFile file(user + "/DataStructures.xml");
+
+    if(!file.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+        return;
+    }
+    else
+    {
+        QTextStream stream(&file);
+        stream << doc.toString();
+        file.close();
+    }
+
+    for(int i = tabBar->count() - 1; i > 0; --i)
+    {
+        tabBar->widget(i)->deleteLater();
+        tabBar->removeTab(i);
+    }
+
+    QWidget::closeEvent(event);
+}
+
+void MainWindow::load(const QString& user)
+{
+    this->user = user;
+
+    QDomDocument doc;
+    QFile file(user + "/DataStructures.xml");
+
+    if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        return;
+    }
+    else
+    {
+        if(!doc.setContent(&file))
+        {
+            return;
+        }
+
+        file.close();
+    }
+
+    auto dataStructuresElement = doc.firstChildElement("DataStructures");
+    auto dataStructureList = dataStructuresElement.elementsByTagName("DataStructure");
+
+    for(int i = 0; i < dataStructureList.size(); ++i)
+    {
+        auto dataStructureNode = dataStructureList.at(i);
+
+        if(dataStructureNode.isElement())
+        {
+            auto dataStructureElement = dataStructureNode.toElement();
+
+            const auto& type = dataStructureElement.attribute("type");
+            const auto& name = dataStructureElement.attribute("name");
+
+            if(type == "Table")
+            {
+                tabBar->addTab(new Table(this, user + '/' + name + '/'), QIcon(":/Resources/Table.png"), name);
+            }
+            else if(type == "Tree")
+            {
+                tabBar->addTab(new Tree(this, user + '/' + name + '/'), QIcon(":/Resources/Tree.png"), name);
+            }
+        }
+    }
+
+    if(tabBar->count() > 1)
+    {
+        tabBar->setCurrentIndex(1);
+    }
+}
+
+void MainWindow::setupTableFunctions(Table* table)
+{
+    menuBar->clear();
+    toolBar->clear();
 
     auto* file = menuBar->addMenu("File");
     file->addAction(QIcon(":/Resources/Open.png"), "Open", [this]
@@ -64,7 +241,7 @@ MainWindow::MainWindow() :
     file->addAction(QIcon(":/Resources/Exit.png"), "Exit", [this] { emit exit(); }, QKeySequence("Esc"));
 
     auto* insert = menuBar->addMenu("Insert");
-    insert->addAction(QIcon(":/Resources/AddColumn.png"),"Column", [this]
+    insert->addAction(QIcon(":/Resources/AddColumn.png"), "Column", [this]
     {
         auto* insertDialog = new QInputDialog(this);
         insertDialog->setFixedSize(500, 200);
@@ -132,168 +309,31 @@ MainWindow::MainWindow() :
     toolBar->addAction(QIcon(":/Resources/Merge.png"), "Merge", [this] { emit merge(); });
     toolBar->addAction(QIcon(":/Resources/Split.png"), "Split", [this] { emit split(); });
 
-    QObject::connect(addButton, &QToolButton::clicked, [this]
-    {
-        auto* insertDialog = new QInputDialog(this);
-        insertDialog->setFixedSize(600, 200);
-        insertDialog->setWindowTitle("Add SpreadSheet");
-        insertDialog->setLabelText("SpreadSheet Name");
-
-        if(insertDialog->exec() == QDialog::Accepted)
-        {
-            const auto& name = insertDialog->textValue();
-
-            if(name.isEmpty())
-            {
-                QMessageBox message(QMessageBox::Critical, "Error", "No name specified!", QMessageBox::NoButton, this);
-                message.exec();
-            }
-            else if(spreadSheetExists(name))
-            {
-                QMessageBox message(QMessageBox::Critical, "Error", "SpreadSheet already exists!", QMessageBox::NoButton, this);
-                message.exec();
-            }
-            else
-            {
-                tabBar->addTab(new SpreadSheet(this, user + '/' + name + '/'), name);
-
-                QDir().mkdir(user + '/' + name);
-            }
-        }
-    });
-    QObject::connect(tabBar, &QTabWidget::tabCloseRequested, [this](auto index)
-    {
-        const auto& name = tabBar->tabText(index);
-
-        QMessageBox message(QMessageBox::Critical, "Error", "Are you sure about removing " + name + " ?", QMessageBox::Yes | QMessageBox::No, this);
-
-        if(message.exec() == QMessageBox::Yes)
-        {
-            tabBar->removeTab(index);
-            QDir(user + '/' + name).removeRecursively();
-        }
-    });
-    QObject::connect(tabBar, &QTabWidget::currentChanged, [this](auto index)
-    {
-        for(const auto& connection : connections)
-        {
-            QObject::disconnect(connection);
-        }
-
-        connections.clear();
-
-        auto* spreadSheet = qobject_cast<SpreadSheet*>(tabBar->widget(index));
-
-        if(!spreadSheet)
-        {
-            return;
-        }
-
-        connections << QObject::connect(this, &MainWindow::loadSpreadSheet, spreadSheet, &SpreadSheet::loadSpreadSheet);
-        connections << QObject::connect(this, &MainWindow::saveSpreadSheet, spreadSheet, &SpreadSheet::saveSpreadSheet);
-        connections << QObject::connect(this, &MainWindow::print, spreadSheet, &SpreadSheet::print);
-        connections << QObject::connect(this, &MainWindow::insertColumn, spreadSheet, &SpreadSheet::insertColumn);
-        connections << QObject::connect(this, &MainWindow::insertRow, spreadSheet, &SpreadSheet::insertRow);
-        connections << QObject::connect(this, &MainWindow::removeColumn, spreadSheet, &SpreadSheet::removeColumn);
-        connections << QObject::connect(this, &MainWindow::removeRow, spreadSheet, &SpreadSheet::removeRow);
-        connections << QObject::connect(this, &MainWindow::getSum, spreadSheet, &SpreadSheet::getSum);
-        connections << QObject::connect(this, &MainWindow::getAverage, spreadSheet, &SpreadSheet::getAverage);
-        connections << QObject::connect(this, &MainWindow::getMin, spreadSheet, &SpreadSheet::getMin);
-        connections << QObject::connect(this, &MainWindow::getMax, spreadSheet, &SpreadSheet::getMax);
-        connections << QObject::connect(this, &MainWindow::getCount, spreadSheet, &SpreadSheet::getCount);
-        connections << QObject::connect(this, &MainWindow::sortColumn, spreadSheet, &SpreadSheet::sortColumn);
-        connections << QObject::connect(this, &MainWindow::sortRow, spreadSheet, &SpreadSheet::sortRow);
-        connections << QObject::connect(this, &MainWindow::merge, spreadSheet, &SpreadSheet::merge);
-        connections << QObject::connect(this, &MainWindow::split, spreadSheet, &SpreadSheet::split);
-    });
+    connections << QObject::connect(this, &MainWindow::loadSpreadSheet, table, &Table::loadTable);
+    connections << QObject::connect(this, &MainWindow::saveSpreadSheet, table, &Table::saveTable);
+    connections << QObject::connect(this, &MainWindow::print, table, &Table::print);
+    connections << QObject::connect(this, &MainWindow::insertColumn, table, &Table::insertColumn);
+    connections << QObject::connect(this, &MainWindow::insertRow, table, &Table::insertRow);
+    connections << QObject::connect(this, &MainWindow::removeColumn, table, &Table::removeColumn);
+    connections << QObject::connect(this, &MainWindow::removeRow, table, &Table::removeRow);
+    connections << QObject::connect(this, &MainWindow::getSum, table, &Table::getSum);
+    connections << QObject::connect(this, &MainWindow::getAverage, table, &Table::getAverage);
+    connections << QObject::connect(this, &MainWindow::getMin, table, &Table::getMin);
+    connections << QObject::connect(this, &MainWindow::getMax, table, &Table::getMax);
+    connections << QObject::connect(this, &MainWindow::getCount, table, &Table::getCount);
+    connections << QObject::connect(this, &MainWindow::sortColumn, table, &Table::sortColumn);
+    connections << QObject::connect(this, &MainWindow::sortRow, table, &Table::sortRow);
+    connections << QObject::connect(this, &MainWindow::merge, table, &Table::merge);
+    connections << QObject::connect(this, &MainWindow::split, table, &Table::split);
 }
 
-void MainWindow::closeEvent(QCloseEvent* event)
+void MainWindow::setupTreeFunctions(Tree* tree)
 {
-    QDomDocument doc;
-
-    auto dec = doc.createProcessingInstruction("xml", "version=\"1.0\" encoding=\"UTF-8\"");
-    doc.appendChild(dec);
-
-    auto spreadSheetsElement = doc.createElement("SpreadSheets");
-
-    for(int i = 1; i < tabBar->count(); ++i)
-    {
-        auto spreadSheetElement = doc.createElement("SpreadSheet");
-        spreadSheetElement.setAttribute("name", tabBar->tabText(i));
-
-        spreadSheetsElement.appendChild(spreadSheetElement);
-    }
-
-    doc.appendChild(spreadSheetsElement);
-
-    QFile file(user + "/SpreadSheets.xml");
-
-    if(!file.open(QIODevice::WriteOnly | QIODevice::Text))
-    {
-        return;
-    }
-    else
-    {
-        QTextStream stream(&file);
-        stream << doc.toString();
-        file.close();
-    }
-
-    for(int i = tabBar->count() - 1; i > 0; --i)
-    {
-        tabBar->widget(i)->deleteLater();
-        tabBar->removeTab(i);
-    }
-
-    QWidget::closeEvent(event);
+    menuBar->clear();
+    toolBar->clear();
 }
 
-void MainWindow::load(const QString& user)
-{
-    this->user = user;
-
-    QDomDocument doc;
-    QFile file(user + "/SpreadSheets.xml");
-
-    if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
-    {
-        return;
-    }
-    else
-    {
-        if(!doc.setContent(&file))
-        {
-            return;
-        }
-
-        file.close();
-    }
-
-    auto spreadSheetsElement = doc.firstChildElement("SpreadSheets");
-    auto spreadSheetList = spreadSheetsElement.elementsByTagName("SpreadSheet");
-
-    for(int i = 0; i < spreadSheetList.size(); ++i)
-    {
-        auto spreadSheetNode = spreadSheetList.at(i);
-
-        if(spreadSheetNode.isElement())
-        {
-            auto spreadSheetElement = spreadSheetNode.toElement();
-
-            const auto& name = spreadSheetElement.attribute("name");
-
-            tabBar->addTab(new SpreadSheet(this, user + '/' + name + '/'), name);
-        }
-    }
-
-    if(tabBar->count() > 1)
-    {
-        tabBar->setCurrentIndex(1);
-    }
-}
-
-bool MainWindow::spreadSheetExists(const QString& name) const
+bool MainWindow::dataStructureExists(const QString& name) const
 {
     for(int i = 1; i < tabBar->count(); ++i)
     {
