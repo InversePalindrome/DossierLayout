@@ -45,12 +45,15 @@ private:
     bool dataStructureExists(const QString& name) const;
 
 signals:
-    void loadSpreadSheet(const QString& fileName);
-    void saveSpreadSheet(const QString& fileName);
+    void loadDataStructure(const QString& fileName);
+    void saveDataStructure(const QString& fileName);
     void print();
 
     void insertColumn(const QString& columnName);
     void insertRow(const QString& rowName);
+    void insertRoot(const QString& name);
+    void insertChild(const QString& name);
+    void insertElement(const QString& name);
 
     void removeColumn();
     void removeRow();

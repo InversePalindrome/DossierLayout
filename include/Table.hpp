@@ -27,8 +27,8 @@ public slots:
 
     void print();
 
-    void insertColumn(QString columnName);
-    void insertRow(QString rowName);
+    void insertColumn(const QString& columnName);
+    void insertRow(const QString& rowName);
 
     void removeColumn();
     void removeRow();
@@ -48,9 +48,6 @@ public slots:
 private:
     QString directory;
     QClipboard* clipboard;
-
-    int selectedColumn;
-    int selectedRow;
 
     void saveToExcel(const QString& directory);
 
