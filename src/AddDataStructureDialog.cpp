@@ -7,6 +7,7 @@ InversePalindrome.com
 
 #include "AddDataStructureDialog.hpp"
 
+#include <QIcon>
 #include <QFont>
 #include <QLabel>
 #include <QBoxLayout>
@@ -31,10 +32,12 @@ AddDataStructureDialog::AddDataStructureDialog(QWidget* parent) :
     nameEntry->setFont(entryFont);
 
     auto* tableButton = new QRadioButton("Table");
+    tableButton->setIcon(QIcon(":/Resources/Table.png"));
     tableButton->setFont(labelFont);
     tableButton->setChecked(true);
 
     auto* treeButton = new QRadioButton("Tree");
+    treeButton->setIcon(QIcon(":/Resources/Tree.png"));
     treeButton->setFont(labelFont);
 
     auto* buttonGroup = new QButtonGroup();

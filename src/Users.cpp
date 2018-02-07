@@ -16,7 +16,7 @@ InversePalindrome.com
 Users::Users(const QString& fileName) :
     crypto(0x0c2ad4a4acb9f023)
 {
-   loadUsers(fileName);
+    loadUsers(fileName);
 }
 
 Users::~Users()

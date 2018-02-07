@@ -30,9 +30,7 @@ InversePalindrome.com
 Table::Table(QWidget* parent, const QString& directory) :
     QTableWidget(parent),
     directory(directory),
-    clipboard(QApplication::clipboard()),
-    selectedColumn(-1),
-    selectedRow(-1)
+    clipboard(QApplication::clipboard())
 {
    setContextMenuPolicy(Qt::CustomContextMenu);
    setSelectionMode(QAbstractItemView::ContiguousSelection);
@@ -47,10 +45,8 @@ Table::Table(QWidget* parent, const QString& directory) :
    horizontalHeader()->setDragEnabled(true);
    horizontalHeader()->setDragDropMode(DragDropMode::InternalMove);
 
-   QObject::connect(horizontalHeader(), &QHeaderView::sectionClicked, [this](auto index) { selectedColumn = index;});
    QObject::connect(horizontalHeader(), &QHeaderView::customContextMenuRequested, this, &Table::openHeaderMenu);
    QObject::connect(horizontalHeader(), &QHeaderView::sectionDoubleClicked, this, &Table::editHeader);
-   QObject::connect(verticalHeader(), &QHeaderView::sectionClicked, [this](auto index) { selectedRow = index; });
    QObject::connect(verticalHeader(), &QHeaderView::customContextMenuRequested, this, &Table::openHeaderMenu);
    QObject::connect(verticalHeader(), &QHeaderView::sectionDoubleClicked, this, &Table::editHeader);
    QObject::connect(this, &Table::customContextMenuRequested, this, &Table::openCellsMenu);
@@ -160,19 +156,14 @@ void Table::print()
     }
 }
 
-void Table::insertColumn(QString columnName)
+void Table::insertColumn(const QString& columnName)
 {
     QTableWidget::insertColumn(columnCount());
 
-    if(columnName.isEmpty())
-    {
-        columnName = QString::number(columnCount());
-    }
-
-    QFont defaultHeaderFont("Arial", 10, QFont::Bold);
+    QFont headerFont("Arial", 10, QFont::Bold);
 
     auto* header = new QTableWidgetItem(columnName);
-    header->setFont(defaultHeaderFont);
+    header->setFont(headerFont);
     setHorizontalHeaderItem(columnCount() - 1, header);
 
     for(int row = 0; row < rowCount(); ++row)
@@ -184,19 +175,14 @@ void Table::insertColumn(QString columnName)
     }
 }
 
-void Table::insertRow(QString rowName)
+void Table::insertRow(const QString& rowName)
 {
     QTableWidget::insertRow(rowCount());
 
-    if(rowName.isEmpty())
-    {
-        rowName = QString::number(rowCount());
-    }
-
-    QFont defaultHeaderFont("Arial", 10, QFont::Bold);
+    QFont headerFont("Arial", 10, QFont::Bold);
 
     auto* header = new QTableWidgetItem(rowName);
-    header->setFont(defaultHeaderFont);
+    header->setFont(headerFont);
     setVerticalHeaderItem(rowCount() - 1, header);
 
     for(int column = 0; column < columnCount(); ++column)
@@ -210,19 +196,17 @@ void Table::insertRow(QString rowName)
 
 void Table::removeColumn()
 {
-    QTableWidget::removeColumn(selectedColumn);
-    selectedColumn = -1;
+    QTableWidget::removeColumn(currentColumn());
 }
 
 void Table::removeRow()
 {
-    QTableWidget::insertRow(selectedRow);
-    selectedRow = -1;
+    QTableWidget::removeRow(currentRow());
 }
 
 void Table::sortColumn(Qt::SortOrder order)
 {
-   auto columnItems = takeColumn(selectedColumn);
+   auto columnItems = takeColumn(currentColumn());
 
    if(order == Qt::AscendingOrder)
    {
@@ -233,12 +217,12 @@ void Table::sortColumn(Qt::SortOrder order)
        std::sort(columnItems.rbegin(), columnItems.rend(), &Table::compareCells);
    }
 
-   setColumn(selectedColumn, columnItems);
+   setColumn(currentColumn(), columnItems);
 }
 
 void Table::sortRow(Qt::SortOrder order)
 {
-   auto rowItems = takeRow(selectedRow);
+   auto rowItems = takeRow(currentRow());
 
    if(order == Qt::AscendingOrder)
    {
@@ -249,7 +233,7 @@ void Table::sortRow(Qt::SortOrder order)
        std::sort(rowItems.rbegin(), rowItems.rend(), &Table::compareCells);
    }
 
-   setRow(selectedRow, rowItems);
+   setRow(currentRow(), rowItems);
 }
 
 void Table::merge()

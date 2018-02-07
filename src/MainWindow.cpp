@@ -28,7 +28,7 @@ MainWindow::MainWindow() :
     toolBar(new QToolBar(this)),
     tabBar(new QTabWidget(this))
 {
-    setFixedSize(2048, 1536);
+    setMinimumSize(2048, 1536);
     setMenuBar(menuBar);
     addToolBar(toolBar);
     setCentralWidget(view);
@@ -229,11 +229,11 @@ void MainWindow::setupTableFunctions(Table* table)
     auto* file = menuBar->addMenu("File");
     file->addAction(QIcon(":/Resources/Open.png"), "Open", [this]
     {
-        emit loadSpreadSheet(QFileDialog::getOpenFileName(this, "Open", "", "Excel (*.xlsx)"));
+        emit loadDataStructure(QFileDialog::getOpenFileName(this, "Open", "", "Excel (*.xlsx)"));
     }, QKeySequence::Open);
     file->addAction(QIcon(":/Resources/Download.png"), "Save as", [this]
     {
-        emit saveSpreadSheet(QFileDialog::getSaveFileName(this, "Guardar Como", "", "SpreadSheet (*.pdf .xlsx)"));
+        emit saveDataStructure(QFileDialog::getSaveFileName(this, "Save as", "", "Table (*.pdf .xlsx)"));
     }, QKeySequence::Save);
     file->addSeparator();
     file->addAction(QIcon(":/Resources/Print.png"), "Print", [this] { emit print(); }, QKeySequence::Print);
@@ -309,8 +309,8 @@ void MainWindow::setupTableFunctions(Table* table)
     toolBar->addAction(QIcon(":/Resources/Merge.png"), "Merge", [this] { emit merge(); });
     toolBar->addAction(QIcon(":/Resources/Split.png"), "Split", [this] { emit split(); });
 
-    connections << QObject::connect(this, &MainWindow::loadSpreadSheet, table, &Table::loadTable);
-    connections << QObject::connect(this, &MainWindow::saveSpreadSheet, table, &Table::saveTable);
+    connections << QObject::connect(this, &MainWindow::loadDataStructure, table, &Table::loadTable);
+    connections << QObject::connect(this, &MainWindow::saveDataStructure, table, &Table::saveTable);
     connections << QObject::connect(this, &MainWindow::print, table, &Table::print);
     connections << QObject::connect(this, &MainWindow::insertColumn, table, &Table::insertColumn);
     connections << QObject::connect(this, &MainWindow::insertRow, table, &Table::insertRow);
@@ -331,6 +331,79 @@ void MainWindow::setupTreeFunctions(Tree* tree)
 {
     menuBar->clear();
     toolBar->clear();
+
+    auto* file = menuBar->addMenu("File");
+
+    file->addAction(QIcon(":/Resources/Open.png"), "Open", [this]
+    {
+
+    }, QKeySequence::Open);
+    file->addAction(QIcon(":/Resources/Download.png"), "Save as", [this]
+    {
+       emit saveDataStructure(QFileDialog::getSaveFileName(this, "Save as", "", "Tree (*.pdf)"));
+    }, QKeySequence::Save);
+    file->addSeparator();
+    file->addAction(QIcon(":/Resources/Print.png"), "Print", [this] { emit print(); }, QKeySequence::Print);
+    file->addSeparator();
+    file->addAction(QIcon(":/Resources/Exit.png"), "Exit", [this] { emit exit(); }, QKeySequence("Esc"));
+
+    auto* insert = menuBar->addMenu("Insert");
+    insert->addAction("Column", [this]
+    {
+        auto* insertDialog = new QInputDialog(this);
+        insertDialog->setFixedSize(500, 200);
+        insertDialog->setWindowTitle("Insert Column");
+        insertDialog->setLabelText("Column Name");
+
+        if(insertDialog->exec() == QDialog::Accepted)
+        {
+           emit insertColumn(insertDialog->textValue());
+        }
+    });
+    insert->addAction("Root", [this]
+    {
+        auto* insertDialog = new QInputDialog(this);
+        insertDialog->setFixedSize(500, 200);
+        insertDialog->setWindowTitle("Insert Root");
+        insertDialog->setLabelText("Root Name");
+
+        if(insertDialog->exec() == QDialog::Accepted)
+        {
+           emit insertRoot(insertDialog->textValue());
+        }
+    });
+    insert->addAction("Child", [this]
+    {
+        auto* insertDialog = new QInputDialog(this);
+        insertDialog->setFixedSize(500, 200);
+        insertDialog->setWindowTitle("Insert Child");
+        insertDialog->setLabelText("Child Name");
+
+        if(insertDialog->exec() == QDialog::Accepted)
+        {
+           emit insertChild(insertDialog->textValue());
+        }
+    });
+    insert->addAction("Element", [this]
+    {
+        auto* insertDialog = new QInputDialog(this);
+        insertDialog->setFixedSize(500, 200);
+        insertDialog->setWindowTitle("Insert Element");
+        insertDialog->setLabelText("Element Name");
+
+        if(insertDialog->exec() == QDialog::Accepted)
+        {
+           emit insertElement(insertDialog->textValue());
+        }
+    });
+
+    connections << QObject::connect(this, &MainWindow::loadDataStructure, tree, &Tree::saveTree);
+    connections << QObject::connect(this, &MainWindow::saveDataStructure, tree, &Tree::saveTree);
+    connections << QObject::connect(this, &MainWindow::print, tree, &Tree::print);
+    connections << QObject::connect(this, &MainWindow::insertColumn, tree, &Tree::insertColumn);
+    connections << QObject::connect(this, &MainWindow::insertRoot, tree, &Tree::insertRoot);
+    connections << QObject::connect(this, &MainWindow::insertChild, tree, &Tree::insertChild);
+    connections << QObject::connect(this, &MainWindow::insertElement, tree, &Tree::insertElement);
 }
 
 bool MainWindow::dataStructureExists(const QString& name) const
