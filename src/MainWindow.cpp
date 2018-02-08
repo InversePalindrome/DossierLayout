@@ -397,6 +397,12 @@ void MainWindow::setupTreeFunctions(Tree* tree)
         }
     });
 
+    auto* remove = menuBar->addMenu("Remove");
+    remove->addAction("Node", [this]
+    {
+        emit removeNode();
+    });
+
     connections << QObject::connect(this, &MainWindow::loadDataStructure, tree, &Tree::saveTree);
     connections << QObject::connect(this, &MainWindow::saveDataStructure, tree, &Tree::saveTree);
     connections << QObject::connect(this, &MainWindow::print, tree, &Tree::print);
@@ -404,6 +410,7 @@ void MainWindow::setupTreeFunctions(Tree* tree)
     connections << QObject::connect(this, &MainWindow::insertRoot, tree, &Tree::insertRoot);
     connections << QObject::connect(this, &MainWindow::insertChild, tree, &Tree::insertChild);
     connections << QObject::connect(this, &MainWindow::insertElement, tree, &Tree::insertElement);
+    connections << QObject::connect(this, &MainWindow::removeNode, tree, &Tree::removeNode);
 }
 
 bool MainWindow::dataStructureExists(const QString& name) const
