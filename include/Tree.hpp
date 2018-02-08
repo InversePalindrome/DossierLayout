@@ -8,6 +8,7 @@ InversePalindrome.com
 #pragma once
 
 #include <QTreeWidget>
+#include <QDomDocument>
 
 
 class Tree : public QTreeWidget
@@ -29,8 +30,13 @@ public slots:
     void insertChild(const QString& name);
     void insertElement(const QString& name);
 
+    void removeNode();
+
 private:
     QString directory;
+
+    void loadNode(QTreeWidgetItem* item, QDomElement& element);
+    void saveNode(QTreeWidgetItem* item, QDomDocument& doc, QDomElement& element);
 
 private slots:
     void openHeaderMenu(const QPoint& position);

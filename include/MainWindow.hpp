@@ -57,6 +57,7 @@ signals:
 
     void removeColumn();
     void removeRow();
+    void removeNode();
 
     void getSum();
     void getAverage();
