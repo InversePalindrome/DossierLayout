@@ -1,6 +1,6 @@
 /*
 Copyright (c) 2018 InversePalindrome
-DossierTable - Tree.cpp
+DossierLayout - Tree.cpp
 InversePalindrome.com
 */
 
@@ -26,16 +26,17 @@ Tree::Tree(QWidget* parent, const QString& directory) :
     directory(directory)
 {
      setContextMenuPolicy(Qt::CustomContextMenu);
+     setSelectionMode(QAbstractItemView::ContiguousSelection);
 
      header()->setContextMenuPolicy(Qt::CustomContextMenu);
-
-     QFont headerFont("Arial", 10, QFont::Bold);
-
-     header()->setFont(headerFont);
      header()->setDefaultAlignment(Qt::AlignCenter);
+     header()->setSectionsClickable(true);
+     header()->setSortIndicatorShown(true);
+     header()->setFont(QFont("Arial", 10, QFont::Bold));
 
      QObject::connect(header(), &QHeaderView::sectionDoubleClicked, this, &Tree::editHeader);
      QObject::connect(header(), &QHeaderView::customContextMenuRequested, this, &Tree::openHeaderMenu);
+     QObject::connect(header(), &QHeaderView::sectionClicked, [this](auto index) { header()->setSortIndicator(index, Qt::AscendingOrder);});
      QObject::connect(this, &Tree::customContextMenuRequested, this, &Tree::openNodesMenu);
 
      loadTree(directory + "Tree.xml");
@@ -43,60 +44,7 @@ Tree::Tree(QWidget* parent, const QString& directory) :
 
 Tree::~Tree()
 {
-    QDomDocument doc;
-
-    auto dec = doc.createProcessingInstruction("xml", "version=\"1.0\" encoding=\"UTF-8\"");
-    doc.appendChild(dec);
-
-    auto headerElement = doc.createElement("Header");
-
-    for(int column = 0; column < columnCount(); ++column)
-    {
-        headerElement.setAttribute("col" + QString::number(column), headerItem()->text(column));
-    }
-
-    auto treeElement = doc.createElement("Tree");
-
-    treeElement.appendChild(headerElement);
-
-    for(int i = 0; i < topLevelItemCount(); ++i)
-    {
-        auto* item = topLevelItem(i);
-        auto rootElement = doc.createElement("Root");
-
-        for(int column = 0; column < columnCount(); ++column)
-        {
-            rootElement.setAttribute("col" + QString::number(column), item->text(column));
-
-            QByteArray fontData;
-            QDataStream stream(&fontData, QIODevice::ReadWrite);
-            stream << item->font(column);
-
-            auto fontElement = doc.createElement("Font" + QString::number(column));
-
-            rootElement.appendChild(fontElement);
-            fontElement.appendChild(doc.createTextNode(QString(fontData.toHex())));
-        }
-
-        treeElement.appendChild(rootElement);
-
-        saveNode(item, doc, rootElement);
-    }
-
-    doc.appendChild(treeElement);
-
-    QFile file(directory + "Tree.xml");
-
-    if(!file.open(QIODevice::WriteOnly | QIODevice::Text))
-    {
-       return;
-    }
-    else
-    {
-        QTextStream stream(&file);
-        stream << doc.toString();
-        file.close();
-    }
+    saveTree(directory + "Tree.xml");
 }
 
 void Tree::loadTree(const QString& fileName)
@@ -121,12 +69,9 @@ void Tree::loadTree(const QString& fileName)
     auto treeElement = doc.firstChildElement("Tree");
     auto headerElement = treeElement.firstChildElement("Header");
 
-    setColumnCount(headerElement.attributes().count());
+    setColumnCount(headerElement.attribute("count").toInt());
 
-    for(int column = 0; column < columnCount(); ++column)
-    {
-        headerItem()->setText(column, headerElement.attribute("col" + QString::number(column)));
-    }
+    initialiseNode(headerItem(), headerElement);
 
     auto rootList = treeElement.elementsByTagName("Root");
 
@@ -141,19 +86,7 @@ void Tree::loadTree(const QString& fileName)
             auto* item = new QTreeWidgetItem(this);
             item->setFlags(item->flags() | Qt::ItemIsEditable);
 
-            for(int j = 0; j < rootElement.attributes().count(); ++j)
-            {
-               item->setText(j, rootElement.attribute("col" + QString::number(j)));
-
-               auto fontElement = rootElement.firstChildElement("Font" + QString::number(j));
-
-               QDataStream iStream(QByteArray::fromHex(fontElement.text().toLocal8Bit()));
-               auto font = item->font(j);
-               iStream >> font;
-
-               item->setFont(j, font);
-            }
-
+            initialiseNode(item, rootElement);
             loadNode(item, rootElement);
         }
     }
@@ -163,20 +96,11 @@ void Tree::saveTree(const QString& fileName)
 {
     if(fileName.endsWith(".pdf"))
     {
-        QPrinter printer;
-
-        printer.setOutputFormat(QPrinter::PdfFormat);
-        printer.setPaperSize(QPrinter::A4);
-        printer.setOutputFileName(fileName);
-
-        QPainter painter(&printer);
-
-        double xScale = printer.pageRect().width() / static_cast<double>(width());
-        double yScale = printer.pageRect().height() / static_cast<double>(height());
-        double scale = qMin(xScale, yScale);
-        painter.scale(scale, scale);
-
-        render(&painter);
+        saveToPdf(fileName);
+    }
+    else if(fileName.endsWith(".xml"))
+    {
+        saveToXml(fileName);
     }
 }
 
@@ -197,66 +121,86 @@ void Tree::insertColumn(const QString& name)
     setColumnCount(columnCount() + 1);
 
     headerItem()->setText(columnCount() - 1, name);
+    headerItem()->setFont(columnCount() - 1, QFont("Arial", 10, QFont::Bold));
 }
 
-void Tree::insertRoot(const QString& name)
+void Tree::insertNode(const QString& name)
 {
-    auto* item = new QTreeWidgetItem(this, QStringList(name));
-    item->setFlags(item->flags() | Qt::ItemIsEditable);
-}
+    const auto& nodes = selectedItems();
 
-void Tree::insertChild(const QString& name)
-{
-    auto items = selectedItems();
-
-    if(!items.isEmpty())
+    if(nodes.isEmpty())
     {
-        auto* item = new QTreeWidgetItem(items.back(), QStringList(name));
+        auto* item = new QTreeWidgetItem(this, QStringList(name));
         item->setFlags(item->flags() | Qt::ItemIsEditable);
     }
-}
-
-void Tree::insertElement(const QString &name)
-{
-    auto items = selectedItems();
-
-    if(!items.isEmpty())
+    else
     {
-        items.back()->setText(columnCount() - 1, name);
+        for(const auto& node : nodes)
+        {
+           auto* item = new QTreeWidgetItem(node, QStringList(name));
+           item->setFlags(item->flags() | Qt::ItemIsEditable);
+        }
     }
 }
 
 void Tree::removeNode()
 {
-    auto items = selectedItems();
+    const auto& nodes = selectedItems();
 
-    if(!items.isEmpty())
+    for(const auto& node : nodes)
     {
-        delete items.back();
+        if(!node->parent() || indexOfTopLevelItem(node) >= 0)
+        {
+            delete node;
+        }
+    }
+}
+
+void Tree::sortColumn(Qt::SortOrder order)
+{
+   sortByColumn(header()->sortIndicatorSection(), order);
+}
+
+void Tree::mousePressEvent(QMouseEvent* event)
+{
+    if(event->button() != Qt::LeftButton)
+    {
+        return;
+    }
+
+    auto* item = itemAt(event->pos());
+    bool isSelected = false;
+
+    if(item)
+    {
+        isSelected = item->isSelected();
+    }
+    else
+    {
+        clearSelection();
+    }
+
+    QTreeWidget::mousePressEvent(event);
+
+    if(isSelected)
+    {
+        item->setSelected(false);
     }
 }
 
 void Tree::loadNode(QTreeWidgetItem* item, QDomElement& element)
 {
-    auto nodeList = element.elementsByTagName("Node");
+    auto nodeElement = element.firstChildElement("Node");
 
-    for(int i = 0; i < nodeList.count(); ++i)
+    while(!nodeElement.isNull())
     {
-         auto node = nodeList.at(i);
+        auto* child = new QTreeWidgetItem(item);
+        child->setFlags(child->flags() | Qt::ItemIsEditable);
 
-         if(node.isElement())
-         {
-             auto nodeElement = node.toElement();
-             auto* child = new QTreeWidgetItem(item);
-             child->setFlags(child->flags() | Qt::ItemIsEditable);
+        initialiseNode(child, nodeElement);
+        loadNode(child, nodeElement);
 
-             for(int j = 0; j < nodeElement.attributes().count(); ++j)
-             {
-                 child->setText(j, nodeElement.attribute("col" + QString::number(j)));
-             }
-
-             loadNode(child, nodeElement);
-         }
+        nodeElement = nodeElement.nextSiblingElement("Node");
     }
 }
 
@@ -265,17 +209,126 @@ void Tree::saveNode(QTreeWidgetItem* item, QDomDocument& doc, QDomElement& eleme
     for(int i = 0; i < item->childCount(); ++i)
     {
         auto* child = item->child(i);
-
         auto nodeElement = doc.createElement("Node");
-
-        for(int column = 0; column < child->columnCount(); ++column)
-        {
-            nodeElement.setAttribute("col" + QString::number(column), child->text(column));
-        }
 
         element.appendChild(nodeElement);
 
+        initialiseElement(child, nodeElement);
         saveNode(child, doc, nodeElement);
+    }
+}
+
+void Tree::initialiseElement(QTreeWidgetItem* item, QDomElement& element)
+{
+    for(int column = 0; column < columnCount(); ++column)
+    {
+        element.setAttribute("col" + QString::number(column), item->text(column));
+
+        QByteArray fontData;
+        QDataStream fontStream(&fontData, QIODevice::ReadWrite);
+        fontStream << item->font(column);
+        element.setAttribute("font" + QString::number(column), QString(fontData.toHex()));
+
+        QByteArray backgroundColorData;
+        QDataStream backgroundColorStream(&backgroundColorData, QIODevice::ReadWrite);
+        backgroundColorStream << item->backgroundColor(column);
+        element.setAttribute("backgroundColor" + QString::number(column), QString(backgroundColorData.toHex()));
+
+        QByteArray textColorData;
+        QDataStream textColorStream(&textColorData, QIODevice::ReadWrite);
+        textColorStream << item->textColor(column);
+        element.setAttribute("textColor" + QString::number(column), QString(textColorData.toHex()));
+
+        element.setAttribute("alignment" + QString::number(column), QString::number(item->textAlignment(column)));
+    }
+}
+
+void Tree::initialiseNode(QTreeWidgetItem* item, QDomElement& element)
+{
+    for(int column = 0; column < columnCount(); ++column)
+    {
+       item->setText(column, element.attribute("col" + QString::number(column)));
+
+       QDataStream fontStream(QByteArray::fromHex(element.attribute("font" + QString::number(column)).toLocal8Bit()));
+       QFont font;
+       fontStream >> font;
+       item->setFont(column, font);
+
+       QDataStream backgroundColorStream(QByteArray::fromHex(element.attribute("backgroundColor" + QString::number(column)).toLocal8Bit()));
+       QColor backgroundColor;
+       backgroundColorStream >> backgroundColor;
+       item->setBackgroundColor(column, backgroundColor);
+       if(!item->backgroundColor(column).isValid())
+       {
+          item->setBackgroundColor(column, Qt::white);
+       }
+
+       QDataStream textColorStream(QByteArray::fromHex(element.attribute("textColor" + QString::number(column)).toLocal8Bit()));
+       QColor textColor;
+       textColorStream >> textColor;
+       item->setTextColor(column, textColor);
+
+       item->setTextAlignment(column, element.attribute("alignment" + QString::number(column)).toInt());
+    }
+}
+
+void Tree::saveToPdf(const QString &fileName)
+{
+    QPrinter printer;
+
+    printer.setOutputFormat(QPrinter::PdfFormat);
+    printer.setPaperSize(QPrinter::A4);
+    printer.setOutputFileName(fileName);
+
+    QPainter painter(&printer);
+
+    double xScale = printer.pageRect().width() / static_cast<double>(width());
+    double yScale = printer.pageRect().height() / static_cast<double>(height());
+    double scale = qMin(xScale, yScale);
+    painter.scale(scale, scale);
+
+    render(&painter);
+}
+
+void Tree::saveToXml(const QString& fileName)
+{
+    QDomDocument doc;
+
+    auto dec = doc.createProcessingInstruction("xml", "version=\"1.0\" encoding=\"UTF-8\"");
+    doc.appendChild(dec);
+
+    auto headerElement = doc.createElement("Header");
+    headerElement.setAttribute("count", QString::number(columnCount()));
+    initialiseElement(headerItem(), headerElement);
+
+    auto treeElement = doc.createElement("Tree");
+
+    treeElement.appendChild(headerElement);
+
+    for(int i = 0; i < topLevelItemCount(); ++i)
+    {
+        auto* item = topLevelItem(i);
+        auto rootElement = doc.createElement("Root");
+
+        treeElement.appendChild(rootElement);
+
+        initialiseElement(item, rootElement);
+        saveNode(item, doc, rootElement);
+    }
+
+    doc.appendChild(treeElement);
+
+    QFile file(fileName);
+
+    if(!file.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+       return;
+    }
+    else
+    {
+        QTextStream stream(&file);
+        stream << doc.toString();
+        file.close();
     }
 }
 
@@ -287,14 +340,13 @@ void Tree::openHeaderMenu(const QPoint& position)
 
     menu->addAction("Font", [this, column]
     {
-        auto font = QFontDialog::getFont(nullptr, QFont("Arial", 10), this);
+        const auto& font = QFontDialog::getFont(nullptr, QFont("Arial", 10), this);
 
         headerItem()->setFont(column, font);
     });
-
     menu->addAction("Text Color", [this, column]
     {
-        auto color = QColorDialog::getColor(Qt::white, this, "Text Color");
+        const auto& color = QColorDialog::getColor(Qt::white, this, "Text Color");
 
         headerItem()->setTextColor(column, color);
     });
@@ -318,44 +370,62 @@ void Tree::openHeaderMenu(const QPoint& position)
 
 void Tree::openNodesMenu(const QPoint& position)
 {
-    auto* node = itemAt(position);
+    const auto& selectedNodes = selectedItems();
     auto column = columnAt(position.x());
 
     auto* menu = new QMenu(this);
 
-    menu->addAction("Font", [this, node, column]
+    menu->addAction("Font", [this, selectedNodes, column]
     {
-        auto font = QFontDialog::getFont(nullptr, QFont("Arial", 10), this);
+        const auto& font = QFontDialog::getFont(nullptr, QFont("Arial", 10), this);
 
-        node->setFont(column, font);
+        for(const auto& node : selectedNodes)
+        {
+           node->setFont(column, font);
+        }
     });
 
     auto* color = menu->addMenu("Color");
-    color->addAction("Background", [this, node, column]
+    color->addAction("Background", [this, selectedNodes, column]
     {
-        auto color = QColorDialog::getColor(Qt::white, this, "Background Color");
+        const auto& color = QColorDialog::getColor(Qt::white, this, "Background Color");
 
-        node->setBackgroundColor(column, color);
+        for(const auto& node : selectedNodes)
+        {
+           node->setBackgroundColor(column, color);
+        }
     });
-    color->addAction("Text", [this, node, column]
+    color->addAction("Text", [this, selectedNodes, column]
     {
-        auto color = QColorDialog::getColor(Qt::white, this, "Text Color");
+        const auto& color = QColorDialog::getColor(Qt::white, this, "Text Color");
 
-        node->setTextColor(column, color);
+        for(const auto& node : selectedNodes)
+        {
+           node->setTextColor(column, color);
+        }
     });
 
     auto* alignment = menu->addMenu("Alignment");
-    alignment->addAction("Left", [this, node, column]
+    alignment->addAction("Left", [selectedNodes, column]
     {
-        node->setTextAlignment(column, Qt::AlignLeft | Qt::AlignVCenter);
+        for(const auto& node : selectedNodes)
+        {
+           node->setTextAlignment(column, Qt::AlignLeft | Qt::AlignVCenter);
+        }
     });
-    alignment->addAction("Right", [this, node, column]
+    alignment->addAction("Right", [selectedNodes, column]
     {
-        node->setTextAlignment(column, Qt::AlignRight | Qt::AlignVCenter);
+        for(const auto& node : selectedNodes)
+        {
+           node->setTextAlignment(column, Qt::AlignRight | Qt::AlignVCenter);
+        }
     });
-    alignment->addAction("Center", [this, node, column]
+    alignment->addAction("Center", [selectedNodes, column]
     {
-        node->setTextAlignment(column, Qt::AlignCenter);
+        for(const auto& node : selectedNodes)
+        {
+           node->setTextAlignment(column, Qt::AlignCenter);
+        }
     });
 
     menu->exec(mapToGlobal(position));
@@ -376,7 +446,7 @@ void Tree::editHeader(int logicalIndex)
     headerEditor->move(rect.topLeft());
     headerEditor->resize(rect.size());
     headerEditor->setFrame(false);
-    headerEditor->setText(header()->model()->headerData(logicalIndex, header()->orientation()).toString());
+    headerEditor->setText(headerItem()->text(logicalIndex));
     headerEditor->setFocus();
     headerEditor->show();
 

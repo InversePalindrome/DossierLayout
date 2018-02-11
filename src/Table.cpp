@@ -1,6 +1,6 @@
 /*
 Copyright (c) 2018 InversePalindrome
-DossierTable - Table.cpp
+DossierLayout - Table.cpp
 InversePalindrome.com
 */
 
@@ -35,15 +35,15 @@ Table::Table(QWidget* parent, const QString& directory) :
    setContextMenuPolicy(Qt::CustomContextMenu);
    setSelectionMode(QAbstractItemView::ContiguousSelection);
 
-   verticalHeader()->setContextMenuPolicy(Qt::CustomContextMenu);
-   verticalHeader()->setSectionsMovable(true);
-   verticalHeader()->setDragEnabled(true);
-   verticalHeader()->setDragDropMode(DragDropMode::InternalMove);
-
    horizontalHeader()->setContextMenuPolicy(Qt::CustomContextMenu);
    horizontalHeader()->setSectionsMovable(true);
    horizontalHeader()->setDragEnabled(true);
    horizontalHeader()->setDragDropMode(DragDropMode::InternalMove);
+
+   verticalHeader()->setContextMenuPolicy(Qt::CustomContextMenu);
+   verticalHeader()->setSectionsMovable(true);
+   verticalHeader()->setDragEnabled(true);
+   verticalHeader()->setDragDropMode(DragDropMode::InternalMove);
 
    QObject::connect(horizontalHeader(), &QHeaderView::customContextMenuRequested, this, &Table::openHeaderMenu);
    QObject::connect(horizontalHeader(), &QHeaderView::sectionDoubleClicked, this, &Table::editHeader);
@@ -104,6 +104,10 @@ void Table::loadTable(const QString& fileName)
            item->setTextAlignment(Utility::ExcelToQtAlignment
            (qMakePair(cell->format().horizontalAlignment(), cell->format().verticalAlignment())));
            item->setBackgroundColor(cell->format().patternBackgroundColor());
+           if(!item->backgroundColor().isValid())
+           {
+               item->setBackgroundColor(Qt::white);
+           }
 
            setItem(row - 2, column - 2, item);
        }
@@ -123,20 +127,7 @@ void Table::saveTable(const QString& fileName)
 {
     if(fileName.endsWith(".pdf"))
     {
-        QPrinter printer;
-
-        printer.setOutputFormat(QPrinter::PdfFormat);
-        printer.setPaperSize(QPrinter::A4);
-        printer.setOutputFileName(fileName);
-
-        QPainter painter(&printer);
-
-        double xScale = printer.pageRect().width() / static_cast<double>(width());
-        double yScale = printer.pageRect().height() / static_cast<double>(height());
-        double scale = qMin(xScale, yScale);
-        painter.scale(scale, scale);
-
-        render(&painter);
+        saveToPdf(fileName);
     }
     else if(fileName.endsWith(".xlsx"))
     {
@@ -160,18 +151,13 @@ void Table::insertColumn(const QString& columnName)
 {
     QTableWidget::insertColumn(columnCount());
 
-    QFont headerFont("Arial", 10, QFont::Bold);
-
     auto* header = new QTableWidgetItem(columnName);
-    header->setFont(headerFont);
+    header->setFont(QFont("Arial", 10, QFont::Bold));
     setHorizontalHeaderItem(columnCount() - 1, header);
 
     for(int row = 0; row < rowCount(); ++row)
     {
-        auto* item = new QTableWidgetItem();
-        item->setBackgroundColor(Qt::white);
-
-        setItem(row, columnCount() - 1, item);
+        setItem(row, columnCount() - 1, new QTableWidgetItem());
     }
 }
 
@@ -179,18 +165,13 @@ void Table::insertRow(const QString& rowName)
 {
     QTableWidget::insertRow(rowCount());
 
-    QFont headerFont("Arial", 10, QFont::Bold);
-
     auto* header = new QTableWidgetItem(rowName);
-    header->setFont(headerFont);
+    header->setFont(QFont("Arial", 10, QFont::Bold));
     setVerticalHeaderItem(rowCount() - 1, header);
 
     for(int column = 0; column < columnCount(); ++column)
     {
-        auto* item = new QTableWidgetItem();
-        item->setBackgroundColor(Qt::white);
-
-        setItem(rowCount() - 1, column, item);
+        setItem(rowCount() - 1, column, new QTableWidgetItem());
     }
 }
 
@@ -363,6 +344,24 @@ std::size_t Table::getCount()
     return count;
 }
 
+void Table::saveToPdf(const QString &fileName)
+{
+    QPrinter printer;
+
+    printer.setOutputFormat(QPrinter::PdfFormat);
+    printer.setPaperSize(QPrinter::A4);
+    printer.setOutputFileName(fileName);
+
+    QPainter painter(&printer);
+
+    double xScale = printer.pageRect().width() / static_cast<double>(width());
+    double yScale = printer.pageRect().height() / static_cast<double>(height());
+    double scale = qMin(xScale, yScale);
+    painter.scale(scale, scale);
+
+    render(&painter);
+}
+
 void Table::saveToExcel(const QString& fileName)
 {
     QXlsx::Document doc;
@@ -531,7 +530,7 @@ void Table::openCellsMenu(const QPoint& position)
 
     menu->addAction("Font", [this, cells]
     {
-        auto font = QFontDialog::getFont(nullptr, QFont("Arial", 10), this);
+        const auto& font = QFontDialog::getFont(nullptr, QFont("Arial", 10), this);
 
         for(const auto& cell : cells)
         {
@@ -542,7 +541,7 @@ void Table::openCellsMenu(const QPoint& position)
     auto* color = menu->addMenu("Color");
     color->addAction("Background", [this, cells]
     {
-        auto color = QColorDialog::getColor(Qt::white, this, "Background Color");
+        const auto& color = QColorDialog::getColor(Qt::white, this, "Background Color");
 
         for(const auto& cell : cells)
         {
@@ -551,7 +550,7 @@ void Table::openCellsMenu(const QPoint& position)
     });
     color->addAction("Text", [this, cells]
     {
-        auto color = QColorDialog::getColor(Qt::black, this, "Text Color");
+        const auto& color = QColorDialog::getColor(Qt::black, this, "Text Color");
 
         for(const auto& cell : cells)
         {

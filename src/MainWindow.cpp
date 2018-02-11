@@ -1,6 +1,6 @@
 /*
 Copyright (c) 2018 InversePalindrome
-DossierTable - MainWindow.cpp
+DossierLayout - MainWindow.cpp
 InversePalindrome.com
 */
 
@@ -68,7 +68,11 @@ MainWindow::MainWindow() :
         }
         else
         {
-            if(type == "Table")
+            if(type == "List")
+            {
+               tabBar->addTab(new List(this, user + '/' + name + '/'), QIcon(":/Resources/List.png"), name);
+            }
+            else if(type == "Table")
             {
                tabBar->addTab(new Table(this, user + '/' + name + '/'), QIcon(":/Resources/Table.png"), name);
             }
@@ -101,10 +105,15 @@ MainWindow::MainWindow() :
 
         connections.clear();
 
+        auto* list = qobject_cast<List*>(tabBar->widget(index));
         auto* table = qobject_cast<Table*>(tabBar->widget(index));
         auto* tree = qobject_cast<Tree*>(tabBar->widget(index));
 
-        if(table)
+        if(list)
+        {
+            setupListFunctions(list);
+        }
+        else if(table)
         {
             setupTableFunctions(table);
         }
@@ -128,10 +137,15 @@ void MainWindow::closeEvent(QCloseEvent* event)
     {
         auto dataStructureElement = doc.createElement("DataStructure");
 
+        const auto* list = qobject_cast<List*>(tabBar->widget(i));
         const auto* table = qobject_cast<Table*>(tabBar->widget(i));
         const auto* tree = qobject_cast<Tree*>(tabBar->widget(i));
 
-        if(table)
+        if(list)
+        {
+            dataStructureElement.setAttribute("type", "List");
+        }
+        else if(table)
         {
             dataStructureElement.setAttribute("type", "Table");
         }
@@ -204,7 +218,11 @@ void MainWindow::load(const QString& user)
             const auto& type = dataStructureElement.attribute("type");
             const auto& name = dataStructureElement.attribute("name");
 
-            if(type == "Table")
+            if(type == "List")
+            {
+                tabBar->addTab(new List(this, user + '/' + name + '/'), QIcon(":/Resources/List.png"), name);
+            }
+            else if(type == "Table")
             {
                 tabBar->addTab(new Table(this, user + '/' + name + '/'), QIcon(":/Resources/Table.png"), name);
             }
@@ -219,6 +237,63 @@ void MainWindow::load(const QString& user)
     {
         tabBar->setCurrentIndex(1);
     }
+}
+
+void MainWindow::setupListFunctions(List* list)
+{
+    menuBar->clear();
+    toolBar->clear();
+
+    auto* file = menuBar->addMenu("File");
+    file->addAction(QIcon(":/Resources/Open.png"), "Open", [this]
+    {
+        emit loadDataStructure(QFileDialog::getOpenFileName(this, "Open", "", "Xml (*.xml)"));
+    }, QKeySequence::Open);
+    file->addAction(QIcon(":/Resources/Download.png"), "Save as", [this]
+    {
+        emit saveDataStructure(QFileDialog::getSaveFileName(this, "Save as", "", "List (*.pdf .xml)"));
+    }, QKeySequence::Save);
+    file->addSeparator();
+    file->addAction(QIcon(":/Resources/Print.png"), "Print", [this] { emit print(); }, QKeySequence::Print);
+    file->addSeparator();
+    file->addAction(QIcon(":/Resources/Exit.png"), "Exit", [this] { emit exit(); }, QKeySequence("Esc"));
+
+    auto* insert = menuBar->addMenu("Insert");
+    insert->addAction(QIcon(":/Resources/AddRow.png"), "Element", [this]
+    {
+        auto* insertDialog = new QInputDialog(this);
+        insertDialog->setFixedSize(500, 200);
+        insertDialog->setWindowTitle("Insert Element");
+        insertDialog->setLabelText("Element Name");
+
+        if(insertDialog->exec() == QDialog::Accepted)
+        {
+            emit insertElement(insertDialog->textValue());
+        }
+    });
+
+    auto* remove = menuBar->addMenu("Remove");
+    remove->addAction(QIcon(":/Resources/RemoveRow.png"), "Element", [this] { emit removeElement(); });
+
+    auto* sortMenu = new QMenu();
+    sortMenu->addAction("Ascending", [this] { emit sortColumn(Qt::AscendingOrder); });
+    sortMenu->addAction("Descending", [this] { emit sortColumn(Qt::DescendingOrder); });
+
+    auto* sortButton = new QToolButton();
+    sortButton->setMenu(sortMenu);
+    sortButton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+    sortButton->setPopupMode(QToolButton::InstantPopup);
+    sortButton->setIcon(QIcon(":/Resources/Sort.png"));
+    sortButton->setText("Sort  ");
+
+    toolBar->addWidget(sortButton);
+
+    connections << QObject::connect(this, &MainWindow::loadDataStructure, list, &List::loadList);
+    connections << QObject::connect(this, &MainWindow::saveDataStructure, list, &List::saveList);
+    connections << QObject::connect(this, &MainWindow::print, list, &List::print);
+    connections << QObject::connect(this, &MainWindow::insertElement, list, &List::insertElement);
+    connections << QObject::connect(this, &MainWindow::removeElement, list, &List::removeElement);
+    connections << QObject::connect(this, &MainWindow::sortColumn, list, &List::sort);
 }
 
 void MainWindow::setupTableFunctions(Table* table)
@@ -284,10 +359,6 @@ void MainWindow::setupTableFunctions(Table* table)
     operationButton->setIcon(QIcon(":/Resources/Sigma.png"));
     operationButton->setText("Calculate  ");
 
-    toolBar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-    toolBar->addWidget(operationButton);
-    toolBar->addSeparator();
-
     auto* sortMenu = new QMenu();
     auto* columnSort = sortMenu->addMenu("Column");
     columnSort->addAction("Ascending", [this] { emit sortColumn(Qt::AscendingOrder); });
@@ -304,6 +375,9 @@ void MainWindow::setupTableFunctions(Table* table)
     sortButton->setIcon(QIcon(":/Resources/Sort.png"));
     sortButton->setText("Sort  ");
 
+    toolBar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+    toolBar->addWidget(operationButton);
+    toolBar->addSeparator();
     toolBar->addWidget(sortButton);
     toolBar->addSeparator();
     toolBar->addAction(QIcon(":/Resources/Merge.png"), "Merge", [this] { emit merge(); });
@@ -336,11 +410,11 @@ void MainWindow::setupTreeFunctions(Tree* tree)
 
     file->addAction(QIcon(":/Resources/Open.png"), "Open", [this]
     {
-
+        emit loadDataStructure(QFileDialog::getOpenFileName(this, "Open", "", "Xml (*.xml)"));
     }, QKeySequence::Open);
     file->addAction(QIcon(":/Resources/Download.png"), "Save as", [this]
     {
-       emit saveDataStructure(QFileDialog::getSaveFileName(this, "Save as", "", "Tree (*.pdf)"));
+       emit saveDataStructure(QFileDialog::getSaveFileName(this, "Save as", "", "Tree (*.pdf .xml)"));
     }, QKeySequence::Save);
     file->addSeparator();
     file->addAction(QIcon(":/Resources/Print.png"), "Print", [this] { emit print(); }, QKeySequence::Print);
@@ -348,7 +422,7 @@ void MainWindow::setupTreeFunctions(Tree* tree)
     file->addAction(QIcon(":/Resources/Exit.png"), "Exit", [this] { emit exit(); }, QKeySequence("Esc"));
 
     auto* insert = menuBar->addMenu("Insert");
-    insert->addAction("Column", [this]
+    insert->addAction(QIcon(":/Resources/AddColumn.png"), "Column", [this]
     {
         auto* insertDialog = new QInputDialog(this);
         insertDialog->setFixedSize(500, 200);
@@ -360,57 +434,45 @@ void MainWindow::setupTreeFunctions(Tree* tree)
            emit insertColumn(insertDialog->textValue());
         }
     });
-    insert->addAction("Root", [this]
+    insert->addAction(QIcon(":/Resources/AddNode.png"), "Node", [this]
     {
         auto* insertDialog = new QInputDialog(this);
         insertDialog->setFixedSize(500, 200);
-        insertDialog->setWindowTitle("Insert Root");
-        insertDialog->setLabelText("Root Name");
+        insertDialog->setWindowTitle("Insert Node");
+        insertDialog->setLabelText("Node Name");
 
         if(insertDialog->exec() == QDialog::Accepted)
         {
-           emit insertRoot(insertDialog->textValue());
-        }
-    });
-    insert->addAction("Child", [this]
-    {
-        auto* insertDialog = new QInputDialog(this);
-        insertDialog->setFixedSize(500, 200);
-        insertDialog->setWindowTitle("Insert Child");
-        insertDialog->setLabelText("Child Name");
-
-        if(insertDialog->exec() == QDialog::Accepted)
-        {
-           emit insertChild(insertDialog->textValue());
-        }
-    });
-    insert->addAction("Element", [this]
-    {
-        auto* insertDialog = new QInputDialog(this);
-        insertDialog->setFixedSize(500, 200);
-        insertDialog->setWindowTitle("Insert Element");
-        insertDialog->setLabelText("Element Name");
-
-        if(insertDialog->exec() == QDialog::Accepted)
-        {
-           emit insertElement(insertDialog->textValue());
+           emit insertNode(insertDialog->textValue());
         }
     });
 
     auto* remove = menuBar->addMenu("Remove");
-    remove->addAction("Node", [this]
+    remove->addAction(QIcon(":/Resources/RemoveNode.png"), "Node", [this]
     {
         emit removeNode();
     });
 
-    connections << QObject::connect(this, &MainWindow::loadDataStructure, tree, &Tree::saveTree);
+    auto* sortMenu = new QMenu();
+    sortMenu->addAction("Ascending", [this] { emit sortColumn(Qt::AscendingOrder); });
+    sortMenu->addAction("Descending", [this] { emit sortColumn(Qt::DescendingOrder); });
+
+    auto* sortButton = new QToolButton();
+    sortButton->setMenu(sortMenu);
+    sortButton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+    sortButton->setPopupMode(QToolButton::InstantPopup);
+    sortButton->setIcon(QIcon(":/Resources/Sort.png"));
+    sortButton->setText("Sort  ");
+
+    toolBar->addWidget(sortButton);
+
+    connections << QObject::connect(this, &MainWindow::loadDataStructure, tree, &Tree::loadTree);
     connections << QObject::connect(this, &MainWindow::saveDataStructure, tree, &Tree::saveTree);
     connections << QObject::connect(this, &MainWindow::print, tree, &Tree::print);
     connections << QObject::connect(this, &MainWindow::insertColumn, tree, &Tree::insertColumn);
-    connections << QObject::connect(this, &MainWindow::insertRoot, tree, &Tree::insertRoot);
-    connections << QObject::connect(this, &MainWindow::insertChild, tree, &Tree::insertChild);
-    connections << QObject::connect(this, &MainWindow::insertElement, tree, &Tree::insertElement);
+    connections << QObject::connect(this, &MainWindow::insertNode, tree, &Tree::insertNode);
     connections << QObject::connect(this, &MainWindow::removeNode, tree, &Tree::removeNode);
+    connections << QObject::connect(this, &MainWindow::sortColumn, tree, &Tree::sortColumn);
 }
 
 bool MainWindow::dataStructureExists(const QString& name) const

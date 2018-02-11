@@ -1,6 +1,6 @@
 /*
 Copyright (c) 2018 InversePalindrome
-DossierTable - AddDataStructureDialog.cpp
+DossierLayout - AddDataStructureDialog.cpp
 InversePalindrome.com
 */
 
@@ -20,7 +20,7 @@ AddDataStructureDialog::AddDataStructureDialog(QWidget* parent) :
     QDialog(parent),
     nameEntry(new QLineEdit(this))
 {
-    setFixedSize(600, 350);
+    setFixedSize(600, 400);
     setWindowTitle("Add Data Structure");
 
     QFont labelFont("Arial", 11, QFont::Bold);
@@ -31,16 +31,21 @@ AddDataStructureDialog::AddDataStructureDialog(QWidget* parent) :
 
     nameEntry->setFont(entryFont);
 
+    auto* listButton = new QRadioButton("List");
+    listButton->setIcon(QIcon(":/Resources/List.png"));
+    listButton->setFont(labelFont);
+    listButton->setChecked(true);
+
     auto* tableButton = new QRadioButton("Table");
     tableButton->setIcon(QIcon(":/Resources/Table.png"));
     tableButton->setFont(labelFont);
-    tableButton->setChecked(true);
 
     auto* treeButton = new QRadioButton("Tree");
     treeButton->setIcon(QIcon(":/Resources/Tree.png"));
     treeButton->setFont(labelFont);
 
     auto* buttonGroup = new QButtonGroup();
+    buttonGroup->addButton(listButton);
     buttonGroup->addButton(tableButton);
     buttonGroup->addButton(treeButton);
 
@@ -50,6 +55,7 @@ AddDataStructureDialog::AddDataStructureDialog(QWidget* parent) :
 
     layout->addWidget(nameLabel);
     layout->addWidget(nameEntry);
+    layout->addWidget(listButton);
     layout->addWidget(tableButton);
     layout->addWidget(treeButton);
     layout->addWidget(addButton);
