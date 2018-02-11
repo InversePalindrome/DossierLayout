@@ -1,6 +1,6 @@
 /*
 Copyright (c) 2018 InversePalindrome
-DossierTable - Application.hpp
+DossierLayout - Application.hpp
 InversePalindrome.com
 */
 

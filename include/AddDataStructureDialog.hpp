@@ -1,6 +1,6 @@
 /*
 Copyright (c) 2018 InversePalindrome
-DossierTable - AddDataStructureDialog.hpp
+DossierLayout - AddDataStructureDialog.hpp
 InversePalindrome.com
 */
 
@@ -18,10 +18,10 @@ class AddDataStructureDialog : public QDialog
 public:
     AddDataStructureDialog(QWidget* parent);
 
-    virtual void closeEvent(QCloseEvent* event) override;
-
 private:
     QLineEdit* nameEntry;
+
+     virtual void closeEvent(QCloseEvent* event) override;
 
 signals:
     void addDataStructure(const QString& type, const QString& name);

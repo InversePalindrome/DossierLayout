@@ -1,14 +1,15 @@
 /*
 Copyright (c) 2018 InversePalindrome
-DossierTable - MainWindow.hpp
+DossierLayout - MainWindow.hpp
 InversePalindrome.com
 */
 
 
 #pragma once
 
-#include "Table.hpp"
 #include "Tree.hpp"
+#include "List.hpp"
+#include "Table.hpp"
 
 #include <QList>
 #include <QString>
@@ -26,8 +27,6 @@ class MainWindow : public QMainWindow
 public:
     MainWindow();
 
-    virtual void closeEvent(QCloseEvent* event) override;
-
     void load(const QString& user);
 
 private:
@@ -39,6 +38,9 @@ private:
     QString user;
     QList<QMetaObject::Connection> connections;
 
+    virtual void closeEvent(QCloseEvent* event) override;
+
+    void setupListFunctions(List* list);
     void setupTableFunctions(Table* table);
     void setupTreeFunctions(Tree* tree);
 
@@ -49,12 +51,12 @@ signals:
     void saveDataStructure(const QString& fileName);
     void print();
 
-    void insertColumn(const QString& columnName);
-    void insertRow(const QString& rowName);
-    void insertRoot(const QString& name);
-    void insertChild(const QString& name);
     void insertElement(const QString& name);
+    void insertColumn(const QString& name);
+    void insertRow(const QString& name);
+    void insertNode(const QString& name);
 
+    void removeElement();
     void removeColumn();
     void removeRow();
     void removeNode();

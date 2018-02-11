@@ -1,6 +1,6 @@
 /*
 Copyright (c) 2018 InversePalindrome
-DossierTable - Table.hpp
+DossierLayout - Table.hpp
 InversePalindrome.com
 */
 
@@ -49,7 +49,8 @@ private:
     QString directory;
     QClipboard* clipboard;
 
-    void saveToExcel(const QString& directory);
+    void saveToPdf(const QString& fileName);
+    void saveToExcel(const QString& fileName);
 
     ItemList takeColumn(int column);
     ItemList takeRow(int row);

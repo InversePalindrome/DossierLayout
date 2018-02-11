@@ -1,6 +1,6 @@
 /*
 Copyright (c) 2018 InversePalindrome
-DossierTable - Tree.hpp
+DossierLayout - Tree.hpp
 InversePalindrome.com
 */
 
@@ -8,6 +8,7 @@ InversePalindrome.com
 #pragma once
 
 #include <QTreeWidget>
+#include <QMouseEvent>
 #include <QDomDocument>
 
 
@@ -26,17 +27,25 @@ public slots:
     void print();
 
     void insertColumn(const QString& name);
-    void insertRoot(const QString& name);
-    void insertChild(const QString& name);
-    void insertElement(const QString& name);
+    void insertNode(const QString& name);
 
     void removeNode();
+
+    void sortColumn(Qt::SortOrder order);
 
 private:
     QString directory;
 
+    virtual void mousePressEvent(QMouseEvent* event) override;
+
     void loadNode(QTreeWidgetItem* item, QDomElement& element);
     void saveNode(QTreeWidgetItem* item, QDomDocument& doc, QDomElement& element);
+
+    void initialiseElement(QTreeWidgetItem* item, QDomElement& element);
+    void initialiseNode(QTreeWidgetItem* item, QDomElement& element);
+
+    void saveToPdf(const QString& fileName);
+    void saveToXml(const QString& fileName);
 
 private slots:
     void openHeaderMenu(const QPoint& position);
