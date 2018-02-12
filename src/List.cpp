@@ -68,6 +68,24 @@ void List::loadList(const QString& fileName)
 
             auto* element = new QListWidgetItem(elementNode.text(), this);
 
+            if(elementNode.attribute("type") == "checkable")
+            {
+                element->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsUserCheckable);
+
+                if(elementNode.attribute("isChecked") == "true")
+                {
+                   element->setCheckState(Qt::Checked);
+                }
+                else
+                {
+                   element->setCheckState(Qt::Unchecked);
+                }
+            }
+            else
+            {
+                element->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable);
+            }
+
             QDataStream fontStream(QByteArray::fromHex(elementNode.attribute("font").toLocal8Bit()));
             QFont font;
             fontStream >> font;
@@ -116,10 +134,15 @@ void List::print()
     }
 }
 
-void List::insertElement(const QString& name)
+void List::insertElement(const QString& name, Qt::ItemFlags flags)
 {
     auto* element = new QListWidgetItem(name, this);
-    element->setFlags(element->flags() | Qt::ItemIsEditable);
+    element->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable | flags);
+
+    if(flags.testFlag(Qt::ItemIsUserCheckable))
+    {
+        element->setCheckState(Qt::Unchecked);
+    }
 }
 
 void List::removeElement()
@@ -168,6 +191,24 @@ void List::saveToXml(const QString& fileName)
     {
         auto elementNode = doc.createElement("Element");
         elementNode.appendChild(doc.createTextNode(item(row)->text()));
+
+        if(item(row)->flags().testFlag(Qt::ItemIsUserCheckable))
+        {
+            elementNode.setAttribute("type", "checkable");
+
+            if(item(row)->checkState() == Qt::Checked)
+            {
+               elementNode.setAttribute("isChecked", "true");
+            }
+            else
+            {
+               elementNode.setAttribute("isChecked", "false");
+            }
+        }
+        else
+        {
+            elementNode.setAttribute("type", "nonCheckable");;
+        }
 
         QByteArray fontData;
         QDataStream fontStream(&fontData, QIODevice::ReadWrite);
@@ -242,21 +283,21 @@ void List::openElementMenu(const QPoint& position)
     });
 
     auto* alignment = menu->addMenu("Alignment");
-    alignment->addAction("Left", [this, elements]
+    alignment->addAction("Left", [elements]
     {
         for(const auto& element : elements)
         {
            element->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
         }
     });
-    alignment->addAction("Right", [this, elements]
+    alignment->addAction("Right", [elements]
     {
         for(const auto& element : elements)
         {
            element->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
         }
     });
-    alignment->addAction("Center", [this, elements]
+    alignment->addAction("Center", [elements]
     {
         for(const auto& element : elements)
         {

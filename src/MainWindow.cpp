@@ -6,20 +6,23 @@ InversePalindrome.com
 
 
 #include "MainWindow.hpp"
-#include "AddDataStructureDialog.hpp"
 
 #include <QDir>
 #include <QIcon>
 #include <QFile>
 #include <QMenu>
 #include <QLabel>
+#include <QCheckBox>
 #include <QBoxLayout>
+#include <QPushButton>
 #include <QToolButton>
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QTextStream>
 #include <QInputDialog>
 #include <QDomDocument>
+#include <QRadioButton>
+#include <QButtonGroup>
 
 
 MainWindow::MainWindow() :
@@ -48,40 +51,92 @@ MainWindow::MainWindow() :
     tabBar->setFont(QFont("Arial", 11, QFont::Bold));
     tabBar->setStyleSheet("QTabBar::tab { min-width: 100px; min-height : 60px; }");
 
-    auto* addDialog = new AddDataStructureDialog(this);
-
-    QObject::connect(addButton, &QToolButton::clicked, [addDialog]
+    QObject::connect(addButton, &QToolButton::clicked, [this]
     {
-        addDialog->show();
-    });
-    QObject::connect(addDialog, &AddDataStructureDialog::addDataStructure, [this](const auto& type, const auto& name)
-    {
-        if(name.isEmpty())
-        {
-            QMessageBox message(QMessageBox::Critical, "Error", "No Data Structure name specified!", QMessageBox::NoButton, this);
-            message.exec();
-        }
-        else if(dataStructureExists(name))
-        {
-            QMessageBox message(QMessageBox::Critical, "Error", "Data Structure '" + name + "' already exists!", QMessageBox::NoButton, this);
-            message.exec();
-        }
-        else
-        {
-            if(type == "List")
-            {
-               tabBar->addTab(new List(this, user + '/' + name + '/'), QIcon(":/Resources/List.png"), name);
-            }
-            else if(type == "Table")
-            {
-               tabBar->addTab(new Table(this, user + '/' + name + '/'), QIcon(":/Resources/Table.png"), name);
-            }
-            else if(type == "Tree")
-            {
-               tabBar->addTab(new Tree(this, user + '/' + name + '/'), QIcon(":/Resources/Tree.png"), name);
-            }
+        auto* addDialog =  new QDialog(this, Qt::Window | Qt::WindowCloseButtonHint | Qt::WindowTitleHint);
+        addDialog->setFixedSize(600, 400);
+        addDialog->setWindowTitle("Add Data Structure");
 
-            QDir().mkdir(user + '/' + name);
+        QFont labelFont("Arial", 11, QFont::Bold);
+        QFont entryFont("Arial", 11);
+
+        auto* nameLabel = new QLabel("Name");
+        nameLabel->setFont(labelFont);
+
+        auto* nameEntry = new QLineEdit();
+        nameEntry->setFont(entryFont);
+
+        auto* listButton = new QRadioButton("List");
+        listButton->setIcon(QIcon(":/Resources/List.png"));
+        listButton->setFont(labelFont);
+        listButton->setChecked(true);
+
+        auto* tableButton = new QRadioButton("Table");
+        tableButton->setIcon(QIcon(":/Resources/Table.png"));
+        tableButton->setFont(labelFont);
+
+        auto* treeButton = new QRadioButton("Tree");
+        treeButton->setIcon(QIcon(":/Resources/Tree.png"));
+        treeButton->setFont(labelFont);
+
+        auto* buttonGroup = new QButtonGroup();
+        buttonGroup->addButton(listButton);
+        buttonGroup->addButton(tableButton);
+        buttonGroup->addButton(treeButton);
+
+        auto* addButton = new QPushButton("Add");
+        auto* cancelButton = new QPushButton("Cancel");
+
+        auto* buttonLayout = new QHBoxLayout(this);
+        buttonLayout->addWidget(addButton);
+        buttonLayout->addWidget(cancelButton);
+
+        auto* layout = new QVBoxLayout(this);
+
+        layout->addWidget(nameLabel);
+        layout->addWidget(nameEntry);
+        layout->addWidget(listButton);
+        layout->addWidget(tableButton);
+        layout->addWidget(treeButton);
+        layout->addLayout(buttonLayout);
+
+        addDialog->setLayout(layout);
+
+        QObject::connect(addButton, &QPushButton::clicked, addDialog, &QDialog::accept);
+        QObject::connect(cancelButton, &QPushButton::clicked, addDialog, &QDialog::reject);
+
+        if(addDialog->exec() == QDialog::Accepted)
+        {
+            const auto& type = buttonGroup->checkedButton()->text();
+            const auto& name = nameEntry->text();
+
+            if(name.isEmpty())
+            {
+                QMessageBox message(QMessageBox::Critical, "Error", "No Data Structure name specified!", QMessageBox::NoButton, this);
+                message.exec();
+            }
+            else if(dataStructureExists(name))
+            {
+                QMessageBox message(QMessageBox::Critical, "Error", "Data Structure '" + name + "' already exists!", QMessageBox::NoButton, this);
+                message.exec();
+            }
+            else
+            {
+                if(type == "List")
+                {
+                   tabBar->addTab(new List(this, user + '/' + name + '/'), QIcon(":/Resources/List.png"), name);
+                }
+                else if(type == "Table")
+                {
+                   tabBar->addTab(new Table(this, user + '/' + name + '/'), QIcon(":/Resources/Table.png"), name);
+                }
+                else if(type == "Tree")
+                {
+                   tabBar->addTab(new Tree(this, user + '/' + name + '/'), QIcon(":/Resources/Tree.png"), name);
+                }
+
+                QDir().mkdir(user + '/' + name);
+            }
         }
     });
     QObject::connect(tabBar, &QTabWidget::tabCloseRequested, [this](auto index)
@@ -105,9 +160,9 @@ MainWindow::MainWindow() :
 
         connections.clear();
 
-        auto* list = qobject_cast<List*>(tabBar->widget(index));
-        auto* table = qobject_cast<Table*>(tabBar->widget(index));
-        auto* tree = qobject_cast<Tree*>(tabBar->widget(index));
+        const auto* list = qobject_cast<List*>(tabBar->widget(index));
+        const auto* table = qobject_cast<Table*>(tabBar->widget(index));
+        const auto* tree = qobject_cast<Tree*>(tabBar->widget(index));
 
         if(list)
         {
@@ -239,7 +294,7 @@ void MainWindow::load(const QString& user)
     }
 }
 
-void MainWindow::setupListFunctions(List* list)
+void MainWindow::setupListFunctions(const List* list)
 {
     menuBar->clear();
     toolBar->clear();
@@ -261,14 +316,44 @@ void MainWindow::setupListFunctions(List* list)
     auto* insert = menuBar->addMenu("Insert");
     insert->addAction(QIcon(":/Resources/AddRow.png"), "Element", [this]
     {
-        auto* insertDialog = new QInputDialog(this);
-        insertDialog->setFixedSize(500, 200);
+        auto* insertDialog = new QDialog(this, Qt::Window | Qt::WindowCloseButtonHint | Qt::WindowTitleHint);
+        insertDialog->setFixedSize(600, 270);
         insertDialog->setWindowTitle("Insert Element");
-        insertDialog->setLabelText("Element Name");
+
+        auto* nameLabel = new QLabel("Name", this);
+        auto* nameEntry = new QLineEdit(this);
+
+        auto* checkButton = new QCheckBox("Checkable", this);
+
+        auto* okButton = new QPushButton("Ok", this);
+        auto* cancelButton = new QPushButton("Cancel", this);
+
+        auto* buttonLayout = new QHBoxLayout();
+
+        buttonLayout->addWidget(okButton);
+        buttonLayout->addWidget(cancelButton);
+
+        auto* layout = new QVBoxLayout();
+        layout->addWidget(nameLabel);
+        layout->addWidget(nameEntry);
+        layout->addWidget(checkButton);
+        layout->addLayout(buttonLayout);
+
+        insertDialog->setLayout(layout);
+
+        QObject::connect(okButton, &QPushButton::clicked, insertDialog, &QDialog::accept);
+        QObject::connect(cancelButton, &QPushButton::clicked, insertDialog, &QDialog::reject);
 
         if(insertDialog->exec() == QDialog::Accepted)
         {
-            emit insertElement(insertDialog->textValue());
+            if(checkButton->isChecked())
+            {
+                emit insertElement(nameEntry->text(), Qt::ItemIsUserCheckable);
+            }
+            else
+            {
+                emit insertElement(nameEntry->text(), Qt::NoItemFlags);
+            }
         }
     });
 
@@ -296,7 +381,7 @@ void MainWindow::setupListFunctions(List* list)
     connections << QObject::connect(this, &MainWindow::sortColumn, list, &List::sort);
 }
 
-void MainWindow::setupTableFunctions(Table* table)
+void MainWindow::setupTableFunctions(const Table* table)
 {
     menuBar->clear();
     toolBar->clear();
@@ -401,7 +486,7 @@ void MainWindow::setupTableFunctions(Table* table)
     connections << QObject::connect(this, &MainWindow::split, table, &Table::split);
 }
 
-void MainWindow::setupTreeFunctions(Tree* tree)
+void MainWindow::setupTreeFunctions(const Tree* tree)
 {
     menuBar->clear();
     toolBar->clear();

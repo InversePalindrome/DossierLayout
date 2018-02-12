@@ -36,14 +36,8 @@ Table::Table(QWidget* parent, const QString& directory) :
    setSelectionMode(QAbstractItemView::ContiguousSelection);
 
    horizontalHeader()->setContextMenuPolicy(Qt::CustomContextMenu);
-   horizontalHeader()->setSectionsMovable(true);
-   horizontalHeader()->setDragEnabled(true);
-   horizontalHeader()->setDragDropMode(DragDropMode::InternalMove);
 
    verticalHeader()->setContextMenuPolicy(Qt::CustomContextMenu);
-   verticalHeader()->setSectionsMovable(true);
-   verticalHeader()->setDragEnabled(true);
-   verticalHeader()->setDragDropMode(DragDropMode::InternalMove);
 
    QObject::connect(horizontalHeader(), &QHeaderView::customContextMenuRequested, this, &Table::openHeaderMenu);
    QObject::connect(horizontalHeader(), &QHeaderView::sectionDoubleClicked, this, &Table::editHeader);

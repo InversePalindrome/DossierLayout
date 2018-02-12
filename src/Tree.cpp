@@ -12,6 +12,7 @@ InversePalindrome.com
 #include <QPainter>
 #include <QPrinter>
 #include <QLineEdit>
+#include <QSettings>
 #include <QByteArray>
 #include <QHeaderView>
 #include <QFontDialog>
@@ -29,10 +30,10 @@ Tree::Tree(QWidget* parent, const QString& directory) :
      setSelectionMode(QAbstractItemView::ContiguousSelection);
 
      header()->setContextMenuPolicy(Qt::CustomContextMenu);
-     header()->setDefaultAlignment(Qt::AlignCenter);
      header()->setSectionsClickable(true);
      header()->setSortIndicatorShown(true);
-     header()->setFont(QFont("Arial", 10, QFont::Bold));
+     headerItem()->setTextAlignment(0, Qt::AlignCenter);
+     headerItem()->setFont(0, QFont("Arial", 10, QFont::Bold));
 
      QObject::connect(header(), &QHeaderView::sectionDoubleClicked, this, &Tree::editHeader);
      QObject::connect(header(), &QHeaderView::customContextMenuRequested, this, &Tree::openHeaderMenu);
@@ -44,6 +45,9 @@ Tree::Tree(QWidget* parent, const QString& directory) :
 
 Tree::~Tree()
 {
+    QSettings settings(directory + "Header.ini", QSettings::IniFormat);
+    settings.setValue("Horizontal", header()->saveState());
+
     saveTree(directory + "Tree.xml");
 }
 
@@ -90,6 +94,9 @@ void Tree::loadTree(const QString& fileName)
             loadNode(item, rootElement);
         }
     }
+
+    QSettings settings(directory + "Header.ini", QSettings::IniFormat);
+    header()->restoreState(settings.value("Horizontal").toByteArray());
 }
 
 void Tree::saveTree(const QString& fileName)
@@ -149,7 +156,7 @@ void Tree::removeNode()
 
     for(const auto& node : nodes)
     {
-        if(!node->parent() || indexOfTopLevelItem(node) >= 0)
+        if(node->parent() || indexOfTopLevelItem(node) >= 0)
         {
             delete node;
         }
