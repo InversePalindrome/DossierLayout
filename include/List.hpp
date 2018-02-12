@@ -24,7 +24,7 @@ public slots:
 
     void print();
 
-    void insertElement(const QString& name);
+    void insertElement(const QString& name, Qt::ItemFlags flags);
 
     void removeElement();
 

@@ -40,9 +40,9 @@ private:
 
     virtual void closeEvent(QCloseEvent* event) override;
 
-    void setupListFunctions(List* list);
-    void setupTableFunctions(Table* table);
-    void setupTreeFunctions(Tree* tree);
+    void setupListFunctions(const List* list);
+    void setupTableFunctions(const Table* table);
+    void setupTreeFunctions(const Tree* tree);
 
     bool dataStructureExists(const QString& name) const;
 
@@ -51,7 +51,7 @@ signals:
     void saveDataStructure(const QString& fileName);
     void print();
 
-    void insertElement(const QString& name);
+    void insertElement(const QString& name, Qt::ItemFlags flags);
     void insertColumn(const QString& name);
     void insertRow(const QString& name);
     void insertNode(const QString& name);
