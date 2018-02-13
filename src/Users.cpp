@@ -97,30 +97,24 @@ void Users::addUser(const QString& user, const QString& password)
     users.insert(user, crypto.encryptToString(password));
 
     QDir().mkdir(user);
-
-    emit userRegistered();
 }
 
-void Users::isLoginValid(const QString& user, const QString& password)
+bool Users::isLoginValid(const QString& user, const QString& password)
 {
     if(users.count(user) && password == crypto.decryptToString(users.value(user)))
     {
-        emit loginAccepted(user);
+        return true;
     }
-    else
-    {
-        emit loginFailed();
-    }
+
+    return false;
 }
 
-void Users::isRegistrationValid(const QString& user, const QString& password)
+bool Users::isRegistrationValid(const QString& user)
 {
-    if(users.count(user))
+    if(!users.count(user))
     {
-        emit userAlreadyExists(user);
+        return true;
     }
-    else
-    {
-        addUser(user, password);
-    }
+
+    return false;
 }

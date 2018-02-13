@@ -36,7 +36,6 @@ Table::Table(QWidget* parent, const QString& directory) :
    setSelectionMode(QAbstractItemView::ContiguousSelection);
 
    horizontalHeader()->setContextMenuPolicy(Qt::CustomContextMenu);
-
    verticalHeader()->setContextMenuPolicy(Qt::CustomContextMenu);
 
    QObject::connect(horizontalHeader(), &QHeaderView::customContextMenuRequested, this, &Table::openHeaderMenu);
@@ -109,7 +108,7 @@ void Table::loadTable(const QString& fileName)
 
    for(const auto& mergedCell : doc.currentWorksheet()->mergedCells())
    {
-       setSpan(mergedCell.firstRow() - 2, mergedCell.firstColumn() - 2, mergedCell.columnCount(), mergedCell.rowCount());
+       setSpan(mergedCell.firstRow() - 2, mergedCell.firstColumn() - 2, mergedCell.rowCount(), mergedCell.columnCount());
    }
 
    QSettings settings(directory + "Headers.ini", QSettings::IniFormat);
@@ -382,47 +381,27 @@ void Table::saveToExcel(const QString& fileName)
         doc.write(row + 2, 1, cell->text(), format);
     }
 
-    QList<QRect> mergedCells;
+    selectAll();
 
-    for(int row = 0; row < rowCount(); ++row)
+    for(const auto& cell : selectedItems())
     {
-        for(int column = 0; column < columnCount(); ++column)
+        QXlsx::Format format;
+        format.setFont(cell->font());
+        format.setFontColor(cell->textColor());
+        format.setHorizontalAlignment(Utility::QtToExcelAlignment(cell->textAlignment()).first);
+        format.setVerticalAlignment(Utility::QtToExcelAlignment(cell->textAlignment()).second);
+        format.setPatternBackgroundColor(cell->backgroundColor());
+
+        doc.write(cell->row() + 2, cell->column() + 2, cell->text(), format);
+
+        auto width = columnSpan(cell->row(), cell->column());
+        auto height = rowSpan(cell->row(), cell->column());
+
+        if(width > 1 || height > 1)
         {
-            const auto* cell = item(row, column);
-
-            QXlsx::Format format;
-            format.setFont(cell->font());
-            format.setFontColor(cell->textColor());
-            format.setHorizontalAlignment(Utility::QtToExcelAlignment(cell->textAlignment()).first);
-            format.setVerticalAlignment(Utility::QtToExcelAlignment(cell->textAlignment()).second);
-            format.setPatternBackgroundColor(cell->backgroundColor());
-
-            doc.write(row + 2, column + 2, cell->text(), format);
-
-            if(columnSpan(row, column) > 0 || rowSpan(row, column) > 0)
-            {
-                bool alreadyExists = false;
-
-                for(const auto& mergedCell : mergedCells)
-                {
-                    if(mergedCell.contains(column, row))
-                    {
-                        alreadyExists = true;
-                        break;
-                    }
-                }
-
-                if(!alreadyExists)
-                {
-                    mergedCells  << QRect(column, row, columnSpan(row, column), rowSpan(row, column));
-                }
-            }
+            doc.mergeCells(QXlsx::CellRange(cell->row() + 2, cell->column() + 2,
+            cell->row() + height + 1, cell->column() + width + 1), format);
         }
-    }
-
-    for(const auto& mergedCell : mergedCells)
-    {
-        doc.mergeCells(QXlsx::CellRange(mergedCell.top() + 2, mergedCell.left() + 2, mergedCell.bottom() + 2, mergedCell.right() + 2));
     }
 
     doc.saveAs(fileName);

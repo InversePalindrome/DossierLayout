@@ -14,6 +14,7 @@ InversePalindrome.com
 #include <QLabel>
 #include <QCheckBox>
 #include <QBoxLayout>
+#include <QFormLayout>
 #include <QPushButton>
 #include <QToolButton>
 #include <QFileDialog>
@@ -54,58 +55,52 @@ MainWindow::MainWindow() :
     QObject::connect(addButton, &QToolButton::clicked, [this]
     {
         auto* addDialog =  new QDialog(this, Qt::Window | Qt::WindowCloseButtonHint | Qt::WindowTitleHint);
-        addDialog->setFixedSize(600, 400);
+        addDialog->setFixedSize(600, 270);
         addDialog->setWindowTitle("Add Data Structure");
 
-        QFont labelFont("Arial", 11, QFont::Bold);
-        QFont entryFont("Arial", 11);
-
-        auto* nameLabel = new QLabel("Name");
-        nameLabel->setFont(labelFont);
-
         auto* nameEntry = new QLineEdit();
-        nameEntry->setFont(entryFont);
+
+        auto* formLayout = new QFormLayout();
+        formLayout->addRow("Name:", nameEntry);
 
         auto* listButton = new QRadioButton("List");
         listButton->setIcon(QIcon(":/Resources/List.png"));
-        listButton->setFont(labelFont);
         listButton->setChecked(true);
 
         auto* tableButton = new QRadioButton("Table");
         tableButton->setIcon(QIcon(":/Resources/Table.png"));
-        tableButton->setFont(labelFont);
 
         auto* treeButton = new QRadioButton("Tree");
         treeButton->setIcon(QIcon(":/Resources/Tree.png"));
-        treeButton->setFont(labelFont);
 
         auto* buttonGroup = new QButtonGroup();
         buttonGroup->addButton(listButton);
         buttonGroup->addButton(tableButton);
         buttonGroup->addButton(treeButton);
 
+        auto* radioButtonLayout = new QHBoxLayout();
+        radioButtonLayout->addWidget(listButton);
+        radioButtonLayout->addWidget(tableButton);
+        radioButtonLayout->addWidget(treeButton);
+
         auto* addButton = new QPushButton("Add");
         auto* cancelButton = new QPushButton("Cancel");
 
-        auto* buttonLayout = new QHBoxLayout(this);
+        auto* buttonLayout = new QHBoxLayout();
         buttonLayout->addWidget(addButton);
         buttonLayout->addWidget(cancelButton);
 
-        auto* layout = new QVBoxLayout(this);
+        auto* layout = new QVBoxLayout(addDialog);
 
-        layout->addWidget(nameLabel);
-        layout->addWidget(nameEntry);
-        layout->addWidget(listButton);
-        layout->addWidget(tableButton);
-        layout->addWidget(treeButton);
+        layout->addLayout(formLayout);
+        layout->addSpacing(20);
+        layout->addLayout(radioButtonLayout);
+        layout->addSpacing(20);
         layout->addLayout(buttonLayout);
 
-        addDialog->setLayout(layout);
+        addDialog->show();
 
-        QObject::connect(addButton, &QPushButton::clicked, addDialog, &QDialog::accept);
-        QObject::connect(cancelButton, &QPushButton::clicked, addDialog, &QDialog::reject);
-
-        if(addDialog->exec() == QDialog::Accepted)
+        QObject::connect(addButton, &QPushButton::clicked, [this, addDialog, buttonGroup, nameEntry]
         {
             const auto& type = buttonGroup->checkedButton()->text();
             const auto& name = nameEntry->text();
@@ -136,8 +131,11 @@ MainWindow::MainWindow() :
                 }
 
                 QDir().mkdir(user + '/' + name);
+
+                addDialog->close();
             }
-        }
+        });
+        QObject::connect(cancelButton, &QPushButton::clicked, [addDialog] { addDialog->close(); });
     });
     QObject::connect(tabBar, &QTabWidget::tabCloseRequested, [this](auto index)
     {
@@ -175,6 +173,14 @@ MainWindow::MainWindow() :
         else if(tree)
         {
             setupTreeFunctions(tree);
+        }
+        else
+        {
+            menuBar->clear();
+            toolBar->clear();
+
+            auto* file =  menuBar->addMenu("File");
+            file->addAction(QIcon(":/Resources/Exit.png"), "Exit", [this] { emit exit(); }, QKeySequence("Esc"));
         }
     });
 }
@@ -288,7 +294,12 @@ void MainWindow::load(const QString& user)
         }
     }
 
-    if(tabBar->count() > 1)
+    if(tabBar->count() == 1)
+    {
+        auto* file =  menuBar->addMenu("File");
+        file->addAction(QIcon(":/Resources/Exit.png"), "Exit", [this] { emit exit(); }, QKeySequence("Esc"));
+    }
+    else if(tabBar->count() > 1)
     {
         tabBar->setCurrentIndex(1);
     }
