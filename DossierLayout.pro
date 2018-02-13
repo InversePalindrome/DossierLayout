@@ -11,30 +11,26 @@ TARGET = DossierLayout
 TEMPLATE = app
 INCLUDEPATH += C:\Users\Bryan\Desktop\DossierLayout\include
 
+win32:RC_ICONS += DossierLayout.ico
+
 DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
-    ../src/AddDataStructureDialog.cpp \
     ../src/AlignmentUtility.cpp \
     ../src/Application.cpp \
     ../src/List.cpp \
-    ../src/LoginDialog.cpp \
     ../src/Main.cpp \
     ../src/MainWindow.cpp \
-    ../src/RegisterDialog.cpp \
     ../src/SimpleCrypt.cpp \
     ../src/Table.cpp \
     ../src/Tree.cpp \
     ../src/Users.cpp
 
 HEADERS += \
-    ../include/AddDataStructureDialog.hpp \
     ../include/AlignmentUtility.hpp \
     ../include/Application.hpp \
     ../include/List.hpp \
-    ../include/LoginDialog.hpp \
     ../include/MainWindow.hpp \
-    ../include/RegisterDialog.hpp \
     ../include/SimpleCrypt.hpp \
     ../include/Table.hpp \
     ../include/Tree.hpp \
