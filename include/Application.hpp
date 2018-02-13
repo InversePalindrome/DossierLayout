@@ -9,10 +9,9 @@ InversePalindrome.com
 
 #include "Users.hpp"
 #include "MainWindow.hpp"
-#include "LoginDialog.hpp"
-#include "RegisterDialog.hpp"
 
 #include <QApplication>
+#include <QDialog>
 #include <QSplashScreen>
 
 
@@ -28,6 +27,7 @@ private:
 
     QSplashScreen splashScreen;
     MainWindow mainWindow;
-    LoginDialog loginDialog;
-    RegisterDialog registerDialog;
+
+    QDialog* createLoginDialog();
+    QDialog* createRegisterDialog();
 };
