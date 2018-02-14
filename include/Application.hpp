@@ -9,14 +9,18 @@ InversePalindrome.com
 
 #include "Users.hpp"
 #include "MainWindow.hpp"
+#include "LoginDialog.hpp"
+#include "RegisterDialog.hpp"
 
 #include <QApplication>
-#include <QDialog>
+#include <QTranslator>
 #include <QSplashScreen>
 
 
 class Application : public QApplication
 {
+    Q_OBJECT
+
 public:
     Application(int& argc, char** argv);
 
@@ -26,8 +30,10 @@ private:
     Users users;
 
     QSplashScreen splashScreen;
-    MainWindow mainWindow;
 
-    QDialog* createLoginDialog();
-    QDialog* createRegisterDialog();
+    MainWindow* mainWindow;
+    LoginDialog* loginDialog;
+    RegisterDialog* registerDialog;
+
+    QTranslator* translator;
 };

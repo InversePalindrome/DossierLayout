@@ -38,6 +38,7 @@ private:
     QString user;
     QList<QMetaObject::Connection> connections;
 
+    virtual void changeEvent(QEvent* event) override;
     virtual void closeEvent(QCloseEvent* event) override;
 
     void setupListFunctions(const List* list);
