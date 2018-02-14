@@ -56,21 +56,24 @@ MainWindow::MainWindow() :
     {
         auto* addDialog =  new QDialog(this, Qt::Window | Qt::WindowCloseButtonHint | Qt::WindowTitleHint);
         addDialog->setFixedSize(600, 270);
-        addDialog->setWindowTitle("Add Data Structure");
+        addDialog->setWindowTitle(tr("Add Data Structure"));
 
         auto* nameEntry = new QLineEdit();
 
         auto* formLayout = new QFormLayout();
-        formLayout->addRow("Name:", nameEntry);
+        formLayout->addRow(tr("Name:"), nameEntry);
 
-        auto* listButton = new QRadioButton("List");
+        auto* listButton = new QRadioButton(tr("List"));
+        listButton->setProperty("type", "List");
         listButton->setIcon(QIcon(":/Resources/List.png"));
         listButton->setChecked(true);
 
-        auto* tableButton = new QRadioButton("Table");
+        auto* tableButton = new QRadioButton(tr("Table"));
+        tableButton->setProperty("type", "Table");
         tableButton->setIcon(QIcon(":/Resources/Table.png"));
 
-        auto* treeButton = new QRadioButton("Tree");
+        auto* treeButton = new QRadioButton(tr("Tree"));
+        treeButton->setProperty("type", "Tree");
         treeButton->setIcon(QIcon(":/Resources/Tree.png"));
 
         auto* buttonGroup = new QButtonGroup();
@@ -83,8 +86,8 @@ MainWindow::MainWindow() :
         radioButtonLayout->addWidget(tableButton);
         radioButtonLayout->addWidget(treeButton);
 
-        auto* addButton = new QPushButton("Add");
-        auto* cancelButton = new QPushButton("Cancel");
+        auto* addButton = new QPushButton(tr("Add"));
+        auto* cancelButton = new QPushButton(tr("Cancel"));
 
         auto* buttonLayout = new QHBoxLayout();
         buttonLayout->addWidget(addButton);
@@ -102,17 +105,17 @@ MainWindow::MainWindow() :
 
         QObject::connect(addButton, &QPushButton::clicked, [this, addDialog, buttonGroup, nameEntry]
         {
-            const auto& type = buttonGroup->checkedButton()->text();
+            const auto& type = buttonGroup->checkedButton()->property("type").toString();
             const auto& name = nameEntry->text();
 
             if(name.isEmpty())
             {
-                QMessageBox message(QMessageBox::Critical, "Error", "No Data Structure name specified!", QMessageBox::NoButton, this);
+                QMessageBox message(QMessageBox::Critical, tr("Error"), tr("No Data Structure name specified!"), QMessageBox::NoButton, this);
                 message.exec();
             }
             else if(dataStructureExists(name))
             {
-                QMessageBox message(QMessageBox::Critical, "Error", "Data Structure '" + name + "' already exists!", QMessageBox::NoButton, this);
+                QMessageBox message(QMessageBox::Critical, tr("Error"), tr("Data Structure '") + name + tr("' already exists!"), QMessageBox::NoButton, this);
                 message.exec();
             }
             else
@@ -141,7 +144,7 @@ MainWindow::MainWindow() :
     {
         const auto& name = tabBar->tabText(index);
 
-        QMessageBox message(QMessageBox::Critical, "Error", "Are you sure about removing " + name + " ?", QMessageBox::Yes | QMessageBox::No, this);
+        QMessageBox message(QMessageBox::Critical, tr("Error"), tr("Are you sure about removing ") + name + " ?", QMessageBox::Yes | QMessageBox::No, this);
 
         if(message.exec() == QMessageBox::Yes)
         {
@@ -179,10 +182,15 @@ MainWindow::MainWindow() :
             menuBar->clear();
             toolBar->clear();
 
-            auto* file =  menuBar->addMenu("File");
-            file->addAction(QIcon(":/Resources/Exit.png"), "Exit", [this] { emit exit(); }, QKeySequence("Esc"));
+            auto* file =  menuBar->addMenu(tr("File"));
+            file->addAction(QIcon(":/Resources/Exit.png"), tr("Exit"), [this] { emit exit(); }, QKeySequence("Esc"));
         }
     });
+}
+
+void MainWindow::changeEvent(QEvent* event)
+{
+
 }
 
 void MainWindow::closeEvent(QCloseEvent* event)
@@ -310,34 +318,34 @@ void MainWindow::setupListFunctions(const List* list)
     menuBar->clear();
     toolBar->clear();
 
-    auto* file = menuBar->addMenu("File");
-    file->addAction(QIcon(":/Resources/Open.png"), "Open", [this]
+    auto* file = menuBar->addMenu(tr("File"));
+    file->addAction(QIcon(":/Resources/Open.png"), tr("Open"), [this]
     {
-        emit loadDataStructure(QFileDialog::getOpenFileName(this, "Open", "", "Xml (*.xml)"));
+        emit loadDataStructure(QFileDialog::getOpenFileName(this, tr("Open"), "", "Xml (*.xml)"));
     }, QKeySequence::Open);
-    file->addAction(QIcon(":/Resources/Download.png"), "Save as", [this]
+    file->addAction(QIcon(":/Resources/Download.png"), tr("Save as"), [this]
     {
-        emit saveDataStructure(QFileDialog::getSaveFileName(this, "Save as", "", "List (*.pdf .xml)"));
+        emit saveDataStructure(QFileDialog::getSaveFileName(this, tr("Save as"), "", tr("List (*.pdf .xml)")));
     }, QKeySequence::Save);
     file->addSeparator();
-    file->addAction(QIcon(":/Resources/Print.png"), "Print", [this] { emit print(); }, QKeySequence::Print);
+    file->addAction(QIcon(":/Resources/Print.png"), tr("Print"), [this] { emit print(); }, QKeySequence::Print);
     file->addSeparator();
-    file->addAction(QIcon(":/Resources/Exit.png"), "Exit", [this] { emit exit(); }, QKeySequence("Esc"));
+    file->addAction(QIcon(":/Resources/Exit.png"), tr("Exit"), [this] { emit exit(); }, QKeySequence("Esc"));
 
-    auto* insert = menuBar->addMenu("Insert");
-    insert->addAction(QIcon(":/Resources/AddRow.png"), "Element", [this]
+    auto* insert = menuBar->addMenu(tr("Insert"));
+    insert->addAction(QIcon(":/Resources/AddRow.png"), tr("Element"), [this]
     {
         auto* insertDialog = new QDialog(this, Qt::Window | Qt::WindowCloseButtonHint | Qt::WindowTitleHint);
         insertDialog->setFixedSize(600, 270);
-        insertDialog->setWindowTitle("Insert Element");
+        insertDialog->setWindowTitle(tr("Insert Element"));
 
-        auto* nameLabel = new QLabel("Name", this);
+        auto* nameLabel = new QLabel(tr("Name"), this);
         auto* nameEntry = new QLineEdit(this);
 
-        auto* checkButton = new QCheckBox("Checkable", this);
+        auto* checkButton = new QCheckBox(tr("Checkable"), this);
 
         auto* okButton = new QPushButton("Ok", this);
-        auto* cancelButton = new QPushButton("Cancel", this);
+        auto* cancelButton = new QPushButton(tr("Cancel"), this);
 
         auto* buttonLayout = new QHBoxLayout();
 
@@ -368,19 +376,19 @@ void MainWindow::setupListFunctions(const List* list)
         }
     });
 
-    auto* remove = menuBar->addMenu("Remove");
-    remove->addAction(QIcon(":/Resources/RemoveRow.png"), "Element", [this] { emit removeElement(); });
+    auto* remove = menuBar->addMenu(tr("Remove"));
+    remove->addAction(QIcon(":/Resources/RemoveRow.png"), tr("Element"), [this] { emit removeElement(); });
 
     auto* sortMenu = new QMenu();
-    sortMenu->addAction("Ascending", [this] { emit sortColumn(Qt::AscendingOrder); });
-    sortMenu->addAction("Descending", [this] { emit sortColumn(Qt::DescendingOrder); });
+    sortMenu->addAction(tr("Ascending"), [this] { emit sortColumn(Qt::AscendingOrder); });
+    sortMenu->addAction(tr("Descending"), [this] { emit sortColumn(Qt::DescendingOrder); });
 
     auto* sortButton = new QToolButton();
     sortButton->setMenu(sortMenu);
     sortButton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
     sortButton->setPopupMode(QToolButton::InstantPopup);
     sortButton->setIcon(QIcon(":/Resources/Sort.png"));
-    sortButton->setText("Sort  ");
+    sortButton->setText(tr("Sort  "));
 
     toolBar->addWidget(sortButton);
 
@@ -397,39 +405,39 @@ void MainWindow::setupTableFunctions(const Table* table)
     menuBar->clear();
     toolBar->clear();
 
-    auto* file = menuBar->addMenu("File");
-    file->addAction(QIcon(":/Resources/Open.png"), "Open", [this]
+    auto* file = menuBar->addMenu(tr("File"));
+    file->addAction(QIcon(":/Resources/Open.png"), tr("Open"), [this]
     {
-        emit loadDataStructure(QFileDialog::getOpenFileName(this, "Open", "", "Excel (*.xlsx)"));
+        emit loadDataStructure(QFileDialog::getOpenFileName(this, tr("Open"), "", "Excel (*.xlsx)"));
     }, QKeySequence::Open);
-    file->addAction(QIcon(":/Resources/Download.png"), "Save as", [this]
+    file->addAction(QIcon(":/Resources/Download.png"), tr("Save as"), [this]
     {
-        emit saveDataStructure(QFileDialog::getSaveFileName(this, "Save as", "", "Table (*.pdf .xlsx)"));
+        emit saveDataStructure(QFileDialog::getSaveFileName(this, tr("Save as"), "", tr("Table (*.pdf .xlsx)")));
     }, QKeySequence::Save);
     file->addSeparator();
-    file->addAction(QIcon(":/Resources/Print.png"), "Print", [this] { emit print(); }, QKeySequence::Print);
+    file->addAction(QIcon(":/Resources/Print.png"), tr("Print"), [this] { emit print(); }, QKeySequence::Print);
     file->addSeparator();
-    file->addAction(QIcon(":/Resources/Exit.png"), "Exit", [this] { emit exit(); }, QKeySequence("Esc"));
+    file->addAction(QIcon(":/Resources/Exit.png"), tr("Exit"), [this] { emit exit(); }, QKeySequence("Esc"));
 
-    auto* insert = menuBar->addMenu("Insert");
-    insert->addAction(QIcon(":/Resources/AddColumn.png"), "Column", [this]
+    auto* insert = menuBar->addMenu(tr("Insert"));
+    insert->addAction(QIcon(":/Resources/AddColumn.png"), tr("Column"), [this]
     {
         auto* insertDialog = new QInputDialog(this);
         insertDialog->setFixedSize(500, 200);
-        insertDialog->setWindowTitle("Insert Column");
-        insertDialog->setLabelText("Column Name");
+        insertDialog->setWindowTitle(tr("Insert Column"));
+        insertDialog->setLabelText(tr("Column Name"));
 
         if(insertDialog->exec() == QDialog::Accepted)
         {
             emit insertColumn(insertDialog->textValue());
         }
     });
-    insert->addAction(QIcon(":/Resources/AddRow.png"), "Row", [this]
+    insert->addAction(QIcon(":/Resources/AddRow.png"), tr("Row"), [this]
     {
         auto* insertDialog = new QInputDialog(this);
         insertDialog->setFixedSize(500, 200);
-        insertDialog->setWindowTitle("Insert Row");
-        insertDialog->setLabelText("Row Name");
+        insertDialog->setWindowTitle(tr("Insert Row"));
+        insertDialog->setLabelText(tr("Row Name"));
 
         if(insertDialog->exec() == QDialog::Accepted)
         {
@@ -437,47 +445,47 @@ void MainWindow::setupTableFunctions(const Table* table)
         }
     });
 
-    auto* remove = menuBar->addMenu("Remove");
-    remove->addAction(QIcon(":/Resources/RemoveColumn.png"), "Column", [this] { emit removeColumn(); });
-    remove->addAction(QIcon(":/Resources/RemoveRow.png"), "Row", [this] { emit removeRow(); });
+    auto* remove = menuBar->addMenu(tr("Remove"));
+    remove->addAction(QIcon(":/Resources/RemoveColumn.png"), tr("Column"), [this] { emit removeColumn(); });
+    remove->addAction(QIcon(":/Resources/RemoveRow.png"), tr("Row"), [this] { emit removeRow(); });
 
     auto* operationsMenu = new QMenu();
-    operationsMenu->addAction("Sum", [this] { emit getSum(); });
-    operationsMenu->addAction("Average", [this] { emit getAverage(); });
-    operationsMenu->addAction("Min", [this] { emit getMin(); });
-    operationsMenu->addAction("Max", [this] { emit getMax(); });
-    operationsMenu->addAction("Count", [this] { emit getCount(); });
+    operationsMenu->addAction(tr("Sum"), [this] { emit getSum(); });
+    operationsMenu->addAction(tr("Average"), [this] { emit getAverage(); });
+    operationsMenu->addAction(tr("Min"), [this] { emit getMin(); });
+    operationsMenu->addAction(tr("Max"), [this] { emit getMax(); });
+    operationsMenu->addAction(tr("Count"), [this] { emit getCount(); });
 
     auto* operationButton = new QToolButton();
     operationButton->setMenu(operationsMenu);
     operationButton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
     operationButton->setPopupMode(QToolButton::InstantPopup);
     operationButton->setIcon(QIcon(":/Resources/Sigma.png"));
-    operationButton->setText("Calculate  ");
+    operationButton->setText(tr("Calculate  "));
 
     auto* sortMenu = new QMenu();
-    auto* columnSort = sortMenu->addMenu("Column");
-    columnSort->addAction("Ascending", [this] { emit sortColumn(Qt::AscendingOrder); });
-    columnSort->addAction("Descending", [this] { emit sortColumn(Qt::DescendingOrder); });
+    auto* columnSort = sortMenu->addMenu(tr("Column"));
+    columnSort->addAction(tr("Ascending"), [this] { emit sortColumn(Qt::AscendingOrder); });
+    columnSort->addAction(tr("Descending"), [this] { emit sortColumn(Qt::DescendingOrder); });
 
     auto* rowSort = sortMenu->addMenu("Row");
-    rowSort->addAction("Ascending", [this] { emit sortRow(Qt::AscendingOrder); });
-    rowSort->addAction("Descending", [this] { emit sortRow(Qt::DescendingOrder); });
+    rowSort->addAction(tr("Ascending"), [this] { emit sortRow(Qt::AscendingOrder); });
+    rowSort->addAction(tr("Descending"), [this] { emit sortRow(Qt::DescendingOrder); });
 
     auto* sortButton = new QToolButton();
     sortButton->setMenu(sortMenu);
     sortButton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
     sortButton->setPopupMode(QToolButton::InstantPopup);
     sortButton->setIcon(QIcon(":/Resources/Sort.png"));
-    sortButton->setText("Sort  ");
+    sortButton->setText(tr("Sort  "));
 
     toolBar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
     toolBar->addWidget(operationButton);
     toolBar->addSeparator();
     toolBar->addWidget(sortButton);
     toolBar->addSeparator();
-    toolBar->addAction(QIcon(":/Resources/Merge.png"), "Merge", [this] { emit merge(); });
-    toolBar->addAction(QIcon(":/Resources/Split.png"), "Split", [this] { emit split(); });
+    toolBar->addAction(QIcon(":/Resources/Merge.png"), tr("Merge"), [this] { emit merge(); });
+    toolBar->addAction(QIcon(":/Resources/Split.png"), tr("Split"), [this] { emit split(); });
 
     connections << QObject::connect(this, &MainWindow::loadDataStructure, table, &Table::loadTable);
     connections << QObject::connect(this, &MainWindow::saveDataStructure, table, &Table::saveTable);
@@ -502,40 +510,40 @@ void MainWindow::setupTreeFunctions(const Tree* tree)
     menuBar->clear();
     toolBar->clear();
 
-    auto* file = menuBar->addMenu("File");
+    auto* file = menuBar->addMenu(tr("File"));
 
-    file->addAction(QIcon(":/Resources/Open.png"), "Open", [this]
+    file->addAction(QIcon(":/Resources/Open.png"), tr("Open"), [this]
     {
-        emit loadDataStructure(QFileDialog::getOpenFileName(this, "Open", "", "Xml (*.xml)"));
+        emit loadDataStructure(QFileDialog::getOpenFileName(this, tr("Open"), "", "Xml (*.xml)"));
     }, QKeySequence::Open);
-    file->addAction(QIcon(":/Resources/Download.png"), "Save as", [this]
+    file->addAction(QIcon(":/Resources/Download.png"), tr("Save as"), [this]
     {
-       emit saveDataStructure(QFileDialog::getSaveFileName(this, "Save as", "", "Tree (*.pdf .xml)"));
+       emit saveDataStructure(QFileDialog::getSaveFileName(this, tr("Save as"), "", tr("Tree (*.pdf .xml)")));
     }, QKeySequence::Save);
     file->addSeparator();
-    file->addAction(QIcon(":/Resources/Print.png"), "Print", [this] { emit print(); }, QKeySequence::Print);
+    file->addAction(QIcon(":/Resources/Print.png"), tr("Print"), [this] { emit print(); }, QKeySequence::Print);
     file->addSeparator();
-    file->addAction(QIcon(":/Resources/Exit.png"), "Exit", [this] { emit exit(); }, QKeySequence("Esc"));
+    file->addAction(QIcon(":/Resources/Exit.png"), tr("Exit"), [this] { emit exit(); }, QKeySequence("Esc"));
 
-    auto* insert = menuBar->addMenu("Insert");
-    insert->addAction(QIcon(":/Resources/AddColumn.png"), "Column", [this]
+    auto* insert = menuBar->addMenu(tr("Insert"));
+    insert->addAction(QIcon(":/Resources/AddColumn.png"), tr("Column"), [this]
     {
         auto* insertDialog = new QInputDialog(this);
         insertDialog->setFixedSize(500, 200);
-        insertDialog->setWindowTitle("Insert Column");
-        insertDialog->setLabelText("Column Name");
+        insertDialog->setWindowTitle(tr("Insert Column"));
+        insertDialog->setLabelText(tr("Column Name"));
 
         if(insertDialog->exec() == QDialog::Accepted)
         {
            emit insertColumn(insertDialog->textValue());
         }
     });
-    insert->addAction(QIcon(":/Resources/AddNode.png"), "Node", [this]
+    insert->addAction(QIcon(":/Resources/AddNode.png"), tr("Node"), [this]
     {
         auto* insertDialog = new QInputDialog(this);
         insertDialog->setFixedSize(500, 200);
-        insertDialog->setWindowTitle("Insert Node");
-        insertDialog->setLabelText("Node Name");
+        insertDialog->setWindowTitle(tr("Insert Node"));
+        insertDialog->setLabelText(tr("Node Name"));
 
         if(insertDialog->exec() == QDialog::Accepted)
         {
@@ -543,22 +551,22 @@ void MainWindow::setupTreeFunctions(const Tree* tree)
         }
     });
 
-    auto* remove = menuBar->addMenu("Remove");
-    remove->addAction(QIcon(":/Resources/RemoveNode.png"), "Node", [this]
+    auto* remove = menuBar->addMenu(tr("Remove"));
+    remove->addAction(QIcon(":/Resources/RemoveNode.png"), tr("Node"), [this]
     {
         emit removeNode();
     });
 
     auto* sortMenu = new QMenu();
-    sortMenu->addAction("Ascending", [this] { emit sortColumn(Qt::AscendingOrder); });
-    sortMenu->addAction("Descending", [this] { emit sortColumn(Qt::DescendingOrder); });
+    sortMenu->addAction(tr("Ascending"), [this] { emit sortColumn(Qt::AscendingOrder); });
+    sortMenu->addAction(tr("Descending"), [this] { emit sortColumn(Qt::DescendingOrder); });
 
     auto* sortButton = new QToolButton();
     sortButton->setMenu(sortMenu);
     sortButton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
     sortButton->setPopupMode(QToolButton::InstantPopup);
     sortButton->setIcon(QIcon(":/Resources/Sort.png"));
-    sortButton->setText("Sort  ");
+    sortButton->setText(tr("Sort  "));
 
     toolBar->addWidget(sortButton);
 

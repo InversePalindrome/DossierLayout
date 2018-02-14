@@ -351,23 +351,23 @@ void Tree::openHeaderMenu(const QPoint& position)
 
         headerItem()->setFont(column, font);
     });
-    menu->addAction("Text Color", [this, column]
+    menu->addAction(tr("Text Color"), [this, column]
     {
-        const auto& color = QColorDialog::getColor(Qt::white, this, "Text Color");
+        const auto& color = QColorDialog::getColor(Qt::white, this, tr("Text Color"));
 
         headerItem()->setTextColor(column, color);
     });
 
-    auto* alignment = menu->addMenu("Alignment");
-    alignment->addAction("Left", [this, column]
+    auto* alignment = menu->addMenu(tr("Alignment"));
+    alignment->addAction(tr("Left"), [this, column]
     {
         headerItem()->setTextAlignment(column, Qt::AlignLeft | Qt::AlignVCenter);
     });
-    alignment->addAction("Right", [this, column]
+    alignment->addAction(tr("Right"), [this, column]
     {
         headerItem()->setTextAlignment(column, Qt::AlignRight | Qt::AlignVCenter);
     });
-    alignment->addAction("Center", [this, column]
+    alignment->addAction(tr("Center"), [this, column]
     {
         headerItem()->setTextAlignment(column, Qt::AlignCenter);
     });
@@ -392,19 +392,19 @@ void Tree::openNodesMenu(const QPoint& position)
         }
     });
 
-    auto* color = menu->addMenu("Color");
+    auto* color = menu->addMenu(tr("Color"));
     color->addAction("Background", [this, selectedNodes, column]
     {
-        const auto& color = QColorDialog::getColor(Qt::white, this, "Background Color");
+        const auto& color = QColorDialog::getColor(Qt::white, this, tr("Background Color"));
 
         for(const auto& node : selectedNodes)
         {
            node->setBackgroundColor(column, color);
         }
     });
-    color->addAction("Text", [this, selectedNodes, column]
+    color->addAction(tr("Text"), [this, selectedNodes, column]
     {
-        const auto& color = QColorDialog::getColor(Qt::white, this, "Text Color");
+        const auto& color = QColorDialog::getColor(Qt::white, this, tr("Text Color"));
 
         for(const auto& node : selectedNodes)
         {
@@ -412,22 +412,22 @@ void Tree::openNodesMenu(const QPoint& position)
         }
     });
 
-    auto* alignment = menu->addMenu("Alignment");
-    alignment->addAction("Left", [selectedNodes, column]
+    auto* alignment = menu->addMenu(tr("Alignment"));
+    alignment->addAction(tr("Left"), [selectedNodes, column]
     {
         for(const auto& node : selectedNodes)
         {
            node->setTextAlignment(column, Qt::AlignLeft | Qt::AlignVCenter);
         }
     });
-    alignment->addAction("Right", [selectedNodes, column]
+    alignment->addAction(tr("Right"), [selectedNodes, column]
     {
         for(const auto& node : selectedNodes)
         {
            node->setTextAlignment(column, Qt::AlignRight | Qt::AlignVCenter);
         }
     });
-    alignment->addAction("Center", [selectedNodes, column]
+    alignment->addAction(tr("Center"), [selectedNodes, column]
     {
         for(const auto& node : selectedNodes)
         {

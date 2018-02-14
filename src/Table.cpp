@@ -482,15 +482,15 @@ void Table::openHeaderMenu(const QPoint& position)
      {
          cell->setFont(QFontDialog::getFont(nullptr, cell->font(), this));
      });
-     menu->addAction("Text Color", [this, cell]
+     menu->addAction(tr("Text Color"), [this, cell]
      {
-         cell->setTextColor(QColorDialog::getColor(Qt::black, this, "Text Color"));
+         cell->setTextColor(QColorDialog::getColor(Qt::black, this, tr("Text Color")));
      });
 
-     auto* alignment = menu->addMenu("Alignment");
-     alignment->addAction("Left", [cell] { cell->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter); });
-     alignment->addAction("Right", [cell] { cell->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter); });
-     alignment->addAction("Center", [cell] { cell->setTextAlignment(Qt::AlignCenter); });
+     auto* alignment = menu->addMenu(tr("Alignment"));
+     alignment->addAction(tr("Left"), [cell] { cell->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter); });
+     alignment->addAction(tr("Right"), [cell] { cell->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter); });
+     alignment->addAction(tr("Center"), [cell] { cell->setTextAlignment(Qt::AlignCenter); });
 
      menu->exec(mapToGlobal(position));
 }
@@ -511,19 +511,19 @@ void Table::openCellsMenu(const QPoint& position)
         }
     });
 
-    auto* color = menu->addMenu("Color");
-    color->addAction("Background", [this, cells]
+    auto* color = menu->addMenu(tr("Color"));
+    color->addAction(tr("Background"), [this, cells]
     {
-        const auto& color = QColorDialog::getColor(Qt::white, this, "Background Color");
+        const auto& color = QColorDialog::getColor(Qt::white, this, tr("Background Color"));
 
         for(const auto& cell : cells)
         {
            cell->setBackgroundColor(color);
         }
     });
-    color->addAction("Text", [this, cells]
+    color->addAction(tr("Text"), [this, cells]
     {
-        const auto& color = QColorDialog::getColor(Qt::black, this, "Text Color");
+        const auto& color = QColorDialog::getColor(Qt::black, this, tr("Text Color"));
 
         for(const auto& cell : cells)
         {
@@ -531,8 +531,8 @@ void Table::openCellsMenu(const QPoint& position)
         }
     });
 
-    auto* format = menu->addMenu("Format");
-    format->addAction("Currency", [cells]
+    auto* format = menu->addMenu(tr("Format"));
+    format->addAction(tr("Currency"), [cells]
     {
         for(const auto& cell : cells)
         {
@@ -545,7 +545,7 @@ void Table::openCellsMenu(const QPoint& position)
             }
         }
     });
-    format->addAction("Percentage", [cells]
+    format->addAction(tr("Percentage"), [cells]
     {
         for(const auto& cell : cells)
         {
@@ -560,7 +560,7 @@ void Table::openCellsMenu(const QPoint& position)
             }
         }
     });
-    format->addAction("Scientific", [cells]
+    format->addAction(tr("Scientific"), [cells]
     {
         for(const auto& cell : cells)
         {
@@ -577,7 +577,7 @@ void Table::openCellsMenu(const QPoint& position)
             }
         }
     });
-    format->addAction("Number", [cells]
+    format->addAction(tr("Number"), [cells]
     {
         for(const auto& cell : cells)
         {
@@ -593,36 +593,36 @@ void Table::openCellsMenu(const QPoint& position)
         }
     });
 
-    auto* alignment = menu->addMenu("Alignment");
-    alignment->addAction("Left", [cells]
+    auto* alignment = menu->addMenu(tr("Alignment"));
+    alignment->addAction(tr("Left"), [cells]
     {
         for(const auto& cell : cells)
         {
            cell->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
         }
     });
-    alignment->addAction("Right", [cells]
+    alignment->addAction(tr("Right"), [cells]
     {
         for(const auto& cell : cells)
         {
            cell->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
         }
     });
-    alignment->addAction("Top", [cells]
+    alignment->addAction(tr("Top"), [cells]
     {
         for(const auto& cell : cells)
         {
            cell->setTextAlignment(Qt::AlignTop | Qt::AlignHCenter);
         }
     });
-    alignment->addAction("Bottom", [cells]
+    alignment->addAction(tr("Bottom"), [cells]
     {
         for(const auto& cell : cells)
         {
            cell->setTextAlignment(Qt::AlignBottom | Qt::AlignHCenter);
         }
     });
-    alignment->addAction("Center", [cells]
+    alignment->addAction(tr("Center"), [cells]
     {
         for(const auto& cell : cells)
         {

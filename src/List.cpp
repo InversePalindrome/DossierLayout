@@ -262,19 +262,19 @@ void List::openElementMenu(const QPoint& position)
         }
     });
 
-    auto* color = menu->addMenu("Color");
-    color->addAction("Background", [this, elements]
+    auto* color = menu->addMenu(tr("Color"));
+    color->addAction(tr("Background"), [this, elements]
     {
-        const auto& color = QColorDialog::getColor(Qt::white, this, "Background Color");
+        const auto& color = QColorDialog::getColor(Qt::white, this, tr("Background Color"));
 
         for(const auto& element : elements)
         {
            element->setBackgroundColor(color);
         }
     });
-    color->addAction("Text", [this, elements]
+    color->addAction(tr("Text"), [this, elements]
     {
-        const auto& color = QColorDialog::getColor(Qt::black, this, "Text Color");
+        const auto& color = QColorDialog::getColor(Qt::black, this, tr("Text Color"));
 
         for(const auto& element : elements)
         {
@@ -282,22 +282,22 @@ void List::openElementMenu(const QPoint& position)
         }
     });
 
-    auto* alignment = menu->addMenu("Alignment");
-    alignment->addAction("Left", [elements]
+    auto* alignment = menu->addMenu(tr("Alignment"));
+    alignment->addAction(tr("Left"), [elements]
     {
         for(const auto& element : elements)
         {
            element->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
         }
     });
-    alignment->addAction("Right", [elements]
+    alignment->addAction(tr("Right"), [elements]
     {
         for(const auto& element : elements)
         {
            element->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
         }
     });
-    alignment->addAction("Center", [elements]
+    alignment->addAction(tr("Center"), [elements]
     {
         for(const auto& element : elements)
         {
