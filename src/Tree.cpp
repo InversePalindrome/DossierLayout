@@ -129,6 +129,16 @@ void Tree::insertColumn(const QString& name)
 
     headerItem()->setText(columnCount() - 1, name);
     headerItem()->setFont(columnCount() - 1, QFont("Arial", 10, QFont::Bold));
+
+    selectAll();
+
+    for(auto node : selectedItems())
+    {
+        node->setBackgroundColor(columnCount() - 1, Qt::white);
+        node->setTextColor(columnCount() - 1, Qt::black);
+    }
+
+    clearSelection();
 }
 
 void Tree::insertNode(const QString& name)
@@ -139,6 +149,12 @@ void Tree::insertNode(const QString& name)
     {
         auto* item = new QTreeWidgetItem(this, QStringList(name));
         item->setFlags(item->flags() | Qt::ItemIsEditable);
+
+        for(int column = 0; column < columnCount(); ++column)
+        {
+            item->setBackgroundColor(column, Qt::white);
+            item->setTextColor(column, Qt::black);
+        }
     }
     else
     {
@@ -146,6 +162,12 @@ void Tree::insertNode(const QString& name)
         {
            auto* item = new QTreeWidgetItem(node, QStringList(name));
            item->setFlags(item->flags() | Qt::ItemIsEditable);
+
+           for(int column = 0; column < columnCount(); ++column)
+           {
+               item->setBackgroundColor(column, Qt::white);
+               item->setTextColor(column, Qt::black);
+           }
         }
     }
 }
@@ -265,10 +287,6 @@ void Tree::initialiseNode(QTreeWidgetItem* item, QDomElement& element)
        QColor backgroundColor;
        backgroundColorStream >> backgroundColor;
        item->setBackgroundColor(column, backgroundColor);
-       if(!item->backgroundColor(column).isValid())
-       {
-          item->setBackgroundColor(column, Qt::white);
-       }
 
        QDataStream textColorStream(QByteArray::fromHex(element.attribute("textColor" + QString::number(column)).toLocal8Bit()));
        QColor textColor;

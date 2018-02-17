@@ -97,10 +97,6 @@ void Table::loadTable(const QString& fileName)
            item->setTextAlignment(Utility::ExcelToQtAlignment
            (qMakePair(cell->format().horizontalAlignment(), cell->format().verticalAlignment())));
            item->setBackgroundColor(cell->format().patternBackgroundColor());
-           if(!item->backgroundColor().isValid())
-           {
-               item->setBackgroundColor(Qt::white);
-           }
 
            setItem(row - 2, column - 2, item);
        }
@@ -150,7 +146,10 @@ void Table::insertColumn(const QString& columnName)
 
     for(int row = 0; row < rowCount(); ++row)
     {
-        setItem(row, columnCount() - 1, new QTableWidgetItem());
+        auto* item = new QTableWidgetItem();
+        item->setBackgroundColor(Qt::white);
+        item->setTextColor(Qt::black);
+        setItem(row, columnCount() - 1, item);
     }
 }
 
@@ -164,7 +163,10 @@ void Table::insertRow(const QString& rowName)
 
     for(int column = 0; column < columnCount(); ++column)
     {
-        setItem(rowCount() - 1, column, new QTableWidgetItem());
+        auto* item = new QTableWidgetItem();
+        item->setBackgroundColor(Qt::white);
+        item->setTextColor(Qt::black);
+        setItem(rowCount() - 1, column, item);
     }
 }
 

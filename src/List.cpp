@@ -95,10 +95,6 @@ void List::loadList(const QString& fileName)
             QColor backgroundColor;
             backgroundColorStream >> backgroundColor;
             element->setBackgroundColor(backgroundColor);
-            if(!element->backgroundColor().isValid())
-            {
-               element->setBackgroundColor(Qt::white);
-            }
 
             QDataStream textColorStream(QByteArray::fromHex(elementNode.attribute("textColor").toLocal8Bit()));
             QColor textColor;
@@ -138,6 +134,8 @@ void List::insertElement(const QString& name, Qt::ItemFlags flags)
 {
     auto* element = new QListWidgetItem(name, this);
     element->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable | flags);
+    element->setBackgroundColor(Qt::white);
+    element->setTextColor(Qt::black);
 
     if(flags.testFlag(Qt::ItemIsUserCheckable))
     {

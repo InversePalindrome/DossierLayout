@@ -9,16 +9,14 @@ InversePalindrome.com
 
 #include <QLabel>
 #include <QMenuBar>
+#include <QLineEdit>
 #include <QBoxLayout>
 #include <QFormLayout>
 #include <QPushButton>
 
 
 RegisterDialog::RegisterDialog(QWidget* parent) :
-    QDialog(parent, Qt::Window | Qt::WindowCloseButtonHint | Qt::WindowTitleHint),
-    userEntry(new QLineEdit()),
-    passwordEntry(new QLineEdit()),
-    rePasswordEntry(new QLineEdit())
+    QDialog(parent, Qt::Window | Qt::WindowCloseButtonHint | Qt::WindowTitleHint)
 {
     setFixedSize(600, 530);
     setWindowTitle(tr("Register - DossierLayout"));
@@ -29,8 +27,12 @@ RegisterDialog::RegisterDialog(QWidget* parent) :
     auto* loginLabel = new QLabel();
     loginLabel->setPixmap(loginIcon);
 
+    auto* userEntry = new QLineEdit();
+
+    auto* passwordEntry = new QLineEdit();
     passwordEntry->setEchoMode(QLineEdit::Password);
 
+    auto* rePasswordEntry = new QLineEdit();
     rePasswordEntry->setEchoMode(QLineEdit::Password);
 
     auto* formLayout = new QFormLayout();
@@ -53,7 +55,7 @@ RegisterDialog::RegisterDialog(QWidget* parent) :
     layout->addLayout(formLayout);
     layout->addLayout(buttonLayout);
 
-    QObject::connect(registerButton, &QPushButton::clicked, [this]
+    QObject::connect(registerButton, &QPushButton::clicked, [this, userEntry, passwordEntry, rePasswordEntry]
     {
         emit registerUser(userEntry->text(), passwordEntry->text(), rePasswordEntry->text());
     });
@@ -61,18 +63,4 @@ RegisterDialog::RegisterDialog(QWidget* parent) :
     {
         emit cancelRegistration();
     });
-}
-
-void RegisterDialog::changeEvent(QEvent* event)
-{
-
-}
-
-void RegisterDialog::closeEvent(QCloseEvent* event)
-{
-    userEntry->clear();
-    passwordEntry->clear();
-    rePasswordEntry->clear();
-
-    QDialog::closeEvent(event);
 }

@@ -8,40 +8,35 @@ InversePalindrome.com
 #include "LoginDialog.hpp"
 
 #include <QLabel>
+#include <QMenuBar>
+#include <QLineEdit>
 #include <QBoxLayout>
 #include <QFormLayout>
 #include <QPushButton>
 
 
 LoginDialog::LoginDialog(QWidget* parent) :
-    QDialog(parent, Qt::Window | Qt::WindowCloseButtonHint | Qt::WindowTitleHint),
-    menuBar(new QMenuBar(this)),
-    userEntry(new QLineEdit()),
-    passwordEntry(new QLineEdit())
+    QDialog(parent, Qt::Window | Qt::WindowCloseButtonHint | Qt::WindowTitleHint)
 {
     setFixedSize(600, 480);
     setWindowTitle(tr("Login - DossierLayout"));
 
+    auto* menuBar = new QMenuBar(this);
+    auto* settings = menuBar->addAction(tr("Settings"));
+
     auto* layout = new QVBoxLayout(this);
     layout->setMenuBar(menuBar);
 
-    auto* language = menuBar->addMenu(tr("Language"));
-    language->addAction(QIcon(":/Resources/English.png"), "English", [this]
-    {
-       emit changeLanguage("English");
-    });
-    language->addAction(QIcon(":/Resources/Spanish.png"), "Español", [this]
-    {
-       emit changeLanguage("Español");
-    });
-
-    auto* logoLabel = new QLabel();
+    auto* logoLabel = new QLabel(this);
 
     QPixmap logoPicture(":/Resources/DossierLayoutIcon.png");
     logoPicture = logoPicture.scaledToHeight(250);
 
     logoLabel->setPixmap(logoPicture);
 
+    auto* userEntry = new QLineEdit(this);
+
+    auto* passwordEntry = new QLineEdit(this);
     passwordEntry->setEchoMode(QLineEdit::Password);
 
     auto* formLayout = new QFormLayout();
@@ -60,7 +55,7 @@ LoginDialog::LoginDialog(QWidget* parent) :
     layout->addLayout(formLayout);
     layout->addLayout(layoutButton);
 
-    QObject::connect(loginButton, &QPushButton::clicked, [this]
+    QObject::connect(loginButton, &QPushButton::clicked, [this, userEntry, passwordEntry]
     {
         emit loginUser(userEntry->text(), passwordEntry->text());
     });
@@ -68,20 +63,8 @@ LoginDialog::LoginDialog(QWidget* parent) :
     {
         emit registerUser();
     });
-}
-
-void LoginDialog::changeEvent(QEvent* event)
-{
-    if(event->type() == QEvent::LanguageChange)
+    QObject::connect(settings, &QAction::triggered, [this]
     {
-
-    }
-}
-
-void LoginDialog::closeEvent(QCloseEvent* event)
-{
-    userEntry->clear();
-    passwordEntry->clear();
-
-    QDialog::closeEvent(event);
+        emit openSettings();
+    });
 }
