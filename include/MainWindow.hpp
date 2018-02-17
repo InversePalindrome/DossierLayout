@@ -25,9 +25,11 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    MainWindow();
+    MainWindow(const QString& user);
+    ~MainWindow();
 
     void load(const QString& user);
+    void save();
 
 private:
     QGraphicsView* view;
@@ -37,9 +39,6 @@ private:
 
     QString user;
     QList<QMetaObject::Connection> connections;
-
-    virtual void changeEvent(QEvent* event) override;
-    virtual void closeEvent(QCloseEvent* event) override;
 
     void setupListFunctions(const List* list);
     void setupTableFunctions(const Table* table);
@@ -51,6 +50,7 @@ signals:
     void loadDataStructure(const QString& fileName);
     void saveDataStructure(const QString& fileName);
     void print();
+    void exit();
 
     void insertElement(const QString& name, Qt::ItemFlags flags);
     void insertColumn(const QString& name);
@@ -73,6 +73,4 @@ signals:
 
     void merge();
     void split();
-
-    void exit();
 };
