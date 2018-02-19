@@ -17,7 +17,6 @@ InversePalindrome.com
 
 Application::Application(int& argc, char** argv) :
     QApplication(argc, argv),
-    users("Users.xml"),
     splashScreen(QPixmap(":/Resources/InversePalindromeLogo.jpg")),
     translator(new QTranslator(this))
 {

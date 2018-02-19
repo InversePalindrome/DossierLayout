@@ -14,6 +14,7 @@ InversePalindrome.com
 #include <QLabel>
 #include <QCheckBox>
 #include <QBoxLayout>
+#include <QCompleter>
 #include <QFormLayout>
 #include <QPushButton>
 #include <QToolButton>
@@ -31,6 +32,7 @@ MainWindow::MainWindow(const QString& user) :
     menuBar(new QMenuBar(this)),
     toolBar(new QToolBar(this)),
     tabBar(new QTabWidget(this)),
+    searchBar(new QLineEdit(this)),
     user(user)
 {
     setMinimumSize(2048, 1536);
@@ -41,6 +43,11 @@ MainWindow::MainWindow(const QString& user) :
 
     centralWidget()->setLayout(new QVBoxLayout());
     centralWidget()->layout()->addWidget(tabBar);
+
+    menuBar->setCornerWidget(searchBar);
+
+    searchBar->setPlaceholderText("🔍");
+    searchBar->setFont(QFont("Seqoe UI Symbol"));
 
     auto* addButton = new QToolButton(this);
     addButton->setText("+");
@@ -55,7 +62,7 @@ MainWindow::MainWindow(const QString& user) :
 
     QObject::connect(addButton, &QToolButton::clicked, [this, user]
     {
-        auto* addDialog =  new QDialog(this, Qt::Window | Qt::WindowCloseButtonHint | Qt::WindowTitleHint);
+        auto* addDialog = new QDialog(this, Qt::Window | Qt::WindowCloseButtonHint | Qt::WindowTitleHint);
         addDialog->setFixedSize(600, 270);
         addDialog->setWindowTitle(tr("Add Data Structure"));
 
@@ -64,16 +71,16 @@ MainWindow::MainWindow(const QString& user) :
         auto* formLayout = new QFormLayout(this);
         formLayout->addRow(tr("Name:"), nameEntry);
 
-        auto* listButton = new QRadioButton(tr("List"));
+        auto* listButton = new QRadioButton(tr("List"), this);
         listButton->setProperty("type", "List");
         listButton->setIcon(QIcon(":/Resources/List.png"));
         listButton->setChecked(true);
 
-        auto* tableButton = new QRadioButton(tr("Table"));
+        auto* tableButton = new QRadioButton(tr("Table"), this);
         tableButton->setProperty("type", "Table");
         tableButton->setIcon(QIcon(":/Resources/Table.png"));
 
-        auto* treeButton = new QRadioButton(tr("Tree"));
+        auto* treeButton = new QRadioButton(tr("Tree"), this);
         treeButton->setProperty("type", "Tree");
         treeButton->setIcon(QIcon(":/Resources/Tree.png"));
 
@@ -87,8 +94,8 @@ MainWindow::MainWindow(const QString& user) :
         radioButtonLayout->addWidget(tableButton);
         radioButtonLayout->addWidget(treeButton);
 
-        auto* addButton = new QPushButton(tr("Add"));
-        auto* cancelButton = new QPushButton(tr("Cancel"));
+        auto* addButton = new QPushButton(tr("Add"), this);
+        auto* cancelButton = new QPushButton(tr("Cancel"), this);
 
         auto* buttonLayout = new QHBoxLayout();
         buttonLayout->addWidget(addButton);
@@ -137,6 +144,8 @@ MainWindow::MainWindow(const QString& user) :
                 QDir().mkdir(user + '/' + name);
 
                 addDialog->close();
+
+                updateSearchBar();
             }
         });
         QObject::connect(cancelButton, &QPushButton::clicked, [addDialog] { addDialog->close(); });
@@ -161,6 +170,8 @@ MainWindow::MainWindow(const QString& user) :
         }
 
         connections.clear();
+        menuBar->clear();
+        toolBar->clear();
 
         const auto* list = qobject_cast<List*>(tabBar->widget(index));
         const auto* table = qobject_cast<Table*>(tabBar->widget(index));
@@ -180,12 +191,13 @@ MainWindow::MainWindow(const QString& user) :
         }
         else
         {
-            menuBar->clear();
-            toolBar->clear();
-
             auto* file =  menuBar->addMenu(tr("File"));
             file->addAction(QIcon(":/Resources/Exit.png"), tr("   Exit"), [this] { emit exit(); }, QKeySequence("Esc"));
         }
+    });
+    QObject::connect(searchBar, &QLineEdit::returnPressed, [this]
+    {
+        emit findTab(searchBar->text());
     });
 
     load(user);
@@ -246,13 +258,15 @@ void MainWindow::load(const QString& user)
 
     if(tabBar->count() == 1)
     {
-        auto* file =  menuBar->addMenu("File");
-        file->addAction(QIcon(":/Resources/Exit.png"), "   Exit", [this] { emit exit(); }, QKeySequence("Esc"));
+        auto* file =  menuBar->addMenu(tr("File"));
+        file->addAction(QIcon(":/Resources/Exit.png"), tr("   Exit"), [this] { emit exit(); }, QKeySequence("Esc"));
     }
     else if(tabBar->count() > 1)
     {
         tabBar->setCurrentIndex(1);
     }
+
+    updateSearchBar();
 }
 
 void MainWindow::save()
@@ -304,19 +318,10 @@ void MainWindow::save()
         stream << doc.toString();
         file.close();
     }
-
-    for(int i = tabBar->count() - 1; i > 0; --i)
-    {
-        tabBar->widget(i)->deleteLater();
-        tabBar->removeTab(i);
-    }
 }
 
 void MainWindow::setupListFunctions(const List* list)
 {
-    menuBar->clear();
-    toolBar->clear();
-
     auto* file = menuBar->addMenu(tr("File"));
     file->addAction(QIcon(":/Resources/Open.png"), tr("   Open"), [this]
     {
@@ -391,8 +396,8 @@ void MainWindow::setupListFunctions(const List* list)
 
     toolBar->addWidget(sortButton);
 
-    connections << QObject::connect(this, &MainWindow::loadDataStructure, list, &List::loadList);
-    connections << QObject::connect(this, &MainWindow::saveDataStructure, list, &List::saveList);
+    connections << QObject::connect(this, &MainWindow::loadDataStructure, list, &List::load);
+    connections << QObject::connect(this, &MainWindow::saveDataStructure, list, &List::save);
     connections << QObject::connect(this, &MainWindow::print, list, &List::print);
     connections << QObject::connect(this, &MainWindow::insertElement, list, &List::insertElement);
     connections << QObject::connect(this, &MainWindow::removeElement, list, &List::removeElement);
@@ -401,9 +406,6 @@ void MainWindow::setupListFunctions(const List* list)
 
 void MainWindow::setupTableFunctions(const Table* table)
 {
-    menuBar->clear();
-    toolBar->clear();
-
     auto* file = menuBar->addMenu(tr("File"));
     file->addAction(QIcon(":/Resources/Open.png"), tr("   Open"), [this]
     {
@@ -448,7 +450,7 @@ void MainWindow::setupTableFunctions(const Table* table)
     remove->addAction(QIcon(":/Resources/RemoveColumn.png"), tr("   Column"), [this] { emit removeColumn(); });
     remove->addAction(QIcon(":/Resources/RemoveRow.png"), tr("   Row"), [this] { emit removeRow(); });
 
-    auto* operationsMenu = new QMenu();
+    auto* operationsMenu = new QMenu(this);
     operationsMenu->addAction(tr("Sum"), [this] { emit getSum(); });
     operationsMenu->addAction(tr("Average"), [this] { emit getAverage(); });
     operationsMenu->addAction(tr("Min"), [this] { emit getMin(); });
@@ -486,8 +488,8 @@ void MainWindow::setupTableFunctions(const Table* table)
     toolBar->addAction(QIcon(":/Resources/Merge.png"), tr("   Merge"), [this] { emit merge(); });
     toolBar->addAction(QIcon(":/Resources/Split.png"), tr("   Split"), [this] { emit split(); });
 
-    connections << QObject::connect(this, &MainWindow::loadDataStructure, table, &Table::loadTable);
-    connections << QObject::connect(this, &MainWindow::saveDataStructure, table, &Table::saveTable);
+    connections << QObject::connect(this, &MainWindow::loadDataStructure, table, &Table::load);
+    connections << QObject::connect(this, &MainWindow::saveDataStructure, table, &Table::save);
     connections << QObject::connect(this, &MainWindow::print, table, &Table::print);
     connections << QObject::connect(this, &MainWindow::insertColumn, table, &Table::insertColumn);
     connections << QObject::connect(this, &MainWindow::insertRow, table, &Table::insertRow);
@@ -506,9 +508,6 @@ void MainWindow::setupTableFunctions(const Table* table)
 
 void MainWindow::setupTreeFunctions(const Tree* tree)
 {
-    menuBar->clear();
-    toolBar->clear();
-
     auto* file = menuBar->addMenu(tr("File"));
 
     file->addAction(QIcon(":/Resources/Open.png"), tr("   Open"), [this]
@@ -569,13 +568,28 @@ void MainWindow::setupTreeFunctions(const Tree* tree)
 
     toolBar->addWidget(sortButton);
 
-    connections << QObject::connect(this, &MainWindow::loadDataStructure, tree, &Tree::loadTree);
-    connections << QObject::connect(this, &MainWindow::saveDataStructure, tree, &Tree::saveTree);
+    connections << QObject::connect(this, &MainWindow::loadDataStructure, tree, &Tree::load);
+    connections << QObject::connect(this, &MainWindow::saveDataStructure, tree, &Tree::save);
     connections << QObject::connect(this, &MainWindow::print, tree, &Tree::print);
     connections << QObject::connect(this, &MainWindow::insertColumn, tree, &Tree::insertColumn);
     connections << QObject::connect(this, &MainWindow::insertNode, tree, &Tree::insertNode);
     connections << QObject::connect(this, &MainWindow::removeNode, tree, &Tree::removeNode);
     connections << QObject::connect(this, &MainWindow::sortColumn, tree, &Tree::sortColumn);
+}
+
+void MainWindow::updateSearchBar()
+{
+    QStringList tabNames;
+
+    for(int i = 0; i < tabBar->count(); ++i)
+    {
+        tabNames << tabBar->tabText(i);
+    }
+
+    auto* searchOptions = new QCompleter(tabNames, this);
+    searchBar->setCompleter(searchOptions);
+
+    QObject::connect(searchOptions, static_cast<void(QCompleter::*)(const QString&)>(&QCompleter::activated), this, &MainWindow::findTab);
 }
 
 bool MainWindow::dataStructureExists(const QString& name) const
@@ -589,4 +603,17 @@ bool MainWindow::dataStructureExists(const QString& name) const
     }
 
     return false;
+}
+
+void MainWindow::findTab(const QString& tabName)
+{
+    for(int i = 0; i < tabBar->count(); ++i)
+    {
+        if(tabBar->tabText(i) == tabName)
+        {
+            tabBar->setCurrentIndex(i);
+        }
+    }
+
+    searchBar->clear();
 }

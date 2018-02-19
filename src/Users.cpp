@@ -13,51 +13,19 @@ InversePalindrome.com
 #include <QDomDocument>
 
 
-Users::Users(const QString& fileName) :
+Users::Users() :
     crypto(0x0c2ad4a4acb9f023)
 {
-    loadUsers(fileName);
+    load("Users.xml");
 }
 
 Users::~Users()
 {
-    QDomDocument doc;
-
-    auto dec = doc.createProcessingInstruction("xml", "version=\"1.0\" encoding=\"UTF-8\"");
-    doc.appendChild(dec);
-
-    auto usersElement = doc.createElement("Users");
-
-    for(auto usuarioItr = users.constBegin(); usuarioItr != users.constEnd(); ++usuarioItr)
-    {
-        auto userElement = doc.createElement("User");
-
-        userElement.setAttribute("name", usuarioItr.key());
-        userElement.setAttribute("password", usuarioItr.value());
-
-        usersElement.appendChild(userElement);
-    }
-
-    doc.appendChild(usersElement);
-
-    QFile file(fileName);
-
-    if(!file.open(QIODevice::WriteOnly | QIODevice::Text))
-    {
-       return;
-    }
-    else
-    {
-        QTextStream stream(&file);
-        stream << doc.toString();
-        file.close();
-    }
+    save("Users.xml");
 }
 
-void Users::loadUsers(const QString& fileName)
+void Users::load(const QString& fileName)
 {
-    this->fileName = fileName;
-
     QDomDocument doc;
     QFile file(fileName);
 
@@ -89,6 +57,41 @@ void Users::loadUsers(const QString& fileName)
 
             users.insert(userElement.attribute("name"), userElement.attribute("password"));
         }
+    }
+}
+
+void Users::save(const QString& fileName)
+{
+    QDomDocument doc;
+
+    auto dec = doc.createProcessingInstruction("xml", "version=\"1.0\" encoding=\"UTF-8\"");
+    doc.appendChild(dec);
+
+    auto usersElement = doc.createElement("Users");
+
+    for(auto usuarioItr = users.constBegin(); usuarioItr != users.constEnd(); ++usuarioItr)
+    {
+        auto userElement = doc.createElement("User");
+
+        userElement.setAttribute("name", usuarioItr.key());
+        userElement.setAttribute("password", usuarioItr.value());
+
+        usersElement.appendChild(userElement);
+    }
+
+    doc.appendChild(usersElement);
+
+    QFile file(fileName);
+
+    if(!file.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+       return;
+    }
+    else
+    {
+        QTextStream stream(&file);
+        stream << doc.toString();
+        file.close();
     }
 }
 

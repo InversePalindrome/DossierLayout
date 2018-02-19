@@ -9,27 +9,34 @@ InversePalindrome.com
 
 
 QPair<QXlsx::Format::HorizontalAlignment, QXlsx::Format::VerticalAlignment>
-Utility::QtToExcelAlignment(int alignment)
+Utility::QtToExcelAlignment(const int alignment)
 {
-    switch(alignment)
+    if(alignment == (Qt::AlignLeft | Qt::AlignVCenter))
     {
-    case Qt::AlignLeft | Qt::AlignVCenter:
         return qMakePair(QXlsx::Format::AlignLeft, QXlsx::Format::AlignVCenter);
-    case Qt::AlignRight | Qt::AlignVCenter:
+    }
+    else if(alignment == (Qt::AlignRight | Qt::AlignVCenter))
+    {
         return qMakePair(QXlsx::Format::AlignRight, QXlsx::Format::AlignVCenter);
-    case Qt::AlignTop | Qt::AlignHCenter:
+    }
+    else if(alignment == (Qt::AlignTop | Qt::AlignHCenter))
+    {
         return qMakePair(QXlsx::Format::AlignHCenter, QXlsx::Format::AlignTop);
-    case Qt::AlignBottom | Qt::AlignHCenter:
+    }
+    else if(alignment == (Qt::AlignBottom | Qt::AlignHCenter))
+    {
         return qMakePair(QXlsx::Format::AlignHCenter, QXlsx::Format::AlignBottom);
-    case Qt::AlignCenter:
-        return qMakePair(QXlsx::Format::AlignHCenter, QXlsx::Format::AlignVCenter);
-    default:
+    }
+    else if(alignment == Qt::AlignCenter)
+    {
         return qMakePair(QXlsx::Format::AlignHCenter, QXlsx::Format::AlignVCenter);
     }
+
+    return qMakePair(QXlsx::Format::AlignHCenter, QXlsx::Format::AlignVCenter);
 }
 
-Qt::Alignment Utility::ExcelToQtAlignment(QPair<QXlsx::Format::HorizontalAlignment,
-QXlsx::Format::VerticalAlignment> alignment)
+Qt::Alignment Utility::ExcelToQtAlignment(const QPair<QXlsx::Format::HorizontalAlignment,
+QXlsx::Format::VerticalAlignment>& alignment)
 {
     if(alignment.first == QXlsx::Format::AlignLeft && alignment.second == QXlsx::Format::AlignVCenter)
     {

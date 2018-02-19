@@ -40,7 +40,7 @@ Tree::Tree(QWidget* parent, const QString& directory) :
      QObject::connect(header(), &QHeaderView::sectionClicked, [this](auto index) { header()->setSortIndicator(index, Qt::AscendingOrder);});
      QObject::connect(this, &Tree::customContextMenuRequested, this, &Tree::openNodesMenu);
 
-     loadTree(directory + "Tree.xml");
+     load(directory + "Tree.xml");
 }
 
 Tree::~Tree()
@@ -48,10 +48,10 @@ Tree::~Tree()
     QSettings settings(directory + "Header.ini", QSettings::IniFormat);
     settings.setValue("Horizontal", header()->saveState());
 
-    saveTree(directory + "Tree.xml");
+    save(directory + "Tree.xml");
 }
 
-void Tree::loadTree(const QString& fileName)
+void Tree::load(const QString& fileName)
 {
     QDomDocument doc;
     QFile file(fileName);
@@ -99,7 +99,7 @@ void Tree::loadTree(const QString& fileName)
     header()->restoreState(settings.value("Horizontal").toByteArray());
 }
 
-void Tree::saveTree(const QString& fileName)
+void Tree::save(const QString& fileName)
 {
     if(fileName.endsWith(".pdf"))
     {

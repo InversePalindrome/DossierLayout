@@ -44,7 +44,7 @@ Table::Table(QWidget* parent, const QString& directory) :
    QObject::connect(verticalHeader(), &QHeaderView::sectionDoubleClicked, this, &Table::editHeader);
    QObject::connect(this, &Table::customContextMenuRequested, this, &Table::openCellsMenu);
 
-   loadTable(directory + "Table.xlsx");
+   load(directory + "Table.xlsx");
 }
 
 Table::~Table()
@@ -56,7 +56,7 @@ Table::~Table()
    saveToExcel(directory + "Table.xlsx");
 }
 
-void Table::loadTable(const QString& fileName)
+void Table::load(const QString& fileName)
 {
    QXlsx::Document doc(fileName);
 
@@ -112,7 +112,7 @@ void Table::loadTable(const QString& fileName)
    verticalHeader()->restoreState(settings.value("Vertical").toByteArray());
 }
 
-void Table::saveTable(const QString& fileName)
+void Table::save(const QString& fileName)
 {
     if(fileName.endsWith(".pdf"))
     {
@@ -405,6 +405,8 @@ void Table::saveToExcel(const QString& fileName)
             cell->row() + height + 1, cell->column() + width + 1), format);
         }
     }
+
+    clearSelection();
 
     doc.saveAs(fileName);
 }

@@ -28,15 +28,15 @@ List::List(QWidget *parent, const QString &directory) :
 
     QObject::connect(this, &List::customContextMenuRequested, this, &List::openElementMenu);
 
-    loadList(directory + "List.xml");
+    load(directory + "List.xml");
 }
 
 List::~List()
 {
-    saveList(directory + "List.xml");
+    save(directory + "List.xml");
 }
 
-void List::loadList(const QString& fileName)
+void List::load(const QString& fileName)
 {
     QDomDocument doc;
     QFile file(fileName);
@@ -106,7 +106,7 @@ void List::loadList(const QString& fileName)
     }
 }
 
-void List::saveList(const QString& fileName)
+void List::save(const QString& fileName)
 {
     if(fileName.endsWith(".pdf"))
     {

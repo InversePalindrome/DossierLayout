@@ -24,15 +24,15 @@ RegisterDialog::RegisterDialog(QWidget* parent) :
     QPixmap loginIcon(":/Resources/Register.png");
     loginIcon = loginIcon.scaledToHeight(200);
 
-    auto* loginLabel = new QLabel();
+    auto* loginLabel = new QLabel(this);
     loginLabel->setPixmap(loginIcon);
 
-    auto* userEntry = new QLineEdit();
+    auto* userEntry = new QLineEdit(this);
 
-    auto* passwordEntry = new QLineEdit();
+    auto* passwordEntry = new QLineEdit(this);
     passwordEntry->setEchoMode(QLineEdit::Password);
 
-    auto* rePasswordEntry = new QLineEdit();
+    auto* rePasswordEntry = new QLineEdit(this);
     rePasswordEntry->setEchoMode(QLineEdit::Password);
 
     auto* formLayout = new QFormLayout();
@@ -40,8 +40,8 @@ RegisterDialog::RegisterDialog(QWidget* parent) :
     formLayout->addRow(tr("Password:"), passwordEntry);
     formLayout->addRow(tr("Re-Passsword:"), rePasswordEntry);
 
-    auto* registerButton = new QPushButton(tr("Register"));
-    auto* cancelButton = new QPushButton(tr("Cancel"));
+    auto* registerButton = new QPushButton(tr("Register"), this);
+    auto* cancelButton = new QPushButton(tr("Cancel"), this);
 
     auto* buttonLayout = new QHBoxLayout();
     buttonLayout->addWidget(registerButton);

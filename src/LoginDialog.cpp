@@ -18,7 +18,7 @@ InversePalindrome.com
 LoginDialog::LoginDialog(QWidget* parent) :
     QDialog(parent, Qt::Window | Qt::WindowCloseButtonHint | Qt::WindowTitleHint)
 {
-    setFixedSize(600, 480);
+    setFixedSize(600, 580);
     setWindowTitle(tr("Login - DossierLayout"));
 
     auto* menuBar = new QMenuBar(this);
@@ -42,8 +42,8 @@ LoginDialog::LoginDialog(QWidget* parent) :
     auto* formLayout = new QFormLayout();
     formLayout->addRow(tr("Username:"), userEntry);
     formLayout->addRow(tr("Password:"), passwordEntry);
-    auto* loginButton = new QPushButton(tr("Login"));
-    auto* registerButton = new QPushButton(tr("Register"));
+    auto* loginButton = new QPushButton(tr("Login"), this);
+    auto* registerButton = new QPushButton(tr("Register"), this);
 
     auto* layoutButton = new QHBoxLayout();
     layoutButton->addWidget(loginButton);
