@@ -22,8 +22,8 @@ public:
     ~Table();
 
 public slots:
-    void loadTable(const QString& fileName);
-    void saveTable(const QString& fileName);
+    void load(const QString& fileName);
+    void save(const QString& fileName);
 
     void print();
 

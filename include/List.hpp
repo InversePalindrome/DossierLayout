@@ -19,8 +19,8 @@ public:
     ~List();
 
 public slots:
-    void loadList(const QString& fileName);
-    void saveList(const QString& fileName);
+    void load(const QString& fileName);
+    void save(const QString& fileName);
 
     void print();
 

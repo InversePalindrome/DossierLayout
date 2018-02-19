@@ -15,6 +15,7 @@ InversePalindrome.com
 #include <QString>
 #include <QMenuBar>
 #include <QToolBar>
+#include <QLineEdit>
 #include <QTabWidget>
 #include <QMainWindow>
 #include <QGraphicsView>
@@ -36,6 +37,7 @@ private:
     QMenuBar* menuBar;
     QToolBar* toolBar;
     QTabWidget* tabBar;
+    QLineEdit* searchBar;
 
     QString user;
     QList<QMetaObject::Connection> connections;
@@ -44,7 +46,12 @@ private:
     void setupTableFunctions(const Table* table);
     void setupTreeFunctions(const Tree* tree);
 
+    void updateSearchBar();
+
     bool dataStructureExists(const QString& name) const;
+
+private slots:
+    void findTab(const QString& tabName);
 
 signals:
     void loadDataStructure(const QString& fileName);

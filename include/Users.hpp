@@ -16,10 +16,11 @@ InversePalindrome.com
 class Users
 {
 public:
-    Users(const QString& fileName);
+    Users();
     ~Users();
 
-    void loadUsers(const QString& fileName);
+    void load(const QString& fileName);
+    void save(const QString& fileName);
 
     void addUser(const QString& user, const QString& password);
 
@@ -27,7 +28,6 @@ public:
     bool isRegistrationValid(const QString& user);
 
 private:
-    QString fileName;
     QMap<QString, QString> users;
 
     SimpleCrypt crypto;

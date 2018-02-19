@@ -21,8 +21,8 @@ public:
     ~Tree();
 
 public slots:
-    void loadTree(const QString& fileName);
-    void saveTree(const QString& fileName);
+    void load(const QString& fileName);
+    void save(const QString& fileName);
 
     void print();
 
