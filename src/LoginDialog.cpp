@@ -8,24 +8,20 @@ InversePalindrome.com
 #include "LoginDialog.hpp"
 
 #include <QLabel>
-#include <QMenuBar>
 #include <QLineEdit>
 #include <QBoxLayout>
 #include <QFormLayout>
 #include <QPushButton>
+#include <QToolButton>
 
 
 LoginDialog::LoginDialog(QWidget* parent) :
     QDialog(parent, Qt::Window | Qt::WindowCloseButtonHint | Qt::WindowTitleHint)
 {
-    setFixedSize(600, 580);
+    setFixedSize(700, 520);
     setWindowTitle(tr("Login - DossierLayout"));
 
-    auto* menuBar = new QMenuBar(this);
-    auto* settings = menuBar->addAction(tr("Settings"));
-
     auto* layout = new QVBoxLayout(this);
-    layout->setMenuBar(menuBar);
 
     auto* logoLabel = new QLabel(this);
 
@@ -42,12 +38,16 @@ LoginDialog::LoginDialog(QWidget* parent) :
     auto* formLayout = new QFormLayout();
     formLayout->addRow(tr("Username:"), userEntry);
     formLayout->addRow(tr("Password:"), passwordEntry);
+
     auto* loginButton = new QPushButton(tr("Login"), this);
     auto* registerButton = new QPushButton(tr("Register"), this);
+    auto* settingsButton = new QToolButton(this);
+    settingsButton->setIcon(QIcon(":/Resources/Settings.png"));
 
     auto* layoutButton = new QHBoxLayout();
     layoutButton->addWidget(loginButton);
     layoutButton->addWidget(registerButton);
+    layoutButton->addWidget(settingsButton);
 
     layout->addSpacing(15);
     layout->addWidget(logoLabel, 0, Qt::AlignCenter);
@@ -63,7 +63,7 @@ LoginDialog::LoginDialog(QWidget* parent) :
     {
         emit registerUser();
     });
-    QObject::connect(settings, &QAction::triggered, [this]
+    QObject::connect(settingsButton, &QPushButton::clicked, [this]
     {
         emit openSettings();
     });

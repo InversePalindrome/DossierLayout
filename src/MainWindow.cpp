@@ -128,18 +128,7 @@ MainWindow::MainWindow(const QString& user) :
             }
             else
             {
-                if(type == "List")
-                {
-                   tabBar->addTab(new List(this, user + '/' + name + '/'), QIcon(":/Resources/List.png"), name);
-                }
-                else if(type == "Table")
-                {
-                   tabBar->addTab(new Table(this, user + '/' + name + '/'), QIcon(":/Resources/Table.png"), name);
-                }
-                else if(type == "Tree")
-                {
-                   tabBar->addTab(new Tree(this, user + '/' + name + '/'), QIcon(":/Resources/Tree.png"), name);
-                }
+                addTab(type, name);
 
                 QDir().mkdir(user + '/' + name);
 
@@ -241,18 +230,7 @@ void MainWindow::load(const QString& user)
             const auto& type = dataStructureElement.attribute("type");
             const auto& name = dataStructureElement.attribute("name");
 
-            if(type == "List")
-            {
-                tabBar->addTab(new List(this, user + '/' + name + '/'), QIcon(":/Resources/List.png"), name);
-            }
-            else if(type == "Table")
-            {
-                tabBar->addTab(new Table(this, user + '/' + name + '/'), QIcon(":/Resources/Table.png"), name);
-            }
-            else if(type == "Tree")
-            {
-                tabBar->addTab(new Tree(this, user + '/' + name + '/'), QIcon(":/Resources/Tree.png"), name);
-            }
+            addTab(type, name);
         }
     }
 
@@ -590,6 +568,22 @@ void MainWindow::updateSearchBar()
     searchBar->setCompleter(searchOptions);
 
     QObject::connect(searchOptions, static_cast<void(QCompleter::*)(const QString&)>(&QCompleter::activated), this, &MainWindow::findTab);
+}
+
+void MainWindow::addTab(const QString& type, const QString& name)
+{
+    if(type == "List")
+    {
+        tabBar->addTab(new List(this, user + '/' + name + '/'), QIcon(":/Resources/List.png"), name);
+    }
+    else if(type == "Table")
+    {
+        tabBar->addTab(new Table(this, user + '/' + name + '/'), QIcon(":/Resources/Table.png"), name);
+    }
+    else if(type == "Tree")
+    {
+        tabBar->addTab(new Tree(this, user + '/' + name + '/'), QIcon(":/Resources/Tree.png"), name);
+    }
 }
 
 bool MainWindow::dataStructureExists(const QString& name) const
