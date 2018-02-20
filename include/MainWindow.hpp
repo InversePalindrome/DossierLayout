@@ -48,6 +48,8 @@ private:
 
     void updateSearchBar();
 
+    void addTab(const QString& type, const QString& name);
+
     bool dataStructureExists(const QString& name) const;
 
 private slots:
