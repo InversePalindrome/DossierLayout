@@ -12,9 +12,9 @@ InversePalindrome.com
 #include "Tree.hpp"
 #include "Table.hpp"
 
+#include <QLabel>
 #include <QMenuBar>
 #include <QToolBar>
-#include <QBoxLayout>
 #include <QMainWindow>
 #include <QGraphicsView>
 #include <QStackedWidget>
@@ -32,10 +32,11 @@ private:
 
     QMenuBar* menuBar;
     QToolBar* toolBar;
-    QStackedWidget* stackWidget;
 
     QGraphicsView* view;
-    QVBoxLayout* centralLayout;
+    QStackedWidget* stackWidget;
+    QLabel* titleIcon;
+    QLabel* titleLabel;
 
     void setupHubFunctions(Hub* hub);
     void setupListFunctions(List* list);
