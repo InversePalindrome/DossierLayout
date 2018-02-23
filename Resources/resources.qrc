@@ -1,9 +1,5 @@
 <RCC>
     <qresource prefix="/Resources">
-        <file>AddColumn.png</file>
-        <file>AddNode.png</file>
-        <file>AddRow.png</file>
-        <file>Download.png</file>
         <file>Exit.png</file>
         <file>InversePalindromeLogo.jpg</file>
         <file>List.png</file>
@@ -23,5 +19,14 @@
         <file>Register.png</file>
         <file>English.png</file>
         <file>Spanish.png</file>
+        <file>Settings.png</file>
+        <file>Download.png</file>
+        <file>DataStructureMenu.png</file>
+        <file>AddIcon.png</file>
+        <file>AddRow.png</file>
+        <file>AddColumn.png</file>
+        <file>AddNode.png</file>
+        <file>Delete.png</file>
     </qresource>
+    <qresource prefix="/"/>
 </RCC>
