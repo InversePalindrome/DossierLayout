@@ -3,7 +3,7 @@
 #InversePalindrome.com
 
 
-QT += core gui xml printsupport xlsx
+QT += core gui uitools xml printsupport xlsx
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -24,7 +24,11 @@ SOURCES += \
     ../src/SimpleCrypt.cpp \
     ../src/Table.cpp \
     ../src/Tree.cpp \
-    ../src/Users.cpp
+    ../src/Users.cpp \
+    ../src/RegisterDialog.cpp \
+    ../src/LoginDialog.cpp \
+    ../src/SettingsDialog.cpp \
+    ../src/Hub.cpp
 
 HEADERS += \
     ../include/AlignmentUtility.hpp \
@@ -34,15 +38,17 @@ HEADERS += \
     ../include/SimpleCrypt.hpp \
     ../include/Table.hpp \
     ../include/Tree.hpp \
-    ../include/Users.hpp
+    ../include/Users.hpp \
+    ../include/RegisterDialog.hpp \
+    ../include/LoginDialog.hpp \
+    ../include/SettingsDialog.hpp \
+    ../include/Hub.hpp
 
 SUBDIRS += \
     DossierLayout.pro
 
 DISTFILES += \
     ../Resources/InversePalindromeLogo.jpg \
-    ../Resources/AddColumn.png \
-    ../Resources/AddNode.png \
     ../Resources/AddRow.png \
     ../Resources/Download.png \
     ../Resources/Exit.png \
@@ -58,7 +64,12 @@ DISTFILES += \
     ../Resources/Sort.png \
     ../Resources/Split.png \
     ../Resources/Table.png \
-    ../Resources/Tree.png
+    ../Resources/Tree.png \
+    ../src/LoginDialog
 
 RESOURCES += \
-    ../Resources/resources.qrc
+    ../Resources/resources.qrc \
+    ../Translations/translations.qrc \
+    ../Styles/breeze.qrc
+
+TRANSLATIONS = ../Translations/spanish.ts
