@@ -21,7 +21,6 @@ public:
     Table(QWidget* parent, const QString& directory);
     ~Table();
 
-public slots:
     void load(const QString& fileName);
     void save(const QString& fileName);
 

@@ -20,7 +20,6 @@ public:
     Tree(QWidget* parent, const QString& directory);
     ~Tree();
 
-public slots:
     void load(const QString& fileName);
     void save(const QString& fileName);
 

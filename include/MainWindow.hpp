@@ -7,18 +7,17 @@ InversePalindrome.com
 
 #pragma once
 
-#include "Tree.hpp"
+#include "Hub.hpp"
 #include "List.hpp"
+#include "Tree.hpp"
 #include "Table.hpp"
 
-#include <QList>
-#include <QString>
 #include <QMenuBar>
 #include <QToolBar>
-#include <QLineEdit>
-#include <QTabWidget>
+#include <QBoxLayout>
 #include <QMainWindow>
 #include <QGraphicsView>
+#include <QStackedWidget>
 
 
 class MainWindow : public QMainWindow
@@ -27,59 +26,22 @@ class MainWindow : public QMainWindow
 
 public:
     MainWindow(const QString& user);
-    ~MainWindow();
-
-    void load(const QString& user);
-    void save();
 
 private:
-    QGraphicsView* view;
+    QString user;
+
     QMenuBar* menuBar;
     QToolBar* toolBar;
-    QTabWidget* tabBar;
-    QLineEdit* searchBar;
+    QStackedWidget* stackWidget;
 
-    QString user;
-    QList<QMetaObject::Connection> connections;
+    QGraphicsView* view;
+    QVBoxLayout* centralLayout;
 
-    void setupListFunctions(const List* list);
-    void setupTableFunctions(const Table* table);
-    void setupTreeFunctions(const Tree* tree);
-
-    void updateSearchBar();
-
-    void addTab(const QString& type, const QString& name);
-
-    bool dataStructureExists(const QString& name) const;
-
-private slots:
-    void findTab(const QString& tabName);
+    void setupHubFunctions(Hub* hub);
+    void setupListFunctions(List* list);
+    void setupTableFunctions(Table* table);
+    void setupTreeFunctions(Tree* tree);
 
 signals:
-    void loadDataStructure(const QString& fileName);
-    void saveDataStructure(const QString& fileName);
-    void print();
     void exit();
-
-    void insertElement(const QString& name, Qt::ItemFlags flags);
-    void insertColumn(const QString& name);
-    void insertRow(const QString& name);
-    void insertNode(const QString& name);
-
-    void removeElement();
-    void removeColumn();
-    void removeRow();
-    void removeNode();
-
-    void getSum();
-    void getAverage();
-    void getMin();
-    void getMax();
-    void getCount();
-
-    void sortColumn(Qt::SortOrder order);
-    void sortRow(Qt::SortOrder order);
-
-    void merge();
-    void split();
 };

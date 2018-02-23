@@ -18,14 +18,12 @@ public:
     List(QWidget* parent, const QString& directory);
     ~List();
 
-public slots:
     void load(const QString& fileName);
     void save(const QString& fileName);
 
     void print();
 
     void insertElement(const QString& name, Qt::ItemFlags flags);
-
     void removeElement();
 
     void sort(Qt::SortOrder order);
