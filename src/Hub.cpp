@@ -189,7 +189,7 @@ QGroupBox* Hub::createDataStructureSelector(const QString& translatedType, const
 void Hub::addDataStructure(const QString& type, const QString& name)
 {
     auto* dataButton = new QToolButton(this);
-    dataButton->setFixedSize(200, 200);
+    dataButton->setMinimumSize(200, 200);
     dataButton->setIcon(QIcon(":/Resources/" + type + ".png"));
     dataButton->setIconSize(QSize(150, 150));
     dataButton->setText(name);

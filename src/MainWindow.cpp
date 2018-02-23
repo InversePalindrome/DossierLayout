@@ -8,11 +8,11 @@ InversePalindrome.com
 #include "MainWindow.hpp"
 
 #include <QDir>
-#include <QLabel>
 #include <QDialog>
 #include <QCheckBox>
 #include <QLineEdit>
 #include <QCompleter>
+#include <QBoxLayout>
 #include <QFormLayout>
 #include <QPushButton>
 #include <QToolButton>
@@ -27,9 +27,10 @@ MainWindow::MainWindow(const QString& user) :
     user(user),
     menuBar(new QMenuBar(this)),
     toolBar(new QToolBar(this)),
-    stackWidget(new QStackedWidget(this)),
     view(new QGraphicsView(this)),
-    centralLayout(new QVBoxLayout(view))
+    stackWidget(new QStackedWidget(this)),
+    titleIcon(new QLabel(this)),
+    titleLabel(new QLabel(this))
 {
     setMinimumSize(2048, 1536);
     setMenuBar(menuBar);
@@ -38,6 +39,19 @@ MainWindow::MainWindow(const QString& user) :
     setAttribute(Qt::WA_DeleteOnClose);
     setCentralWidget(view);
 
+    QPixmap icon(":/Resources/User.png");
+    icon = icon.scaledToHeight(64);
+
+    titleIcon->setPixmap(icon);
+    titleLabel->setText(user);
+    titleLabel->setFont(QFont("MS Shell Dlg 2", 10, QFont::Bold));
+
+    auto* titleLayout = new QHBoxLayout();
+    titleLayout->addWidget(titleIcon, 0, Qt::AlignRight);
+    titleLayout->addWidget(titleLabel, 0, Qt::AlignLeft);
+
+    auto* centralLayout = new QVBoxLayout(view);
+    centralLayout->addLayout(titleLayout);
     centralLayout->addWidget(stackWidget);
 
     auto* hub = new Hub(user, this);
@@ -79,17 +93,8 @@ void MainWindow::setupHubFunctions(Hub* hub)
         QPixmap icon(":/Resources/" + type + ".png");
         icon = icon.scaledToHeight(64);
 
-        auto* titleIcon = new QLabel(this);
         titleIcon->setPixmap(icon);
-
-        auto* titleLabel = new QLabel(name, this);
-        titleLabel->setFont(QFont("MS Shell Dlg 2", 10, QFont::Bold));
-
-        auto* titleLayout = new QHBoxLayout();
-        titleLayout->addWidget(titleIcon, 0, Qt::AlignRight);
-        titleLayout->addWidget(titleLabel, 0, Qt::AlignLeft);
-
-        centralLayout->insertLayout(0, titleLayout);
+        titleLabel->setText(name);
 
         if(type == "List")
         {
@@ -118,7 +123,7 @@ void MainWindow::setupHubFunctions(Hub* hub)
 
         stackWidget->setCurrentIndex(1);
 
-        QObject::connect(menuButton, &QToolButton::clicked, [this, searchBar, menuButton, titleLayout, titleIcon, titleLabel]
+        QObject::connect(menuButton, &QToolButton::clicked, [this, searchBar, menuButton]
         {
             menuBar->clear();
             toolBar->clear();
@@ -127,10 +132,11 @@ void MainWindow::setupHubFunctions(Hub* hub)
             menuButton->hide();
             searchBar->show();
 
-            centralLayout->removeItem(titleLayout);
-            titleLayout->deleteLater();
-            titleIcon->deleteLater();
-            titleLabel->deleteLater();
+            QPixmap icon(":/Resources/User.png");
+            icon = icon.scaledToHeight(64);
+
+            titleIcon->setPixmap(icon);
+            titleLabel->setText(user);
 
             stackWidget->currentWidget()->deleteLater();
             stackWidget->removeWidget(stackWidget->widget(1));
