@@ -141,7 +141,7 @@ void Table::insertColumn(const QString& columnName)
     QTableWidget::insertColumn(columnCount());
 
     auto* header = new QTableWidgetItem(columnName);
-    header->setFont(QFont("Arial", 10, QFont::Bold));
+    header->setFont(QFont("Ms Shell Dlg 2", 8, QFont::Bold));
     setHorizontalHeaderItem(columnCount() - 1, header);
 
     for(int row = 0; row < rowCount(); ++row)
@@ -158,7 +158,7 @@ void Table::insertRow(const QString& rowName)
     QTableWidget::insertRow(rowCount());
 
     auto* header = new QTableWidgetItem(rowName);
-    header->setFont(QFont("Arial", 10, QFont::Bold));
+    header->setFont(QFont("MS Shell Dlg 2", 8, QFont::Bold));
     setVerticalHeaderItem(rowCount() - 1, header);
 
     for(int column = 0; column < columnCount(); ++column)

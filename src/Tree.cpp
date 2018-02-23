@@ -128,7 +128,7 @@ void Tree::insertColumn(const QString& name)
     setColumnCount(columnCount() + 1);
 
     headerItem()->setText(columnCount() - 1, name);
-    headerItem()->setFont(columnCount() - 1, QFont("Arial", 10, QFont::Bold));
+    headerItem()->setFont(columnCount() - 1, QFont("MS Shell Dlg 2", 8, QFont::Bold));
 
     selectAll();
 
