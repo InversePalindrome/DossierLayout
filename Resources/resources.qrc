@@ -27,6 +27,7 @@
         <file>AddColumn.png</file>
         <file>AddNode.png</file>
         <file>Delete.png</file>
+        <file>User.png</file>
     </qresource>
     <qresource prefix="/"/>
 </RCC>
