@@ -197,7 +197,7 @@ void Hub::addDataStructure(const QString& type, const QString& name)
     dataButton->setPopupMode(QToolButton::InstantPopup);
     dataButton->setProperty("type", type);
 
-    dataButtons->addButton(dataButton, qHash(name));
+    dataButtons->addButton(dataButton, qHash(name.toLower()));
 
     dataStructureModel->setStringList(dataStructureModel->stringList() << name);
 
@@ -215,22 +215,29 @@ void Hub::addDataStructure(const QString& type, const QString& name)
     });
     QObject::connect(deleteAction, &QAction::triggered, [this, dataButton, name]
     {
-        dataButton->deleteLater();
+        QMessageBox deleteMessage(QMessageBox::Question, tr("Delete"), tr("Do you want to remove ") + '"' + name + "\"?", QMessageBox::Yes | QMessageBox::No, this);
+        deleteMessage.setButtonText(QMessageBox::Yes, tr("Yes"));
+        deleteMessage.setButtonText(QMessageBox::No, tr("No"));
 
-        auto names = dataStructureModel->stringList();
-        QMutableStringListIterator itr(names);
-
-        while(itr.hasNext())
+        if(deleteMessage.exec() == QMessageBox::Yes)
         {
-            if(itr.next() == name)
-            {
-                itr.remove();
-            }
+           dataButton->deleteLater();
+
+           auto names = dataStructureModel->stringList();
+           QMutableStringListIterator itr(names);
+
+           while(itr.hasNext())
+           {
+              if(itr.next() == name)
+              {
+                 itr.remove();
+              }
+           }
+
+           dataStructureModel->setStringList(names);
+
+           QDir(user + '/' + name).removeRecursively();
         }
-
-        dataStructureModel->setStringList(names);
-
-        QDir(user + '/' + name).removeRecursively();
     });
 }
 

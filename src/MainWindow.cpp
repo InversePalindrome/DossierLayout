@@ -160,7 +160,7 @@ void MainWindow::setupListFunctions(List* list)
     }, QKeySequence::Open);
     file->addAction(QIcon(":/Resources/Download.png"), tr("   Save as"), [this, list]
     {
-        list->save(QFileDialog::getSaveFileName(this, tr("Save as"), "", tr("List (*.pdf .xml)")));
+        list->save(QFileDialog::getSaveFileName(this, tr("Save as"), "", tr("List") + " (*.pdf .xml)"));
     }, QKeySequence::Save);
     file->addSeparator();
     file->addAction(QIcon(":/Resources/Print.png"), tr("   Print"), [list] { list->print(); }, QKeySequence::Print);
@@ -232,11 +232,11 @@ void MainWindow::setupTableFunctions(Table* table)
     auto* file = menuBar->addMenu(tr("File"));
     file->addAction(QIcon(":/Resources/Open.png"), tr("   Open"), [this, table]
     {
-        table->load(QFileDialog::getOpenFileName(this, tr("Open"), "", "Excel (*.xlsx)"));
+        table->load(QFileDialog::getOpenFileName(this, tr("Open"), "", "Xml (*.xml)"));
     }, QKeySequence::Open);
     file->addAction(QIcon(":/Resources/Download.png"), tr("   Save as"), [this, table]
     {
-        table->save(QFileDialog::getSaveFileName(this, tr("Save as"), "", tr("Table (*.pdf .xlsx)")));
+        table->save(QFileDialog::getSaveFileName(this, tr("Save as"), "", tr("Table") + " (*.pdf .xlsx .xml)"));
     }, QKeySequence::Save);
     file->addSeparator();
     file->addAction(QIcon(":/Resources/Print.png"), tr("   Print"), [table] { table->print(); }, QKeySequence::Print);
@@ -321,7 +321,7 @@ void MainWindow::setupTreeFunctions(Tree* tree)
     }, QKeySequence::Open);
     file->addAction(QIcon(":/Resources/Download.png"), tr("   Save as"), [this, tree]
     {
-        tree->save(QFileDialog::getSaveFileName(this, tr("Save as"), "", tr("Tree (*.pdf .xml)")));
+        tree->save(QFileDialog::getSaveFileName(this, tr("Save as"), "", tr("Tree") + " (*.pdf .xml)"));
     }, QKeySequence::Save);
     file->addSeparator();
     file->addAction(QIcon(":/Resources/Print.png"), tr("   Print"), [tree] { tree->print(); }, QKeySequence::Print);

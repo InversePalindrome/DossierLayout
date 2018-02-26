@@ -44,7 +44,7 @@ Table::Table(QWidget* parent, const QString& directory) :
    QObject::connect(verticalHeader(), &QHeaderView::sectionDoubleClicked, this, &Table::editHeader);
    QObject::connect(this, &Table::customContextMenuRequested, this, &Table::openCellsMenu);
 
-   load(directory + "Table.xlsx");
+   load(directory + "Table.xml");
 }
 
 Table::~Table()
@@ -53,58 +53,85 @@ Table::~Table()
    settings.setValue("Horizontal", horizontalHeader()->saveState());
    settings.setValue("Vertical", verticalHeader()->saveState());
 
-   saveToExcel(directory + "Table.xlsx");
+   save(directory + "Table.xml");
 }
 
 void Table::load(const QString& fileName)
 {
-   QXlsx::Document doc(fileName);
+   QDomDocument doc;
+   QFile file(fileName);
 
-   setRowCount(doc.dimension().lastRow() - 1);
-   setColumnCount(doc.dimension().lastColumn() - 1);
-
-   for(int column = 2; column <= doc.dimension().lastColumn(); ++column)
+   if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
    {
-       const auto* cell = doc.cellAt(1, column);
-
-       auto* item = new QTableWidgetItem(cell->value().toString());
-       item->setFont(cell->format().font());
-       item->setTextColor(cell->format().fontColor());
-
-       setHorizontalHeaderItem(column - 2, item);
+       return;
    }
-
-   for(int row = 2; row <= doc.dimension().lastRow(); ++row)
+   else
    {
-       const auto* cell = doc.cellAt(row, 1);
-
-       auto* item = new QTableWidgetItem(cell->value().toString());
-       item->setFont(cell->format().font());
-       item->setTextColor(cell->format().fontColor());
-
-       setVerticalHeaderItem(row - 2, item);
-   }
-
-   for(int row = 2; row <= doc.dimension().lastRow(); ++row)
-   {
-       for(int column = 2; column <= doc.dimension().lastColumn(); ++column)
+       if(!doc.setContent(&file))
        {
-           const auto* cell = doc.cellAt(row, column);
+           return;
+       }
 
-           auto* item = new QTableWidgetItem(cell->value().toString());
-           item->setFont(cell->format().font());
-           item->setTextColor(cell->format().fontColor());
-           item->setTextAlignment(Utility::ExcelToQtAlignment
-           (qMakePair(cell->format().horizontalAlignment(), cell->format().verticalAlignment())));
-           item->setBackgroundColor(cell->format().patternBackgroundColor());
+       file.close();
+   }
 
-           setItem(row - 2, column - 2, item);
+   auto tableElement = doc.firstChildElement("Table");
+   setRowCount(tableElement.attribute("rowCount").toInt());
+   setColumnCount(tableElement.attribute("columnCount").toInt());
+
+   auto horizontalHeaderList = tableElement.elementsByTagName("HorizontalHeader");
+
+   for(int i = 0; i < horizontalHeaderList.count(); ++i)
+   {
+       auto header = horizontalHeaderList.at(i);
+
+       if(header.isElement())
+       {
+           auto headerElement = header.toElement();
+           auto* item = new QTableWidgetItem();
+
+           initialiseCell(item, headerElement);
+           setHorizontalHeaderItem(i, item);
        }
    }
 
-   for(const auto& mergedCell : doc.currentWorksheet()->mergedCells())
+   auto verticalHeaderList = tableElement.elementsByTagName("VerticalHeader");
+
+   for(int i = 0; i < verticalHeaderList.count(); ++i)
    {
-       setSpan(mergedCell.firstRow() - 2, mergedCell.firstColumn() - 2, mergedCell.rowCount(), mergedCell.columnCount());
+       auto header = verticalHeaderList.at(i);
+
+       if(header.isElement())
+       {
+          auto headerElement = header.toElement();
+          auto* item = new QTableWidgetItem();
+
+          initialiseCell(item, headerElement);
+          setVerticalHeaderItem(i, item);
+       }
+   }
+
+   for(int row = 0; row < rowCount(); ++row)
+   {
+       for(int column = 0; column < columnCount(); ++column)
+       {
+           setItem(row, column, new QTableWidgetItem());
+       }
+   }
+
+   auto cellList = tableElement.elementsByTagName("Cell");
+
+   for(int i = 0; i < cellList.count(); ++i)
+   {
+       auto cell = cellList.at(i);
+
+       if(cell.isElement())
+       {
+           auto cellElement = cell.toElement();
+           auto* cellItem = item(cellElement.attribute("row").toInt(), cellElement.attribute("column").toInt());
+
+           initialiseCell(cellItem, cellElement);
+       }
    }
 
    QSettings settings(directory + "Headers.ini", QSettings::IniFormat);
@@ -121,6 +148,10 @@ void Table::save(const QString& fileName)
     else if(fileName.endsWith(".xlsx"))
     {
         saveToExcel(fileName);
+    }
+    else if(fileName.endsWith(".xml"))
+    {
+        saveToXml(fileName);
     }
 }
 
@@ -149,6 +180,7 @@ void Table::insertColumn(const QString& columnName)
         auto* item = new QTableWidgetItem();
         item->setBackgroundColor(Qt::white);
         item->setTextColor(Qt::black);
+
         setItem(row, columnCount() - 1, item);
     }
 }
@@ -166,6 +198,7 @@ void Table::insertRow(const QString& rowName)
         auto* item = new QTableWidgetItem();
         item->setBackgroundColor(Qt::white);
         item->setTextColor(Qt::black);
+
         setItem(rowCount() - 1, column, item);
     }
 }
@@ -409,6 +442,115 @@ void Table::saveToExcel(const QString& fileName)
     clearSelection();
 
     doc.saveAs(fileName);
+}
+
+void Table::saveToXml(const QString& fileName)
+{
+    QDomDocument doc;
+
+    auto dec = doc.createProcessingInstruction("xml", "version=\"1.0\" encoding=\"UTF-8\"");
+    doc.appendChild(dec);
+
+    QFile file(fileName);
+
+    auto tableElement = doc.createElement("Table");
+    tableElement.setAttribute("rowCount", rowCount());
+    tableElement.setAttribute("columnCount", columnCount());
+
+    for(int column = 0; column < columnCount(); ++column)
+    {
+        const auto* cell = horizontalHeaderItem(column);
+        auto horizontalHeaderElement = doc.createElement("HorizontalHeader");
+
+        initialiseElement(cell, horizontalHeaderElement);
+
+        tableElement.appendChild(horizontalHeaderElement);
+    }
+
+    for(int row = 0; row < rowCount(); ++row)
+    {
+        const auto* cell = verticalHeaderItem(row);
+        auto verticalHeaderElement = doc.createElement("VerticalHeader");
+
+        initialiseElement(cell, verticalHeaderElement);
+
+        tableElement.appendChild(verticalHeaderElement);
+    }
+
+    selectAll();
+
+    for(const auto& cell : selectedItems())
+    {
+        auto cellElement = doc.createElement("Cell");
+
+        initialiseElement(cell, cellElement);
+
+        tableElement.appendChild(cellElement);
+    }
+
+    clearSelection();
+
+    doc.appendChild(tableElement);
+
+    if(!file.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+       return;
+    }
+    else
+    {
+        QTextStream stream(&file);
+        stream << doc.toString();
+        file.close();
+    }
+}
+
+void Table::initialiseElement(const QTableWidgetItem* item, QDomElement& element)
+{
+    element.setAttribute("text", item->text());
+    element.setAttribute("row", item->row());
+    element.setAttribute("rowSpan", rowSpan(item->row(), item->column()));
+    element.setAttribute("column", item->column());
+    element.setAttribute("columnSpan", columnSpan(item->row(), item->column()));
+
+    QByteArray fontData;
+    QDataStream fontStream(&fontData, QIODevice::ReadWrite);
+    fontStream << item->font();
+    element.setAttribute("font", QString(fontData.toHex()));
+
+    QByteArray backgroundColorData;
+    QDataStream backgroundColorStream(&backgroundColorData, QIODevice::ReadWrite);
+    backgroundColorStream << item->backgroundColor();
+    element.setAttribute("backgroundColor", QString(backgroundColorData.toHex()));
+
+    QByteArray textColorData;
+    QDataStream textColorStream(&textColorData, QIODevice::ReadWrite);
+    textColorStream << item->textColor();
+    element.setAttribute("textColor", QString(textColorData.toHex()));
+
+    element.setAttribute("alignment", QString::number(item->textAlignment()));
+}
+
+void Table::initialiseCell(QTableWidgetItem* item, QDomElement& element)
+{
+    item->setText(element.attribute("text"));
+    setSpan(item->row(), item->column(), element.attribute("rowSpan").toInt(), element.attribute("columnSpan").toInt());
+
+    QDataStream fontStream(QByteArray::fromHex(element.attribute("font").toLocal8Bit()));
+    QFont font;
+    fontStream >> font;
+    item->setFont(font);
+
+    QDataStream backgroundColorStream(QByteArray::fromHex(element.attribute("backgroundColor").toLocal8Bit()));
+    QColor backgroundColor;
+    backgroundColorStream >> backgroundColor;
+    item->setBackgroundColor(backgroundColor);
+
+    QDataStream textColorStream(QByteArray::fromHex(element.attribute("textColor").toLocal8Bit()));
+    QColor textColor;
+    textColorStream >> textColor;
+    item->setTextColor(textColor);
+
+    item->setTextAlignment(element.attribute("alignment").toInt());
 }
 
 Table::ItemList Table::takeColumn(int column)

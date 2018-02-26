@@ -13,6 +13,11 @@ InversePalindrome.com
 #include <QDomDocument>
 
 
+User::User(const QString& user) :
+    QString(user)
+{
+}
+
 Users::Users() :
     crypto(0x0c2ad4a4acb9f023)
 {
@@ -55,7 +60,7 @@ void Users::load(const QString& fileName)
         {
             auto userElement = user.toElement();
 
-            users.insert(userElement.attribute("name"), userElement.attribute("password"));
+            users.insert(User(userElement.attribute("name")), userElement.attribute("password"));
         }
     }
 }
@@ -95,16 +100,16 @@ void Users::save(const QString& fileName)
     }
 }
 
-void Users::addUser(const QString& user, const QString& password)
+void Users::addUser(const User& user, const QString& password)
 {
     users.insert(user, crypto.encryptToString(password));
 
     QDir().mkdir(user);
 }
 
-bool Users::isLoginValid(const QString& user, const QString& password)
+bool Users::isLoginValid(const User& user, const QString& password)
 {
-    if(users.count(user) && password == crypto.decryptToString(users.value(user)))
+    if(users.contains(user) && password == crypto.decryptToString(users.value(user)))
     {
         return true;
     }
@@ -112,12 +117,17 @@ bool Users::isLoginValid(const QString& user, const QString& password)
     return false;
 }
 
-bool Users::isRegistrationValid(const QString& user)
+bool Users::isRegistrationValid(const User& user)
 {
-    if(!users.count(user))
+    if(!users.contains(user))
     {
         return true;
     }
 
     return false;
+}
+
+bool operator<(const User& user1, const User& user2)
+{
+    return user1.compare(user2, Qt::CaseInsensitive);
 }

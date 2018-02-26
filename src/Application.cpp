@@ -120,17 +120,17 @@ LoginDialog* Application::createLoginDialog()
 {
     auto* loginDialog = new LoginDialog();
 
-    QObject::connect(loginDialog, &LoginDialog::loginUser, [this, loginDialog](const auto& user, const auto& password)
+    QObject::connect(loginDialog, &LoginDialog::loginUser, [this, loginDialog](const auto& username, const auto& password)
     {
-        if(users.isLoginValid(user, password))
-        {
-            loginDialog->deleteLater();
-            createMainWindow(user);
-        }
-        else
+        if(!users.isLoginValid(User(username), password))
         {
             QMessageBox errorMessage(QMessageBox::Critical, tr("Error"), tr("Invalid username or password!"), QMessageBox::NoButton, loginDialog);
             errorMessage.exec();
+        }
+        else
+        {
+            loginDialog->deleteLater();
+            createMainWindow(username);
         }
     });
     QObject::connect(loginDialog, &LoginDialog::registerUser, [this, loginDialog]
@@ -165,19 +165,19 @@ RegisterDialog* Application::createRegisterDialog()
             QMessageBox errorMessage(QMessageBox::Critical, tr("Error"), tr("Password is empty!"), QMessageBox::NoButton, registerDialog);
             errorMessage.exec();
         }
-        else if(password.compare(rePassword, Qt::CaseSensitive) != 0)
+        else if(password.compare(rePassword) != 0)
         {
             QMessageBox errorMessage(QMessageBox::Critical, tr("Error"), tr("Passwords do not match!"), QMessageBox::NoButton, registerDialog);
             errorMessage.exec();
         }
-        else if(!users.isRegistrationValid(user))
+        else if(!users.isRegistrationValid(User(user)))
         {
             QMessageBox errorMessage(QMessageBox::Critical, tr("Error"), tr("Username is already taken!"), QMessageBox::NoButton, registerDialog);
             errorMessage.exec();
         }
         else
         {
-            users.addUser(user, password);
+            users.addUser(User(user), password);
 
             registerDialog->deleteLater();
             createLoginDialog();
