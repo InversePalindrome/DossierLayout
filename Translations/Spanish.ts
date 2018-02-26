@@ -128,6 +128,26 @@
         <source>   Delete</source>
         <translation>   Borrar</translation>
     </message>
+    <message>
+        <location filename="../src/Hub.cpp" line="218"/>
+        <source>Delete</source>
+        <translation>Borrar</translation>
+    </message>
+    <message>
+        <location filename="../src/Hub.cpp" line="218"/>
+        <source>Do you want to remove </source>
+        <translation>Quiere remover </translation>
+    </message>
+    <message>
+        <location filename="../src/Hub.cpp" line="219"/>
+        <source>Yes</source>
+        <translation>Si</translation>
+    </message>
+    <message>
+        <location filename="../src/Hub.cpp" line="220"/>
+        <source>No</source>
+        <translation>No</translation>
+    </message>
 </context>
 <context>
     <name>List</name>
@@ -224,23 +244,26 @@
         <translation type="vanished">Nombre:</translation>
     </message>
     <message>
+        <location filename="../src/MainWindow.cpp" line="163"/>
         <source>List</source>
-        <translation type="vanished">Lista</translation>
+        <translation>Lista</translation>
     </message>
     <message>
+        <location filename="../src/MainWindow.cpp" line="239"/>
         <source>Table</source>
-        <translation type="vanished">Tabla</translation>
+        <translation>Tabla</translation>
     </message>
     <message>
+        <location filename="../src/MainWindow.cpp" line="324"/>
         <source>Tree</source>
-        <translation type="vanished">Árbol</translation>
+        <translation>Árbol</translation>
     </message>
     <message>
         <source>Add</source>
         <translation type="vanished">Agregar</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="176"/>
+        <location filename="../src/MainWindow.cpp" line="182"/>
         <source>Cancel</source>
         <translation>Cancelar</translation>
     </message>
@@ -265,66 +288,65 @@
         <translation type="vanished">Esta seguro de remover </translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="150"/>
-        <location filename="../src/MainWindow.cpp" line="226"/>
-        <location filename="../src/MainWindow.cpp" line="310"/>
+        <location filename="../src/MainWindow.cpp" line="156"/>
+        <location filename="../src/MainWindow.cpp" line="232"/>
+        <location filename="../src/MainWindow.cpp" line="316"/>
         <source>File</source>
         <translation>Archivo</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="304"/>
+        <location filename="../src/MainWindow.cpp" line="310"/>
         <source>   Merge</source>
         <translation>   Unir</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="305"/>
+        <location filename="../src/MainWindow.cpp" line="311"/>
         <source>   Split</source>
         <translation>   Separar</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="337"/>
-        <location filename="../src/MainWindow.cpp" line="351"/>
+        <location filename="../src/MainWindow.cpp" line="343"/>
+        <location filename="../src/MainWindow.cpp" line="357"/>
         <source>   Node</source>
         <translation>   Nodo</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="61"/>
+        <location filename="../src/MainWindow.cpp" line="75"/>
         <source>Exit</source>
         <translation>Salir</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="71"/>
+        <location filename="../src/MainWindow.cpp" line="85"/>
         <source>Menu</source>
         <translatorcomment>Menú</translatorcomment>
         <translation>Menu</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="153"/>
-        <location filename="../src/MainWindow.cpp" line="229"/>
-        <location filename="../src/MainWindow.cpp" line="314"/>
+        <location filename="../src/MainWindow.cpp" line="159"/>
+        <location filename="../src/MainWindow.cpp" line="235"/>
+        <location filename="../src/MainWindow.cpp" line="320"/>
         <source>Open</source>
         <translation>Abrir</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="157"/>
-        <location filename="../src/MainWindow.cpp" line="233"/>
-        <location filename="../src/MainWindow.cpp" line="318"/>
+        <location filename="../src/MainWindow.cpp" line="163"/>
+        <location filename="../src/MainWindow.cpp" line="239"/>
+        <location filename="../src/MainWindow.cpp" line="324"/>
         <source>Save as</source>
         <translation>Guardar como</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="157"/>
         <source>List (*.pdf .xml)</source>
-        <translation>Lista (*.pdf .xml)</translation>
+        <translation type="vanished">Lista (*.pdf .xml)</translation>
     </message>
     <message>
         <source>Print</source>
         <translation type="vanished">Imprimir</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="163"/>
-        <location filename="../src/MainWindow.cpp" line="239"/>
-        <location filename="../src/MainWindow.cpp" line="324"/>
+        <location filename="../src/MainWindow.cpp" line="169"/>
+        <location filename="../src/MainWindow.cpp" line="245"/>
+        <location filename="../src/MainWindow.cpp" line="330"/>
         <source>Insert</source>
         <translation>Insertar</translation>
     </message>
@@ -333,54 +355,53 @@
         <translation type="vanished">Elemento</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="168"/>
+        <location filename="../src/MainWindow.cpp" line="174"/>
         <source>Insert Element</source>
         <translation>Insertar Elemento</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="170"/>
+        <location filename="../src/MainWindow.cpp" line="176"/>
         <source>Name</source>
         <translation>Nombre</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="173"/>
+        <location filename="../src/MainWindow.cpp" line="179"/>
         <source>Checkable</source>
         <translation>Chequeable</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="207"/>
-        <location filename="../src/MainWindow.cpp" line="265"/>
-        <location filename="../src/MainWindow.cpp" line="350"/>
+        <location filename="../src/MainWindow.cpp" line="213"/>
+        <location filename="../src/MainWindow.cpp" line="271"/>
+        <location filename="../src/MainWindow.cpp" line="356"/>
         <source>Remove</source>
         <translation>Remover</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="211"/>
-        <location filename="../src/MainWindow.cpp" line="285"/>
-        <location filename="../src/MainWindow.cpp" line="289"/>
-        <location filename="../src/MainWindow.cpp" line="354"/>
+        <location filename="../src/MainWindow.cpp" line="217"/>
+        <location filename="../src/MainWindow.cpp" line="291"/>
+        <location filename="../src/MainWindow.cpp" line="295"/>
+        <location filename="../src/MainWindow.cpp" line="360"/>
         <source>Ascending</source>
         <translation>Ascendiendo</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="212"/>
-        <location filename="../src/MainWindow.cpp" line="286"/>
-        <location filename="../src/MainWindow.cpp" line="290"/>
-        <location filename="../src/MainWindow.cpp" line="355"/>
+        <location filename="../src/MainWindow.cpp" line="218"/>
+        <location filename="../src/MainWindow.cpp" line="292"/>
+        <location filename="../src/MainWindow.cpp" line="296"/>
+        <location filename="../src/MainWindow.cpp" line="361"/>
         <source>Descending</source>
         <translation>Descendiendo</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="219"/>
-        <location filename="../src/MainWindow.cpp" line="297"/>
-        <location filename="../src/MainWindow.cpp" line="362"/>
+        <location filename="../src/MainWindow.cpp" line="225"/>
+        <location filename="../src/MainWindow.cpp" line="303"/>
+        <location filename="../src/MainWindow.cpp" line="368"/>
         <source>Sort  </source>
         <translation>Ordenar  </translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="233"/>
         <source>Table (*.pdf .xlsx)</source>
-        <translation>Tabla (*.pdf .xlsx)</translation>
+        <translation type="vanished">Tabla (*.pdf .xlsx)</translation>
     </message>
     <message>
         <source>    Print</source>
@@ -391,26 +412,26 @@
         <translation type="vanished">   Salir</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="240"/>
-        <location filename="../src/MainWindow.cpp" line="266"/>
-        <location filename="../src/MainWindow.cpp" line="325"/>
+        <location filename="../src/MainWindow.cpp" line="246"/>
+        <location filename="../src/MainWindow.cpp" line="272"/>
+        <location filename="../src/MainWindow.cpp" line="331"/>
         <source>   Column</source>
         <translation>   Columna</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="252"/>
-        <location filename="../src/MainWindow.cpp" line="267"/>
+        <location filename="../src/MainWindow.cpp" line="258"/>
+        <location filename="../src/MainWindow.cpp" line="273"/>
         <source>   Row</source>
         <translation>   Fila</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="284"/>
+        <location filename="../src/MainWindow.cpp" line="290"/>
         <source>Column</source>
         <translation>Columna</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="244"/>
-        <location filename="../src/MainWindow.cpp" line="329"/>
+        <location filename="../src/MainWindow.cpp" line="250"/>
+        <location filename="../src/MainWindow.cpp" line="335"/>
         <source>Insert Column</source>
         <translation>Insertar Columna</translation>
     </message>
@@ -419,35 +440,35 @@
         <translation type="vanished">   Salir</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="151"/>
-        <location filename="../src/MainWindow.cpp" line="227"/>
-        <location filename="../src/MainWindow.cpp" line="312"/>
+        <location filename="../src/MainWindow.cpp" line="157"/>
+        <location filename="../src/MainWindow.cpp" line="233"/>
+        <location filename="../src/MainWindow.cpp" line="318"/>
         <source>   Open</source>
         <translation>   Abrir</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="155"/>
-        <location filename="../src/MainWindow.cpp" line="231"/>
-        <location filename="../src/MainWindow.cpp" line="316"/>
+        <location filename="../src/MainWindow.cpp" line="161"/>
+        <location filename="../src/MainWindow.cpp" line="237"/>
+        <location filename="../src/MainWindow.cpp" line="322"/>
         <source>   Save as</source>
         <translation>   Guardar como</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="160"/>
-        <location filename="../src/MainWindow.cpp" line="236"/>
-        <location filename="../src/MainWindow.cpp" line="321"/>
+        <location filename="../src/MainWindow.cpp" line="166"/>
+        <location filename="../src/MainWindow.cpp" line="242"/>
+        <location filename="../src/MainWindow.cpp" line="327"/>
         <source>   Print</source>
         <translation>   Imprimir</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="164"/>
-        <location filename="../src/MainWindow.cpp" line="208"/>
+        <location filename="../src/MainWindow.cpp" line="170"/>
+        <location filename="../src/MainWindow.cpp" line="214"/>
         <source>   Element</source>
         <translation>   Elemento</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="245"/>
-        <location filename="../src/MainWindow.cpp" line="330"/>
+        <location filename="../src/MainWindow.cpp" line="251"/>
+        <location filename="../src/MainWindow.cpp" line="336"/>
         <source>Column Name</source>
         <translation>Nombre de Columna</translation>
     </message>
@@ -456,42 +477,42 @@
         <translation type="vanished">Fila</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="256"/>
+        <location filename="../src/MainWindow.cpp" line="262"/>
         <source>Insert Row</source>
         <translation>Insertar Fila</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="257"/>
+        <location filename="../src/MainWindow.cpp" line="263"/>
         <source>Row Name</source>
         <translation>Nombre de Fila</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="270"/>
+        <location filename="../src/MainWindow.cpp" line="276"/>
         <source>Sum</source>
         <translation>Suma</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="271"/>
+        <location filename="../src/MainWindow.cpp" line="277"/>
         <source>Average</source>
         <translation>Promedio</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="272"/>
+        <location filename="../src/MainWindow.cpp" line="278"/>
         <source>Min</source>
         <translation>Min</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="273"/>
+        <location filename="../src/MainWindow.cpp" line="279"/>
         <source>Max</source>
         <translation>Max</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="274"/>
+        <location filename="../src/MainWindow.cpp" line="280"/>
         <source>Count</source>
         <translation>Contar</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="281"/>
+        <location filename="../src/MainWindow.cpp" line="287"/>
         <source>Calculate  </source>
         <translation>Calcular  </translation>
     </message>
@@ -504,21 +525,20 @@
         <translation type="vanished">Separar</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="318"/>
         <source>Tree (*.pdf .xml)</source>
-        <translation>Árbol (*.pdf .xml)</translation>
+        <translation type="vanished">Árbol (*.pdf .xml)</translation>
     </message>
     <message>
         <source>Node</source>
         <translation type="vanished">Nodo</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="341"/>
+        <location filename="../src/MainWindow.cpp" line="347"/>
         <source>Insert Node</source>
         <translation>Insertar Nodo</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="342"/>
+        <location filename="../src/MainWindow.cpp" line="348"/>
         <source>Node Name</source>
         <translation>Nombre de Nodo</translation>
     </message>
@@ -604,88 +624,88 @@
 <context>
     <name>Table</name>
     <message>
-        <location filename="../src/Table.cpp" line="489"/>
-        <location filename="../src/Table.cpp" line="491"/>
-        <location filename="../src/Table.cpp" line="530"/>
+        <location filename="../src/Table.cpp" line="632"/>
+        <location filename="../src/Table.cpp" line="634"/>
+        <location filename="../src/Table.cpp" line="673"/>
         <source>Text Color</source>
         <translation>Color de Texto</translation>
     </message>
     <message>
-        <location filename="../src/Table.cpp" line="494"/>
-        <location filename="../src/Table.cpp" line="600"/>
+        <location filename="../src/Table.cpp" line="637"/>
+        <location filename="../src/Table.cpp" line="743"/>
         <source>Alignment</source>
         <translation>Alineación</translation>
     </message>
     <message>
-        <location filename="../src/Table.cpp" line="495"/>
-        <location filename="../src/Table.cpp" line="601"/>
+        <location filename="../src/Table.cpp" line="638"/>
+        <location filename="../src/Table.cpp" line="744"/>
         <source>Left</source>
         <translation>Izquierda</translation>
     </message>
     <message>
-        <location filename="../src/Table.cpp" line="496"/>
-        <location filename="../src/Table.cpp" line="608"/>
+        <location filename="../src/Table.cpp" line="639"/>
+        <location filename="../src/Table.cpp" line="751"/>
         <source>Right</source>
         <translation>Derecha</translation>
     </message>
     <message>
-        <location filename="../src/Table.cpp" line="497"/>
-        <location filename="../src/Table.cpp" line="629"/>
+        <location filename="../src/Table.cpp" line="640"/>
+        <location filename="../src/Table.cpp" line="772"/>
         <source>Center</source>
         <translation>Centro</translation>
     </message>
     <message>
-        <location filename="../src/Table.cpp" line="518"/>
+        <location filename="../src/Table.cpp" line="661"/>
         <source>Color</source>
         <translation>Color</translation>
     </message>
     <message>
-        <location filename="../src/Table.cpp" line="519"/>
+        <location filename="../src/Table.cpp" line="662"/>
         <source>Background</source>
         <translation>Fondo</translation>
     </message>
     <message>
-        <location filename="../src/Table.cpp" line="521"/>
+        <location filename="../src/Table.cpp" line="664"/>
         <source>Background Color</source>
         <translation>Color de Fondo</translation>
     </message>
     <message>
-        <location filename="../src/Table.cpp" line="528"/>
+        <location filename="../src/Table.cpp" line="671"/>
         <source>Text</source>
         <translation>Texto</translation>
     </message>
     <message>
-        <location filename="../src/Table.cpp" line="538"/>
+        <location filename="../src/Table.cpp" line="681"/>
         <source>Format</source>
         <translation>Formato</translation>
     </message>
     <message>
-        <location filename="../src/Table.cpp" line="539"/>
+        <location filename="../src/Table.cpp" line="682"/>
         <source>Currency</source>
         <translation>Moneda</translation>
     </message>
     <message>
-        <location filename="../src/Table.cpp" line="552"/>
+        <location filename="../src/Table.cpp" line="695"/>
         <source>Percentage</source>
         <translation>Porcentaje</translation>
     </message>
     <message>
-        <location filename="../src/Table.cpp" line="567"/>
+        <location filename="../src/Table.cpp" line="710"/>
         <source>Scientific</source>
         <translation>Científico</translation>
     </message>
     <message>
-        <location filename="../src/Table.cpp" line="584"/>
+        <location filename="../src/Table.cpp" line="727"/>
         <source>Number</source>
         <translation>Número</translation>
     </message>
     <message>
-        <location filename="../src/Table.cpp" line="615"/>
+        <location filename="../src/Table.cpp" line="758"/>
         <source>Top</source>
         <translation>Superior</translation>
     </message>
     <message>
-        <location filename="../src/Table.cpp" line="622"/>
+        <location filename="../src/Table.cpp" line="765"/>
         <source>Bottom</source>
         <translation>Inferior</translation>
     </message>
