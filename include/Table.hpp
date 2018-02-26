@@ -7,8 +7,9 @@ InversePalindrome.com
 
 #pragma once
 
-#include <QTableWidget>
 #include <QClipboard>
+#include <QTableWidget>
+#include <QDomDocument>
 
 
 class Table : public QTableWidget
@@ -50,6 +51,10 @@ private:
 
     void saveToPdf(const QString& fileName);
     void saveToExcel(const QString& fileName);
+    void saveToXml(const QString& fileName);
+
+    void initialiseElement(const QTableWidgetItem* item, QDomElement& element);
+    void initialiseCell(QTableWidgetItem* item, QDomElement& element);
 
     ItemList takeColumn(int column);
     ItemList takeRow(int row);

@@ -13,6 +13,12 @@ InversePalindrome.com
 #include <QString>
 
 
+class User : public QString
+{
+public:
+    explicit User(const QString& user);
+};
+
 class Users
 {
 public:
@@ -22,13 +28,15 @@ public:
     void load(const QString& fileName);
     void save(const QString& fileName);
 
-    void addUser(const QString& user, const QString& password);
+    void addUser(const User& user, const QString& password);
 
-    bool isLoginValid(const QString& user, const QString& password);
-    bool isRegistrationValid(const QString& user);
+    bool isLoginValid(const User& user, const QString& password);
+    bool isRegistrationValid(const User& user);
 
 private:
-    QMap<QString, QString> users;
+    QMap<User, QString> users;
 
     SimpleCrypt crypto;
 };
+
+bool operator<(const User& user1, const User& user2);
