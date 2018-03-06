@@ -28,6 +28,9 @@
         <file>AddNode.png</file>
         <file>Delete.png</file>
         <file>User.png</file>
+        <file>Insert.png</file>
+        <file>Remove.png</file>
+        <file>File.png</file>
     </qresource>
     <qresource prefix="/"/>
 </RCC>
