@@ -170,7 +170,6 @@ void Table::insertColumn(const QString& columnName)
 
     auto* header = new QTableWidgetItem(columnName);
     header->setFont(QFont("Ms Shell Dlg 2", 8, QFont::Bold));
-    header->setFlags(header->flags() | Qt::ItemIsSelectable);
     setHorizontalHeaderItem(columnCount() - 1, header);
 
     for(int row = 0; row < rowCount(); ++row)
@@ -189,7 +188,6 @@ void Table::insertRow(const QString& rowName)
 
     auto* header = new QTableWidgetItem(rowName);
     header->setFont(QFont("MS Shell Dlg 2", 8, QFont::Bold));
-    header->setFlags(header->flags() | Qt::ItemIsSelectable);
     setVerticalHeaderItem(rowCount() - 1, header);
 
     for(int column = 0; column < columnCount(); ++column)
@@ -381,18 +379,7 @@ bool Table::event(QEvent* event)
         {
             const auto& position = mapFromGlobal(static_cast<QTapAndHoldGesture*>(gesture)->position().toPoint());
 
-            if(horizontalHeaderItem(horizontalHeader()->logicalIndexAt(position)))
-            {
-                openHeaderMenu(position);
-            }
-            if(verticalHeaderItem(verticalHeader()->logicalIndexAt(position)))
-            {
-                openHeaderMenu(position);
-            }
-            if(itemAt(position))
-            {
-                openCellsMenu(position);
-            }
+
         }
     }
 
@@ -584,11 +571,6 @@ bool Table::compareCells(const QTableWidgetItem* first, const QTableWidgetItem* 
 void Table::openHeaderMenu(const QPoint& position)
 {
      auto* header = qobject_cast<QHeaderView*>(sender());
-
-     if(!header)
-     {
-         return;
-     }
 
      QTableWidgetItem* cell;
 

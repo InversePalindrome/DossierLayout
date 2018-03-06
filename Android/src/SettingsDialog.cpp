@@ -16,7 +16,7 @@ InversePalindrome.com
 
 
 SettingsDialog::SettingsDialog(QWidget* parent) :
-    QDialog(parent),
+    QDialog(parent, Qt::Window),
     formLayout(new QFormLayout()),
     styleLabel(new QLabel(tr("Style:"), this)),
     languageLabel(new QLabel(tr("Language:"), this)),

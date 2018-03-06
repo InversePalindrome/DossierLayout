@@ -16,7 +16,7 @@ InversePalindrome.com
 
 
 LoginDialog::LoginDialog(QWidget* parent) :
-    QDialog(parent)
+    QDialog(parent, Qt::Window)
 {
     auto* layout = new QVBoxLayout(this);
 

@@ -16,7 +16,7 @@ InversePalindrome.com
 
 
 RegisterDialog::RegisterDialog(QWidget* parent) :
-    QDialog(parent)
+    QDialog(parent, Qt::Window)
 {
     QPixmap loginIcon(":/Resources/Register.png");
     loginIcon = loginIcon.scaledToHeight(200);
