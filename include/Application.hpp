@@ -13,8 +13,8 @@ InversePalindrome.com
 #include "SettingsDialog.hpp"
 #include "RegisterDialog.hpp"
 
-#include <QApplication>
 #include <QTranslator>
+#include <QApplication>
 #include <QSplashScreen>
 
 
@@ -35,7 +35,8 @@ private:
     Users users;
 
     QSplashScreen splashScreen;
-    QTranslator* translator;
+    QTranslator* mainTranslator;
+    QTranslator* qtTranslator;
 
     void load(const QString& fileName);
 
