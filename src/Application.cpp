@@ -18,7 +18,8 @@ InversePalindrome.com
 Application::Application(int& argc, char** argv) :
     QApplication(argc, argv),
     splashScreen(QPixmap(":/Resources/InversePalindromeLogo.jpg")),
-    translator(new QTranslator(this))
+    mainTranslator(new QTranslator(this)),
+    qtTranslator(new QTranslator(this))
 {
     load("Settings.xml");
 }
@@ -48,13 +49,18 @@ void Application::changeLanguage(const QString& language)
 {
     if(language == "English")
     {
-       removeTranslator(translator);
+       removeTranslator(mainTranslator);
+       removeTranslator(qtTranslator);
     }
     else
     {
-       if(translator->load(":/Translations/" + language + ".qm"))
+       if(mainTranslator->load(":/Translations/" + language + ".qm"))
        {
-           installTranslator(translator);
+           installTranslator(mainTranslator);
+       }
+       if(qtTranslator->load(":/Translations/qt_" + language + ".qm"))
+       {
+           installTranslator(qtTranslator);
        }
     }
 }

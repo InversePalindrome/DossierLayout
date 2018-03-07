@@ -159,11 +159,15 @@ QGroupBox* Hub::createDataStructureSelector(const QString& translatedType, const
 
     QObject::connect(addButton, &QToolButton::clicked, [this, translatedType, type]
     {
-        bool ok;
-        const auto& name = QInputDialog::getText(this, tr("Add ") + translatedType, tr("Name:"), QLineEdit::EchoMode(), "", &ok);
+        auto* addDialog = new QInputDialog(this, Qt::Window | Qt::WindowCloseButtonHint | Qt::WindowTitleHint);
+        addDialog->setMinimumSize(400, 150);
+        addDialog->setWindowTitle(tr("Add") + ' ' + translatedType);
+        addDialog->setLabelText(tr("Name:"));
 
-        if(ok)
+        if(addDialog->exec() == QInputDialog::Accepted)
         {
+            const auto& name = addDialog->textValue();
+
             if(name.isEmpty())
             {
                QMessageBox errorMessage(QMessageBox::Critical, tr("Error"), tr("Name can't be empty!"), QMessageBox::NoButton, this);
@@ -201,8 +205,8 @@ void Hub::addDataStructure(const QString& type, const QString& name)
 
     dataStructureModel->setStringList(dataStructureModel->stringList() << name);
 
-    auto* openAction = new QAction(QIcon(":/Resources/Open.png"), tr("   Open"), this);
-    auto* deleteAction = new QAction(QIcon(":/Resources/Delete.png"), tr("   Delete"), this);
+    auto* openAction = new QAction(QIcon(":/Resources/Open.png"), "   " + tr("Open"), this);
+    auto* deleteAction = new QAction(QIcon(":/Resources/Delete.png"), "   " +  tr("Delete"), this);
 
     dataButton->addAction(openAction);
     dataButton->addAction(deleteAction);
@@ -216,8 +220,6 @@ void Hub::addDataStructure(const QString& type, const QString& name)
     QObject::connect(deleteAction, &QAction::triggered, [this, dataButton, name]
     {
         QMessageBox deleteMessage(QMessageBox::Question, tr("Delete"), tr("Do you want to remove ") + '"' + name + "\"?", QMessageBox::Yes | QMessageBox::No, this);
-        deleteMessage.setButtonText(QMessageBox::Yes, tr("Yes"));
-        deleteMessage.setButtonText(QMessageBox::No, tr("No"));
 
         if(deleteMessage.exec() == QMessageBox::Yes)
         {
