@@ -219,7 +219,7 @@ void Hub::addDataStructure(const QString& type, const QString& name)
     });
     QObject::connect(deleteAction, &QAction::triggered, [this, dataButton, name]
     {
-        QMessageBox deleteMessage(QMessageBox::Question, tr("Delete"), tr("Do you want to remove ") + '"' + name + "\"?", QMessageBox::Yes | QMessageBox::No, this);
+        QMessageBox deleteMessage(QMessageBox::Question, tr("Delete"), tr("Do you want to remove") + " \"" + name + "\"?", QMessageBox::Yes | QMessageBox::No, this);
 
         if(deleteMessage.exec() == QMessageBox::Yes)
         {

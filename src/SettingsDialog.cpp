@@ -14,7 +14,7 @@ InversePalindrome.com
 
 
 SettingsDialog::SettingsDialog(QWidget* parent) :
-    QDialog(parent, Qt::Window | Qt::WindowCloseButtonHint | Qt::WindowTitleHint),
+    QDialog(parent, Qt::Window | Qt::WindowCloseButtonHint | Qt::WindowMinimizeButtonHint | Qt::WindowTitleHint),
     formLayout(new QFormLayout()),
     styleLabel(new QLabel(tr("Style:"), this)),
     languageLabel(new QLabel(tr("Language:"), this)),
@@ -22,8 +22,11 @@ SettingsDialog::SettingsDialog(QWidget* parent) :
     languageChoices(new QComboBox(this)),
     doneButton(new QPushButton(tr("Done"), this))
 {
-    setFixedSize(630, 250);
+    setFixedSize(630, 500);
     setWindowTitle(tr("Settings - DossierLayout"));
+
+    auto* settingsLabel = new QLabel(this);
+    settingsLabel->setPixmap(QPixmap(":/Resources/Settings.png"));
 
     styleChoices->setProperty("0", "Regular");
     styleChoices->setProperty("1", "Light");
@@ -46,6 +49,7 @@ SettingsDialog::SettingsDialog(QWidget* parent) :
     formLayout->addRow(styleLabel, styleChoices);
     formLayout->addRow(languageLabel, languageChoices);
 
+    layout->addWidget(settingsLabel, 0, Qt::AlignCenter);
     layout->addLayout(formLayout);
     layout->addWidget(doneButton);
 

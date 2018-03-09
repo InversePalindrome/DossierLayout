@@ -16,19 +16,15 @@ InversePalindrome.com
 
 
 LoginDialog::LoginDialog(QWidget* parent) :
-    QDialog(parent, Qt::Window | Qt::WindowCloseButtonHint | Qt::WindowTitleHint)
+    QDialog(parent, Qt::Window | Qt::WindowCloseButtonHint | Qt::WindowMinimizeButtonHint | Qt::WindowTitleHint)
 {
-    setFixedSize(700, 520);
+    setFixedSize(800, 760);
     setWindowTitle(tr("Login - DossierLayout"));
 
     auto* layout = new QVBoxLayout(this);
 
     auto* logoLabel = new QLabel(this);
-
-    QPixmap logoPicture(":/Resources/DossierLayoutIcon.png");
-    logoPicture = logoPicture.scaledToHeight(250);
-
-    logoLabel->setPixmap(logoPicture);
+    logoLabel->setPixmap(QPixmap(":/Resources/DossierLayoutIcon.png"));
 
     auto* userEntry = new QLineEdit(this);
 
