@@ -1,36 +1,34 @@
 <RCC>
     <qresource prefix="/Resources">
+        <file>AddColumn.png</file>
+        <file>AddIcon.png</file>
+        <file>AddNode.png</file>
+        <file>AddRow.png</file>
+        <file>DataStructureMenu.png</file>
+        <file>Delete.png</file>
+        <file>DossierLayoutIcon.png</file>
+        <file>Download.png</file>
+        <file>English.png</file>
         <file>Exit.png</file>
+        <file>File.png</file>
+        <file>Insert.png</file>
         <file>InversePalindromeLogo.jpg</file>
         <file>List.png</file>
         <file>Merge.png</file>
         <file>Open.png</file>
         <file>Print.png</file>
+        <file>Remove.png</file>
         <file>RemoveColumn.png</file>
         <file>RemoveNode.png</file>
         <file>RemoveRow.png</file>
-        <file>resources.qrc</file>
         <file>Sigma.png</file>
         <file>Sort.png</file>
+        <file>Spanish.png</file>
         <file>Split.png</file>
         <file>Table.png</file>
         <file>Tree.png</file>
-        <file>DossierLayoutIcon.png</file>
-        <file>Register.png</file>
-        <file>English.png</file>
-        <file>Spanish.png</file>
-        <file>Settings.png</file>
-        <file>Download.png</file>
-        <file>DataStructureMenu.png</file>
-        <file>AddIcon.png</file>
-        <file>AddRow.png</file>
-        <file>AddColumn.png</file>
-        <file>AddNode.png</file>
-        <file>Delete.png</file>
         <file>User.png</file>
-        <file>Insert.png</file>
-        <file>Remove.png</file>
-        <file>File.png</file>
+        <file>Register.png</file>
+        <file>Settings.png</file>
     </qresource>
-    <qresource prefix="/"/>
 </RCC>
