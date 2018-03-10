@@ -36,36 +36,36 @@
         <translation type="vanished">Cancelar</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/Application.cpp" line="127"/>
-        <location filename="../DossierLayout/src/Application.cpp" line="160"/>
-        <location filename="../DossierLayout/src/Application.cpp" line="165"/>
-        <location filename="../DossierLayout/src/Application.cpp" line="170"/>
-        <location filename="../DossierLayout/src/Application.cpp" line="175"/>
+        <location filename="../DossierLayout/src/Application.cpp" line="133"/>
+        <location filename="../DossierLayout/src/Application.cpp" line="166"/>
+        <location filename="../DossierLayout/src/Application.cpp" line="171"/>
+        <location filename="../DossierLayout/src/Application.cpp" line="176"/>
+        <location filename="../DossierLayout/src/Application.cpp" line="181"/>
         <source>Error</source>
         <translation>Error</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/Application.cpp" line="127"/>
+        <location filename="../DossierLayout/src/Application.cpp" line="133"/>
         <source>Invalid username or password!</source>
         <translation>Nombre de usuario o contraseña invalido!</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/Application.cpp" line="160"/>
+        <location filename="../DossierLayout/src/Application.cpp" line="166"/>
         <source>Username is empty!</source>
         <translation>Nombre de usuario esta vacío!</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/Application.cpp" line="165"/>
+        <location filename="../DossierLayout/src/Application.cpp" line="171"/>
         <source>Password is empty!</source>
         <translation>Contraseña esta vacía!</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/Application.cpp" line="170"/>
+        <location filename="../DossierLayout/src/Application.cpp" line="176"/>
         <source>Passwords do not match!</source>
         <translation>Contraseñas no concuerdan!</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/Application.cpp" line="175"/>
+        <location filename="../DossierLayout/src/Application.cpp" line="181"/>
         <source>Username is already taken!</source>
         <translation>Nombre de usuario ya existe!</translation>
     </message>
@@ -93,6 +93,11 @@
         <translation>Árbol</translation>
     </message>
     <message>
+        <location filename="../DossierLayout/src/Hub.cpp" line="222"/>
+        <source>Do you want to remove</source>
+        <translation>Quiere remover</translation>
+    </message>
+    <message>
         <source>Add </source>
         <translation type="vanished">Agregar </translation>
     </message>
@@ -107,33 +112,31 @@
         <translation>Agregar</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/Hub.cpp" line="166"/>
         <source>Ok</source>
-        <translation>Listo</translation>
+        <translation type="vanished">Listo</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/Hub.cpp" line="167"/>
         <source>Cancel</source>
-        <translation>Cancelar</translation>
+        <translation type="vanished">Cancelar</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/Hub.cpp" line="175"/>
-        <location filename="../DossierLayout/src/Hub.cpp" line="180"/>
+        <location filename="../DossierLayout/src/Hub.cpp" line="173"/>
+        <location filename="../DossierLayout/src/Hub.cpp" line="178"/>
         <source>Error</source>
         <translation>Error</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/Hub.cpp" line="175"/>
+        <location filename="../DossierLayout/src/Hub.cpp" line="173"/>
         <source>Name can&apos;t be empty!</source>
         <translation>Nombre no puede estar vacío!</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/Hub.cpp" line="180"/>
+        <location filename="../DossierLayout/src/Hub.cpp" line="178"/>
         <source>Data structure already exists!</source>
         <translation>Estructura de datos ya existe!</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/Hub.cpp" line="210"/>
+        <location filename="../DossierLayout/src/Hub.cpp" line="208"/>
         <source>Open</source>
         <translation>Abrir</translation>
     </message>
@@ -146,25 +149,22 @@
         <translation type="vanished">   Borrar</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/Hub.cpp" line="211"/>
-        <location filename="../DossierLayout/src/Hub.cpp" line="224"/>
+        <location filename="../DossierLayout/src/Hub.cpp" line="209"/>
+        <location filename="../DossierLayout/src/Hub.cpp" line="222"/>
         <source>Delete</source>
         <translation>Borrar</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/Hub.cpp" line="224"/>
         <source>Do you want to remove </source>
-        <translation>Quiere remover </translation>
+        <translation type="vanished">Quiere remover </translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/Hub.cpp" line="225"/>
         <source>Yes</source>
-        <translation>Si</translation>
+        <translation type="vanished">Si</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/Hub.cpp" line="226"/>
         <source>No</source>
-        <translation>No</translation>
+        <translation type="vanished">No</translation>
     </message>
 </context>
 <context>
@@ -268,8 +268,8 @@
     </message>
     <message>
         <location filename="../DossierLayout/src/MainWindow.cpp" line="221"/>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="294"/>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="365"/>
+        <location filename="../DossierLayout/src/MainWindow.cpp" line="290"/>
+        <location filename="../DossierLayout/src/MainWindow.cpp" line="357"/>
         <source>Sort</source>
         <translation>Ordenar</translation>
     </message>
@@ -279,7 +279,7 @@
         <translation>Tabla</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="321"/>
+        <location filename="../DossierLayout/src/MainWindow.cpp" line="317"/>
         <source>Tree</source>
         <translation>Árbol</translation>
     </message>
@@ -289,10 +289,6 @@
     </message>
     <message>
         <location filename="../DossierLayout/src/MainWindow.cpp" line="182"/>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="251"/>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="265"/>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="335"/>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="349"/>
         <source>Cancel</source>
         <translation>Cancelar</translation>
     </message>
@@ -319,7 +315,7 @@
     <message>
         <location filename="../DossierLayout/src/MainWindow.cpp" line="156"/>
         <location filename="../DossierLayout/src/MainWindow.cpp" line="230"/>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="313"/>
+        <location filename="../DossierLayout/src/MainWindow.cpp" line="309"/>
         <source>File</source>
         <translation>Archivo</translation>
     </message>
@@ -351,8 +347,8 @@
         <location filename="../DossierLayout/src/MainWindow.cpp" line="159"/>
         <location filename="../DossierLayout/src/MainWindow.cpp" line="231"/>
         <location filename="../DossierLayout/src/MainWindow.cpp" line="233"/>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="315"/>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="317"/>
+        <location filename="../DossierLayout/src/MainWindow.cpp" line="311"/>
+        <location filename="../DossierLayout/src/MainWindow.cpp" line="313"/>
         <source>Open</source>
         <translation>Abrir</translation>
     </message>
@@ -361,8 +357,8 @@
         <location filename="../DossierLayout/src/MainWindow.cpp" line="163"/>
         <location filename="../DossierLayout/src/MainWindow.cpp" line="235"/>
         <location filename="../DossierLayout/src/MainWindow.cpp" line="237"/>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="319"/>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="321"/>
+        <location filename="../DossierLayout/src/MainWindow.cpp" line="315"/>
+        <location filename="../DossierLayout/src/MainWindow.cpp" line="317"/>
         <source>Save as</source>
         <translation>Guardar como</translation>
     </message>
@@ -373,14 +369,14 @@
     <message>
         <location filename="../DossierLayout/src/MainWindow.cpp" line="166"/>
         <location filename="../DossierLayout/src/MainWindow.cpp" line="240"/>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="324"/>
+        <location filename="../DossierLayout/src/MainWindow.cpp" line="320"/>
         <source>Print</source>
         <translation>Imprimir</translation>
     </message>
     <message>
         <location filename="../DossierLayout/src/MainWindow.cpp" line="169"/>
         <location filename="../DossierLayout/src/MainWindow.cpp" line="243"/>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="327"/>
+        <location filename="../DossierLayout/src/MainWindow.cpp" line="323"/>
         <source>Insert</source>
         <translation>Insertar</translation>
     </message>
@@ -407,33 +403,29 @@
     </message>
     <message>
         <location filename="../DossierLayout/src/MainWindow.cpp" line="181"/>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="250"/>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="264"/>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="334"/>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="348"/>
         <source>Ok</source>
         <translation>Listo</translation>
     </message>
     <message>
         <location filename="../DossierLayout/src/MainWindow.cpp" line="213"/>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="273"/>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="357"/>
+        <location filename="../DossierLayout/src/MainWindow.cpp" line="269"/>
+        <location filename="../DossierLayout/src/MainWindow.cpp" line="349"/>
         <source>Remove</source>
         <translation>Remover</translation>
     </message>
     <message>
         <location filename="../DossierLayout/src/MainWindow.cpp" line="222"/>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="296"/>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="299"/>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="366"/>
+        <location filename="../DossierLayout/src/MainWindow.cpp" line="292"/>
+        <location filename="../DossierLayout/src/MainWindow.cpp" line="295"/>
+        <location filename="../DossierLayout/src/MainWindow.cpp" line="358"/>
         <source>Ascending</source>
         <translation>Ascendiendo</translation>
     </message>
     <message>
         <location filename="../DossierLayout/src/MainWindow.cpp" line="223"/>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="297"/>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="300"/>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="367"/>
+        <location filename="../DossierLayout/src/MainWindow.cpp" line="293"/>
+        <location filename="../DossierLayout/src/MainWindow.cpp" line="296"/>
+        <location filename="../DossierLayout/src/MainWindow.cpp" line="359"/>
         <source>Descending</source>
         <translation>Descendiendo</translation>
     </message>
@@ -463,15 +455,15 @@
     </message>
     <message>
         <location filename="../DossierLayout/src/MainWindow.cpp" line="244"/>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="274"/>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="295"/>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="328"/>
+        <location filename="../DossierLayout/src/MainWindow.cpp" line="270"/>
+        <location filename="../DossierLayout/src/MainWindow.cpp" line="291"/>
+        <location filename="../DossierLayout/src/MainWindow.cpp" line="324"/>
         <source>Column</source>
         <translation>Columna</translation>
     </message>
     <message>
         <location filename="../DossierLayout/src/MainWindow.cpp" line="248"/>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="332"/>
+        <location filename="../DossierLayout/src/MainWindow.cpp" line="328"/>
         <source>Insert Column</source>
         <translation>Insertar Columna</translation>
     </message>
@@ -497,53 +489,53 @@
     </message>
     <message>
         <location filename="../DossierLayout/src/MainWindow.cpp" line="249"/>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="333"/>
+        <location filename="../DossierLayout/src/MainWindow.cpp" line="329"/>
         <source>Column Name</source>
         <translation>Nombre de Columna</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="258"/>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="275"/>
+        <location filename="../DossierLayout/src/MainWindow.cpp" line="256"/>
+        <location filename="../DossierLayout/src/MainWindow.cpp" line="271"/>
         <source>Row</source>
         <translation>Fila</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="262"/>
+        <location filename="../DossierLayout/src/MainWindow.cpp" line="260"/>
         <source>Insert Row</source>
         <translation>Insertar Fila</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="263"/>
+        <location filename="../DossierLayout/src/MainWindow.cpp" line="261"/>
         <source>Row Name</source>
         <translation>Nombre de Fila</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="282"/>
+        <location filename="../DossierLayout/src/MainWindow.cpp" line="278"/>
         <source>Calculate</source>
         <translation>Calcular</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="283"/>
+        <location filename="../DossierLayout/src/MainWindow.cpp" line="279"/>
         <source>Sum</source>
         <translation>Suma</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="284"/>
+        <location filename="../DossierLayout/src/MainWindow.cpp" line="280"/>
         <source>Average</source>
         <translation>Promedio</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="285"/>
+        <location filename="../DossierLayout/src/MainWindow.cpp" line="281"/>
         <source>Min</source>
         <translation>Min</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="286"/>
+        <location filename="../DossierLayout/src/MainWindow.cpp" line="282"/>
         <source>Max</source>
         <translation>Max</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="287"/>
+        <location filename="../DossierLayout/src/MainWindow.cpp" line="283"/>
         <source>Count</source>
         <translation>Contar</translation>
     </message>
@@ -552,12 +544,12 @@
         <translation type="vanished">Calcular  </translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="307"/>
+        <location filename="../DossierLayout/src/MainWindow.cpp" line="303"/>
         <source>Merge</source>
         <translation>Unir</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="308"/>
+        <location filename="../DossierLayout/src/MainWindow.cpp" line="304"/>
         <source>Split</source>
         <translation>Separar</translation>
     </message>
@@ -566,18 +558,18 @@
         <translation type="vanished">Árbol (*.pdf .xml)</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="342"/>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="358"/>
+        <location filename="../DossierLayout/src/MainWindow.cpp" line="336"/>
+        <location filename="../DossierLayout/src/MainWindow.cpp" line="350"/>
         <source>Node</source>
         <translation>Nodo</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="346"/>
+        <location filename="../DossierLayout/src/MainWindow.cpp" line="340"/>
         <source>Insert Node</source>
         <translation>Insertar Nodo</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="347"/>
+        <location filename="../DossierLayout/src/MainWindow.cpp" line="341"/>
         <source>Node Name</source>
         <translation>Nombre de Nodo</translation>
     </message>
