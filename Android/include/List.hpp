@@ -7,6 +7,7 @@ InversePalindrome.com
 
 #pragma once
 
+#include <QEvent>
 #include <QListWidget>
 
 
@@ -30,6 +31,8 @@ public:
 
 private:
     QString directory;
+
+    virtual bool event(QEvent* event) override;
 
     void saveToPdf(const QString& fileName);
     void saveToXml(const QString& fileName);

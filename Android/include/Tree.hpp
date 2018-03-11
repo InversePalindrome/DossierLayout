@@ -35,7 +35,7 @@ public:
 private:
     QString directory;
 
-    virtual void mousePressEvent(QMouseEvent* event) override;
+    virtual bool event(QEvent* event) override;
 
     void loadNode(QTreeWidgetItem* item, QDomElement& element);
     void saveNode(QTreeWidgetItem* item, QDomDocument& doc, QDomElement& element);
