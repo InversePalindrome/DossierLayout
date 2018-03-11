@@ -1424,8 +1424,8 @@ QHeaderView
 
 QHeaderView::section
 {
-    background-color: #EFF0F1;
-    color: #31363B;
+    background-color: #ffffff;
+    color: #000000;
     padding: 0.5ex;
     border: 0.1ex solid #BAB9B8;
     border-radius: 0px;
