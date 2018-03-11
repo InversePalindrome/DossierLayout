@@ -1,5 +1,5 @@
 #Copyright (c) 2018 InversePalindrome
-#DossierLayout - DossierLayout.pro
+#DossierLayout - DossierLayoutAndroid.pro
 #InversePalindrome.com
 
 
