@@ -27,8 +27,8 @@
         <file>Split.png</file>
         <file>Table.png</file>
         <file>Tree.png</file>
-        <file>User.png</file>
         <file>Register.png</file>
         <file>Settings.png</file>
+        <file>User.png</file>
     </qresource>
 </RCC>
