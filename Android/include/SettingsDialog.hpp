@@ -39,7 +39,7 @@ private:
     void retranslateUi();
 
 signals:
-    void done();
+    void closeSettings();
     void changeStyle(const QString& style);
     void changeLanguage(const QString& language);
 };

@@ -42,4 +42,5 @@ private:
 
 signals:
     void exit();
+    void openSettings();
 };

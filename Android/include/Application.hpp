@@ -40,7 +40,7 @@ private:
     void load(const QString& fileName);
 
     MainWindow* createMainWindow(const QString& user);
-    SettingsDialog* createSettingsDialog();
+    SettingsDialog* createSettingsDialog(QWidget* parent = nullptr);
     LoginDialog* createLoginDialog();
     RegisterDialog* createRegisterDialog();
 };
