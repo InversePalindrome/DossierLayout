@@ -36,36 +36,36 @@
         <translation type="vanished">Cancelar</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/Application.cpp" line="133"/>
-        <location filename="../DossierLayout/src/Application.cpp" line="166"/>
-        <location filename="../DossierLayout/src/Application.cpp" line="171"/>
-        <location filename="../DossierLayout/src/Application.cpp" line="176"/>
-        <location filename="../DossierLayout/src/Application.cpp" line="181"/>
+        <location filename="../DossierLayoutAndroid/src/Application.cpp" line="146"/>
+        <location filename="../DossierLayoutAndroid/src/Application.cpp" line="179"/>
+        <location filename="../DossierLayoutAndroid/src/Application.cpp" line="184"/>
+        <location filename="../DossierLayoutAndroid/src/Application.cpp" line="189"/>
+        <location filename="../DossierLayoutAndroid/src/Application.cpp" line="194"/>
         <source>Error</source>
         <translation>Error</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/Application.cpp" line="133"/>
+        <location filename="../DossierLayoutAndroid/src/Application.cpp" line="146"/>
         <source>Invalid username or password!</source>
         <translation>Nombre de usuario o contraseña invalido!</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/Application.cpp" line="166"/>
+        <location filename="../DossierLayoutAndroid/src/Application.cpp" line="179"/>
         <source>Username is empty!</source>
         <translation>Nombre de usuario esta vacío!</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/Application.cpp" line="171"/>
+        <location filename="../DossierLayoutAndroid/src/Application.cpp" line="184"/>
         <source>Password is empty!</source>
         <translation>Contraseña esta vacía!</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/Application.cpp" line="176"/>
+        <location filename="../DossierLayoutAndroid/src/Application.cpp" line="189"/>
         <source>Passwords do not match!</source>
         <translation>Contraseñas no concuerdan!</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/Application.cpp" line="181"/>
+        <location filename="../DossierLayoutAndroid/src/Application.cpp" line="194"/>
         <source>Username is already taken!</source>
         <translation>Nombre de usuario ya existe!</translation>
     </message>
@@ -73,27 +73,27 @@
 <context>
     <name>Hub</name>
     <message>
-        <location filename="../DossierLayout/src/Hub.cpp" line="25"/>
+        <location filename="../DossierLayoutAndroid/src/Hub.cpp" line="25"/>
         <source>Data Structures</source>
         <translation>Estructuras de Datos</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/Hub.cpp" line="34"/>
+        <location filename="../DossierLayoutAndroid/src/Hub.cpp" line="34"/>
         <source>List</source>
         <translation>Lista</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/Hub.cpp" line="35"/>
+        <location filename="../DossierLayoutAndroid/src/Hub.cpp" line="35"/>
         <source>Table</source>
         <translation>Tabla</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/Hub.cpp" line="36"/>
+        <location filename="../DossierLayoutAndroid/src/Hub.cpp" line="36"/>
         <source>Tree</source>
         <translation>Árbol</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/Hub.cpp" line="222"/>
+        <location filename="../DossierLayoutAndroid/src/Hub.cpp" line="218"/>
         <source>Do you want to remove</source>
         <translation>Quiere remover</translation>
     </message>
@@ -102,12 +102,12 @@
         <translation type="vanished">Agregar </translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/Hub.cpp" line="165"/>
+        <location filename="../DossierLayoutAndroid/src/Hub.cpp" line="163"/>
         <source>Name:</source>
         <translation>Nombre:</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/Hub.cpp" line="164"/>
+        <location filename="../DossierLayoutAndroid/src/Hub.cpp" line="163"/>
         <source>Add</source>
         <translation>Agregar</translation>
     </message>
@@ -120,23 +120,23 @@
         <translation type="vanished">Cancelar</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/Hub.cpp" line="173"/>
-        <location filename="../DossierLayout/src/Hub.cpp" line="178"/>
+        <location filename="../DossierLayoutAndroid/src/Hub.cpp" line="169"/>
+        <location filename="../DossierLayoutAndroid/src/Hub.cpp" line="174"/>
         <source>Error</source>
         <translation>Error</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/Hub.cpp" line="173"/>
+        <location filename="../DossierLayoutAndroid/src/Hub.cpp" line="169"/>
         <source>Name can&apos;t be empty!</source>
         <translation>Nombre no puede estar vacío!</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/Hub.cpp" line="178"/>
+        <location filename="../DossierLayoutAndroid/src/Hub.cpp" line="174"/>
         <source>Data structure already exists!</source>
         <translation>Estructura de datos ya existe!</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/Hub.cpp" line="208"/>
+        <location filename="../DossierLayoutAndroid/src/Hub.cpp" line="204"/>
         <source>Open</source>
         <translation>Abrir</translation>
     </message>
@@ -149,8 +149,8 @@
         <translation type="vanished">   Borrar</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/Hub.cpp" line="209"/>
-        <location filename="../DossierLayout/src/Hub.cpp" line="222"/>
+        <location filename="../DossierLayoutAndroid/src/Hub.cpp" line="205"/>
+        <location filename="../DossierLayoutAndroid/src/Hub.cpp" line="218"/>
         <source>Delete</source>
         <translation>Borrar</translation>
     </message>
@@ -170,47 +170,47 @@
 <context>
     <name>List</name>
     <message>
-        <location filename="../DossierLayout/src/List.cpp" line="263"/>
+        <location filename="../DossierLayoutAndroid/src/List.cpp" line="286"/>
         <source>Color</source>
         <translation>Color</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/List.cpp" line="264"/>
+        <location filename="../DossierLayoutAndroid/src/List.cpp" line="287"/>
         <source>Background</source>
         <translation>Fondo</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/List.cpp" line="266"/>
+        <location filename="../DossierLayoutAndroid/src/List.cpp" line="289"/>
         <source>Background Color</source>
         <translation>Color de Fondo</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/List.cpp" line="273"/>
+        <location filename="../DossierLayoutAndroid/src/List.cpp" line="296"/>
         <source>Text</source>
         <translation>Texto</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/List.cpp" line="275"/>
+        <location filename="../DossierLayoutAndroid/src/List.cpp" line="298"/>
         <source>Text Color</source>
         <translation>Color de Texto</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/List.cpp" line="283"/>
+        <location filename="../DossierLayoutAndroid/src/List.cpp" line="306"/>
         <source>Alignment</source>
         <translation>Alineación</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/List.cpp" line="284"/>
+        <location filename="../DossierLayoutAndroid/src/List.cpp" line="307"/>
         <source>Left</source>
         <translation>Izquierda</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/List.cpp" line="291"/>
+        <location filename="../DossierLayoutAndroid/src/List.cpp" line="314"/>
         <source>Right</source>
         <translation>Derecha</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/List.cpp" line="298"/>
+        <location filename="../DossierLayoutAndroid/src/List.cpp" line="321"/>
         <source>Center</source>
         <translation>Centro</translation>
     </message>
@@ -218,9 +218,8 @@
 <context>
     <name>LoginDialog</name>
     <message>
-        <location filename="../DossierLayout/src/LoginDialog.cpp" line="22"/>
         <source>Login - DossierLayout</source>
-        <translation>Iniciar Sesión - DossierLayout</translation>
+        <translation type="vanished">Iniciar Sesión - DossierLayout</translation>
     </message>
     <message>
         <source>Language</source>
@@ -231,22 +230,22 @@
         <translation type="vanished">Ajustes</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/LoginDialog.cpp" line="39"/>
+        <location filename="../DossierLayoutAndroid/src/LoginDialog.cpp" line="35"/>
         <source>Username:</source>
         <translation>Nombre de Usuario:</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/LoginDialog.cpp" line="40"/>
+        <location filename="../DossierLayoutAndroid/src/LoginDialog.cpp" line="36"/>
         <source>Password:</source>
         <translation>Contraseña:</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/LoginDialog.cpp" line="42"/>
+        <location filename="../DossierLayoutAndroid/src/LoginDialog.cpp" line="38"/>
         <source>Login</source>
         <translation>Iniciar sesión</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/LoginDialog.cpp" line="43"/>
+        <location filename="../DossierLayoutAndroid/src/LoginDialog.cpp" line="39"/>
         <source>Register</source>
         <translation>Registrar</translation>
     </message>
@@ -262,24 +261,24 @@
         <translation type="vanished">Nombre:</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="163"/>
+        <location filename="../DossierLayoutAndroid/src/MainWindow.cpp" line="182"/>
         <source>List</source>
         <translation>Lista</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="221"/>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="290"/>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="357"/>
+        <location filename="../DossierLayoutAndroid/src/MainWindow.cpp" line="250"/>
+        <location filename="../DossierLayoutAndroid/src/MainWindow.cpp" line="343"/>
+        <location filename="../DossierLayoutAndroid/src/MainWindow.cpp" line="422"/>
         <source>Sort</source>
         <translation>Ordenar</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="237"/>
+        <location filename="../DossierLayoutAndroid/src/MainWindow.cpp" line="274"/>
         <source>Table</source>
         <translation>Tabla</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="317"/>
+        <location filename="../DossierLayoutAndroid/src/MainWindow.cpp" line="372"/>
         <source>Tree</source>
         <translation>Árbol</translation>
     </message>
@@ -288,7 +287,7 @@
         <translation type="vanished">Agregar</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="182"/>
+        <location filename="../DossierLayoutAndroid/src/MainWindow.cpp" line="204"/>
         <source>Cancel</source>
         <translation>Cancelar</translation>
     </message>
@@ -313,9 +312,9 @@
         <translation type="vanished">Esta seguro de remover </translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="156"/>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="230"/>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="309"/>
+        <location filename="../DossierLayoutAndroid/src/MainWindow.cpp" line="174"/>
+        <location filename="../DossierLayoutAndroid/src/MainWindow.cpp" line="266"/>
+        <location filename="../DossierLayoutAndroid/src/MainWindow.cpp" line="364"/>
         <source>File</source>
         <translation>Archivo</translation>
     </message>
@@ -332,33 +331,38 @@
         <translation type="vanished">   Nodo</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="75"/>
+        <location filename="../DossierLayoutAndroid/src/MainWindow.cpp" line="82"/>
         <source>Exit</source>
         <translation>Salir</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="85"/>
+        <location filename="../DossierLayoutAndroid/src/MainWindow.cpp" line="87"/>
+        <source>Settings</source>
+        <translation>Ajustes</translation>
+    </message>
+    <message>
+        <location filename="../DossierLayoutAndroid/src/MainWindow.cpp" line="109"/>
         <source>Menu</source>
         <translatorcomment>Menú</translatorcomment>
         <translation>Menu</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="157"/>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="159"/>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="231"/>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="233"/>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="311"/>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="313"/>
+        <location filename="../DossierLayoutAndroid/src/MainWindow.cpp" line="176"/>
+        <location filename="../DossierLayoutAndroid/src/MainWindow.cpp" line="178"/>
+        <location filename="../DossierLayoutAndroid/src/MainWindow.cpp" line="268"/>
+        <location filename="../DossierLayoutAndroid/src/MainWindow.cpp" line="270"/>
+        <location filename="../DossierLayoutAndroid/src/MainWindow.cpp" line="366"/>
+        <location filename="../DossierLayoutAndroid/src/MainWindow.cpp" line="368"/>
         <source>Open</source>
         <translation>Abrir</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="161"/>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="163"/>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="235"/>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="237"/>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="315"/>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="317"/>
+        <location filename="../DossierLayoutAndroid/src/MainWindow.cpp" line="180"/>
+        <location filename="../DossierLayoutAndroid/src/MainWindow.cpp" line="182"/>
+        <location filename="../DossierLayoutAndroid/src/MainWindow.cpp" line="272"/>
+        <location filename="../DossierLayoutAndroid/src/MainWindow.cpp" line="274"/>
+        <location filename="../DossierLayoutAndroid/src/MainWindow.cpp" line="370"/>
+        <location filename="../DossierLayoutAndroid/src/MainWindow.cpp" line="372"/>
         <source>Save as</source>
         <translation>Guardar como</translation>
     </message>
@@ -367,65 +371,63 @@
         <translation type="vanished">Lista (*.pdf .xml)</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="166"/>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="240"/>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="320"/>
+        <location filename="../DossierLayoutAndroid/src/MainWindow.cpp" line="185"/>
+        <location filename="../DossierLayoutAndroid/src/MainWindow.cpp" line="277"/>
+        <location filename="../DossierLayoutAndroid/src/MainWindow.cpp" line="375"/>
         <source>Print</source>
         <translation>Imprimir</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="169"/>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="243"/>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="323"/>
+        <location filename="../DossierLayoutAndroid/src/MainWindow.cpp" line="192"/>
+        <location filename="../DossierLayoutAndroid/src/MainWindow.cpp" line="284"/>
+        <location filename="../DossierLayoutAndroid/src/MainWindow.cpp" line="382"/>
         <source>Insert</source>
         <translation>Insertar</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="170"/>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="214"/>
+        <location filename="../DossierLayoutAndroid/src/MainWindow.cpp" line="194"/>
+        <location filename="../DossierLayoutAndroid/src/MainWindow.cpp" line="241"/>
         <source>Element</source>
         <translation>Elemento</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="174"/>
         <source>Insert Element</source>
-        <translation>Insertar Elemento</translation>
+        <translation type="vanished">Insertar Elemento</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="176"/>
+        <location filename="../DossierLayoutAndroid/src/MainWindow.cpp" line="198"/>
         <source>Name</source>
         <translation>Nombre</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="179"/>
+        <location filename="../DossierLayoutAndroid/src/MainWindow.cpp" line="201"/>
         <source>Checkable</source>
         <translation>Chequeable</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="181"/>
         <source>Ok</source>
-        <translation>Listo</translation>
+        <translation type="vanished">Listo</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="213"/>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="269"/>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="349"/>
+        <location filename="../DossierLayoutAndroid/src/MainWindow.cpp" line="239"/>
+        <location filename="../DossierLayoutAndroid/src/MainWindow.cpp" line="315"/>
+        <location filename="../DossierLayoutAndroid/src/MainWindow.cpp" line="413"/>
         <source>Remove</source>
         <translation>Remover</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="222"/>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="292"/>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="295"/>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="358"/>
+        <location filename="../DossierLayoutAndroid/src/MainWindow.cpp" line="245"/>
+        <location filename="../DossierLayoutAndroid/src/MainWindow.cpp" line="335"/>
+        <location filename="../DossierLayoutAndroid/src/MainWindow.cpp" line="338"/>
+        <location filename="../DossierLayoutAndroid/src/MainWindow.cpp" line="423"/>
         <source>Ascending</source>
         <translation>Ascendiendo</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="223"/>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="293"/>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="296"/>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="359"/>
+        <location filename="../DossierLayoutAndroid/src/MainWindow.cpp" line="246"/>
+        <location filename="../DossierLayoutAndroid/src/MainWindow.cpp" line="336"/>
+        <location filename="../DossierLayoutAndroid/src/MainWindow.cpp" line="339"/>
+        <location filename="../DossierLayoutAndroid/src/MainWindow.cpp" line="424"/>
         <source>Descending</source>
         <translation>Descendiendo</translation>
     </message>
@@ -454,16 +456,16 @@
         <translation type="vanished">   Fila</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="244"/>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="270"/>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="291"/>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="324"/>
+        <location filename="../DossierLayoutAndroid/src/MainWindow.cpp" line="286"/>
+        <location filename="../DossierLayoutAndroid/src/MainWindow.cpp" line="317"/>
+        <location filename="../DossierLayoutAndroid/src/MainWindow.cpp" line="334"/>
+        <location filename="../DossierLayoutAndroid/src/MainWindow.cpp" line="384"/>
         <source>Column</source>
         <translation>Columna</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="248"/>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="328"/>
+        <location filename="../DossierLayoutAndroid/src/MainWindow.cpp" line="290"/>
+        <location filename="../DossierLayoutAndroid/src/MainWindow.cpp" line="388"/>
         <source>Insert Column</source>
         <translation>Insertar Columna</translation>
     </message>
@@ -488,54 +490,54 @@
         <translation type="vanished">   Elemento</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="249"/>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="329"/>
+        <location filename="../DossierLayoutAndroid/src/MainWindow.cpp" line="291"/>
+        <location filename="../DossierLayoutAndroid/src/MainWindow.cpp" line="389"/>
         <source>Column Name</source>
         <translation>Nombre de Columna</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="256"/>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="271"/>
+        <location filename="../DossierLayoutAndroid/src/MainWindow.cpp" line="298"/>
+        <location filename="../DossierLayoutAndroid/src/MainWindow.cpp" line="318"/>
         <source>Row</source>
         <translation>Fila</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="260"/>
+        <location filename="../DossierLayoutAndroid/src/MainWindow.cpp" line="302"/>
         <source>Insert Row</source>
         <translation>Insertar Fila</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="261"/>
+        <location filename="../DossierLayoutAndroid/src/MainWindow.cpp" line="303"/>
         <source>Row Name</source>
         <translation>Nombre de Fila</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="278"/>
+        <location filename="../DossierLayoutAndroid/src/MainWindow.cpp" line="325"/>
         <source>Calculate</source>
         <translation>Calcular</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="279"/>
+        <location filename="../DossierLayoutAndroid/src/MainWindow.cpp" line="326"/>
         <source>Sum</source>
         <translation>Suma</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="280"/>
+        <location filename="../DossierLayoutAndroid/src/MainWindow.cpp" line="327"/>
         <source>Average</source>
         <translation>Promedio</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="281"/>
+        <location filename="../DossierLayoutAndroid/src/MainWindow.cpp" line="328"/>
         <source>Min</source>
         <translation>Min</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="282"/>
+        <location filename="../DossierLayoutAndroid/src/MainWindow.cpp" line="329"/>
         <source>Max</source>
         <translation>Max</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="283"/>
+        <location filename="../DossierLayoutAndroid/src/MainWindow.cpp" line="330"/>
         <source>Count</source>
         <translation>Contar</translation>
     </message>
@@ -544,12 +546,12 @@
         <translation type="vanished">Calcular  </translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="303"/>
+        <location filename="../DossierLayoutAndroid/src/MainWindow.cpp" line="354"/>
         <source>Merge</source>
         <translation>Unir</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="304"/>
+        <location filename="../DossierLayoutAndroid/src/MainWindow.cpp" line="355"/>
         <source>Split</source>
         <translation>Separar</translation>
     </message>
@@ -558,18 +560,18 @@
         <translation type="vanished">Árbol (*.pdf .xml)</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="336"/>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="350"/>
+        <location filename="../DossierLayoutAndroid/src/MainWindow.cpp" line="396"/>
+        <location filename="../DossierLayoutAndroid/src/MainWindow.cpp" line="415"/>
         <source>Node</source>
         <translation>Nodo</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="340"/>
+        <location filename="../DossierLayoutAndroid/src/MainWindow.cpp" line="400"/>
         <source>Insert Node</source>
         <translation>Insertar Nodo</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/MainWindow.cpp" line="341"/>
+        <location filename="../DossierLayoutAndroid/src/MainWindow.cpp" line="401"/>
         <source>Node Name</source>
         <translation>Nombre de Nodo</translation>
     </message>
@@ -577,32 +579,31 @@
 <context>
     <name>RegisterDialog</name>
     <message>
-        <location filename="../DossierLayout/src/RegisterDialog.cpp" line="22"/>
         <source>Register - DossierLayout</source>
-        <translation>Registrar - DossierLayout</translation>
+        <translation type="vanished">Registrar - DossierLayout</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/RegisterDialog.cpp" line="39"/>
+        <location filename="../DossierLayoutAndroid/src/RegisterDialog.cpp" line="35"/>
         <source>Username:</source>
         <translation>Nombre de Usuario:</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/RegisterDialog.cpp" line="40"/>
+        <location filename="../DossierLayoutAndroid/src/RegisterDialog.cpp" line="36"/>
         <source>Password:</source>
         <translation>Contraseña:</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/RegisterDialog.cpp" line="41"/>
+        <location filename="../DossierLayoutAndroid/src/RegisterDialog.cpp" line="37"/>
         <source>Re-Passsword:</source>
         <translation>Re-Contraseña:</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/RegisterDialog.cpp" line="43"/>
+        <location filename="../DossierLayoutAndroid/src/RegisterDialog.cpp" line="39"/>
         <source>Register</source>
         <translation>Registrar</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/RegisterDialog.cpp" line="44"/>
+        <location filename="../DossierLayoutAndroid/src/RegisterDialog.cpp" line="40"/>
         <source>Cancel</source>
         <translation>Cancelar</translation>
     </message>
@@ -610,44 +611,43 @@
 <context>
     <name>SettingsDialog</name>
     <message>
-        <location filename="../DossierLayout/src/SettingsDialog.cpp" line="23"/>
-        <location filename="../DossierLayout/src/SettingsDialog.cpp" line="145"/>
+        <location filename="../DossierLayoutAndroid/src/SettingsDialog.cpp" line="25"/>
+        <location filename="../DossierLayoutAndroid/src/SettingsDialog.cpp" line="150"/>
         <source>Done</source>
         <translation>Hecho</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/SettingsDialog.cpp" line="26"/>
-        <location filename="../DossierLayout/src/SettingsDialog.cpp" line="143"/>
+        <location filename="../DossierLayoutAndroid/src/SettingsDialog.cpp" line="148"/>
         <source>Settings - DossierLayout</source>
         <translation>Ajustes - DossierLayout</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/SettingsDialog.cpp" line="32"/>
-        <location filename="../DossierLayout/src/SettingsDialog.cpp" line="147"/>
+        <location filename="../DossierLayoutAndroid/src/SettingsDialog.cpp" line="36"/>
+        <location filename="../DossierLayoutAndroid/src/SettingsDialog.cpp" line="152"/>
         <source>Regular</source>
         <translation>Regular</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/SettingsDialog.cpp" line="33"/>
-        <location filename="../DossierLayout/src/SettingsDialog.cpp" line="148"/>
+        <location filename="../DossierLayoutAndroid/src/SettingsDialog.cpp" line="37"/>
+        <location filename="../DossierLayoutAndroid/src/SettingsDialog.cpp" line="153"/>
         <source>Light</source>
         <translation>Luz</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/SettingsDialog.cpp" line="34"/>
-        <location filename="../DossierLayout/src/SettingsDialog.cpp" line="149"/>
+        <location filename="../DossierLayoutAndroid/src/SettingsDialog.cpp" line="38"/>
+        <location filename="../DossierLayoutAndroid/src/SettingsDialog.cpp" line="154"/>
         <source>Dark</source>
         <translation>Oscuro</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/SettingsDialog.cpp" line="19"/>
-        <location filename="../DossierLayout/src/SettingsDialog.cpp" line="151"/>
+        <location filename="../DossierLayoutAndroid/src/SettingsDialog.cpp" line="21"/>
+        <location filename="../DossierLayoutAndroid/src/SettingsDialog.cpp" line="156"/>
         <source>Style:</source>
         <translation>Estilo:</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/SettingsDialog.cpp" line="20"/>
-        <location filename="../DossierLayout/src/SettingsDialog.cpp" line="152"/>
+        <location filename="../DossierLayoutAndroid/src/SettingsDialog.cpp" line="22"/>
+        <location filename="../DossierLayoutAndroid/src/SettingsDialog.cpp" line="157"/>
         <source>Language:</source>
         <translation>Lenguaje:</translation>
     </message>
@@ -655,88 +655,88 @@
 <context>
     <name>Table</name>
     <message>
-        <location filename="../DossierLayout/src/Table.cpp" line="631"/>
-        <location filename="../DossierLayout/src/Table.cpp" line="633"/>
-        <location filename="../DossierLayout/src/Table.cpp" line="672"/>
+        <location filename="../DossierLayoutAndroid/src/Table.cpp" line="599"/>
+        <location filename="../DossierLayoutAndroid/src/Table.cpp" line="601"/>
+        <location filename="../DossierLayoutAndroid/src/Table.cpp" line="639"/>
         <source>Text Color</source>
         <translation>Color de Texto</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/Table.cpp" line="636"/>
-        <location filename="../DossierLayout/src/Table.cpp" line="742"/>
+        <location filename="../DossierLayoutAndroid/src/Table.cpp" line="604"/>
+        <location filename="../DossierLayoutAndroid/src/Table.cpp" line="709"/>
         <source>Alignment</source>
         <translation>Alineación</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/Table.cpp" line="637"/>
-        <location filename="../DossierLayout/src/Table.cpp" line="743"/>
+        <location filename="../DossierLayoutAndroid/src/Table.cpp" line="605"/>
+        <location filename="../DossierLayoutAndroid/src/Table.cpp" line="710"/>
         <source>Left</source>
         <translation>Izquierda</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/Table.cpp" line="638"/>
-        <location filename="../DossierLayout/src/Table.cpp" line="750"/>
+        <location filename="../DossierLayoutAndroid/src/Table.cpp" line="606"/>
+        <location filename="../DossierLayoutAndroid/src/Table.cpp" line="717"/>
         <source>Right</source>
         <translation>Derecha</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/Table.cpp" line="639"/>
-        <location filename="../DossierLayout/src/Table.cpp" line="771"/>
+        <location filename="../DossierLayoutAndroid/src/Table.cpp" line="607"/>
+        <location filename="../DossierLayoutAndroid/src/Table.cpp" line="738"/>
         <source>Center</source>
         <translation>Centro</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/Table.cpp" line="660"/>
+        <location filename="../DossierLayoutAndroid/src/Table.cpp" line="627"/>
         <source>Color</source>
         <translation>Color</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/Table.cpp" line="661"/>
+        <location filename="../DossierLayoutAndroid/src/Table.cpp" line="628"/>
         <source>Background</source>
         <translation>Fondo</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/Table.cpp" line="663"/>
+        <location filename="../DossierLayoutAndroid/src/Table.cpp" line="630"/>
         <source>Background Color</source>
         <translation>Color de Fondo</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/Table.cpp" line="670"/>
+        <location filename="../DossierLayoutAndroid/src/Table.cpp" line="637"/>
         <source>Text</source>
         <translation>Texto</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/Table.cpp" line="680"/>
+        <location filename="../DossierLayoutAndroid/src/Table.cpp" line="647"/>
         <source>Format</source>
         <translation>Formato</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/Table.cpp" line="681"/>
+        <location filename="../DossierLayoutAndroid/src/Table.cpp" line="648"/>
         <source>Currency</source>
         <translation>Moneda</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/Table.cpp" line="694"/>
+        <location filename="../DossierLayoutAndroid/src/Table.cpp" line="661"/>
         <source>Percentage</source>
         <translation>Porcentaje</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/Table.cpp" line="709"/>
+        <location filename="../DossierLayoutAndroid/src/Table.cpp" line="676"/>
         <source>Scientific</source>
         <translation>Científico</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/Table.cpp" line="726"/>
+        <location filename="../DossierLayoutAndroid/src/Table.cpp" line="693"/>
         <source>Number</source>
         <translation>Número</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/Table.cpp" line="757"/>
+        <location filename="../DossierLayoutAndroid/src/Table.cpp" line="724"/>
         <source>Top</source>
         <translation>Superior</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/Table.cpp" line="764"/>
+        <location filename="../DossierLayoutAndroid/src/Table.cpp" line="731"/>
         <source>Bottom</source>
         <translation>Inferior</translation>
     </message>
@@ -744,48 +744,48 @@
 <context>
     <name>Tree</name>
     <message>
-        <location filename="../DossierLayout/src/Tree.cpp" line="372"/>
-        <location filename="../DossierLayout/src/Tree.cpp" line="374"/>
-        <location filename="../DossierLayout/src/Tree.cpp" line="425"/>
+        <location filename="../DossierLayoutAndroid/src/Tree.cpp" line="369"/>
+        <location filename="../DossierLayoutAndroid/src/Tree.cpp" line="371"/>
+        <location filename="../DossierLayoutAndroid/src/Tree.cpp" line="422"/>
         <source>Text Color</source>
         <translation>Color de Texto</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/Tree.cpp" line="379"/>
-        <location filename="../DossierLayout/src/Tree.cpp" line="433"/>
+        <location filename="../DossierLayoutAndroid/src/Tree.cpp" line="376"/>
+        <location filename="../DossierLayoutAndroid/src/Tree.cpp" line="430"/>
         <source>Alignment</source>
         <translation>Alineación</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/Tree.cpp" line="380"/>
-        <location filename="../DossierLayout/src/Tree.cpp" line="434"/>
+        <location filename="../DossierLayoutAndroid/src/Tree.cpp" line="377"/>
+        <location filename="../DossierLayoutAndroid/src/Tree.cpp" line="431"/>
         <source>Left</source>
         <translation>Izquierda</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/Tree.cpp" line="384"/>
-        <location filename="../DossierLayout/src/Tree.cpp" line="441"/>
+        <location filename="../DossierLayoutAndroid/src/Tree.cpp" line="381"/>
+        <location filename="../DossierLayoutAndroid/src/Tree.cpp" line="438"/>
         <source>Right</source>
         <translation>Derecha</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/Tree.cpp" line="388"/>
-        <location filename="../DossierLayout/src/Tree.cpp" line="448"/>
+        <location filename="../DossierLayoutAndroid/src/Tree.cpp" line="385"/>
+        <location filename="../DossierLayoutAndroid/src/Tree.cpp" line="445"/>
         <source>Center</source>
         <translation>Centro</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/Tree.cpp" line="413"/>
+        <location filename="../DossierLayoutAndroid/src/Tree.cpp" line="410"/>
         <source>Color</source>
         <translation>Color</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/Tree.cpp" line="416"/>
+        <location filename="../DossierLayoutAndroid/src/Tree.cpp" line="413"/>
         <source>Background Color</source>
         <translation>Color de Fondo</translation>
     </message>
     <message>
-        <location filename="../DossierLayout/src/Tree.cpp" line="423"/>
+        <location filename="../DossierLayoutAndroid/src/Tree.cpp" line="420"/>
         <source>Text</source>
         <translation>Texto</translation>
     </message>
