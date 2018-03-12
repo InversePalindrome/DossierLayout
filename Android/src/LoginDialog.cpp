@@ -18,14 +18,13 @@ InversePalindrome.com
 LoginDialog::LoginDialog(QWidget* parent) :
     QDialog(parent, Qt::Window)
 {
+    setAttribute(Qt::WA_DeleteOnClose);
+    setProperty("name", "Login");
+
     auto* layout = new QVBoxLayout(this);
 
     auto* logoLabel = new QLabel(this);
-
-    QPixmap logoPicture(":/Resources/DossierLayoutIcon.png");
-    logoPicture = logoPicture.scaledToHeight(250);
-
-    logoLabel->setPixmap(logoPicture);
+    logoLabel->setPixmap(QPixmap(":/Resources/DossierLayoutIcon.png"));
 
     auto* userEntry = new QLineEdit(this);
 

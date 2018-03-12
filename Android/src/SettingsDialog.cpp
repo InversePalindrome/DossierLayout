@@ -24,6 +24,11 @@ SettingsDialog::SettingsDialog(QWidget* parent) :
     languageChoices(new QComboBox(this)),
     doneButton(new QPushButton(tr("Done"), this))
 {
+    setAttribute(Qt::WA_DeleteOnClose);
+
+    auto* settingsLabel = new QLabel(this);
+    settingsLabel->setPixmap(QPixmap(":/Resources/Settings.png"));
+
     styleChoices->setProperty("0", "Regular");
     styleChoices->setProperty("1", "Light");
     styleChoices->setProperty("2", "Dark");
@@ -45,6 +50,7 @@ SettingsDialog::SettingsDialog(QWidget* parent) :
     formLayout->addRow(styleLabel, styleChoices);
     formLayout->addRow(languageLabel, languageChoices);
 
+    layout->addWidget(settingsLabel, 0, Qt::AlignCenter);
     layout->addLayout(formLayout);
     layout->addWidget(doneButton);
 
@@ -56,7 +62,7 @@ SettingsDialog::SettingsDialog(QWidget* parent) :
     {
         emit changeLanguage(languageChoices->property(QString::number(index).toStdString().c_str()).toString());
     });
-    QObject::connect(doneButton, &QPushButton::clicked, [this] { emit done(); });
+    QObject::connect(doneButton, &QPushButton::clicked, [this] { emit closeSettings(); });
 
     load("Settings.xml");
 }

@@ -6,6 +6,7 @@ InversePalindrome.com
 
 
 #include "MainWindow.hpp"
+#include "SettingsDialog.hpp"
 #include "AndroidUtility.hpp"
 
 #include <QDir>
@@ -37,11 +38,12 @@ MainWindow::MainWindow(const QString& user) :
     setContextMenuPolicy(Qt::NoContextMenu);
     setAttribute(Qt::WA_DeleteOnClose);
     setCentralWidget(view);
+    setProperty("name", "MainWindow");
+    setProperty("user", user);
 
     toolBar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
 
     QPixmap icon(":/Resources/User.png");
-    icon = icon.scaledToHeight(64);
 
     titleIcon->setPixmap(icon);
     titleLabel->setText(user);
@@ -80,11 +82,17 @@ void MainWindow::setupHubFunctions(Hub* hub)
     exitButton->setText(tr("Exit"));
     exitButton->setIcon(QIcon(":/Resources/Exit.png"));
 
-    auto* searchAction = toolBar->addWidget(searchBar);
-    auto* spacerAction = toolBar->addWidget(spacer);
-    auto* exitAction = toolBar->addWidget(exitButton);
+    auto* settingsButton = new QToolButton(this);
+    settingsButton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+    settingsButton->setText(tr("Settings"));
+    settingsButton->setIcon(QIcon(":/Resources/Settings.png"));
 
-    QObject::connect(hub, &Hub::openDataStructure, [this, searchAction, spacerAction, exitAction](const QString& type, const QString& name)
+    auto* exitAction = toolBar->addWidget(exitButton);
+    auto* settingsAction = toolBar->addWidget(settingsButton);
+    auto* spacerAction = toolBar->addWidget(spacer);
+    auto* searchAction = toolBar->addWidget(searchBar);
+
+    QObject::connect(hub, &Hub::openDataStructure, [this, exitAction, settingsAction, spacerAction, searchAction](const QString& type, const QString& name)
     {
         Utility::setRotation(0);
 
@@ -95,6 +103,13 @@ void MainWindow::setupHubFunctions(Hub* hub)
 
         titleIcon->setPixmap(icon);
         titleLabel->setText(name);
+
+        auto* menuButton = new QToolButton(this);
+        menuButton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+        menuButton->setText(tr("Menu"));
+        menuButton->setIcon(QIcon(":/Resources/DataStructureMenu.png"));
+
+        toolBar->addWidget(menuButton);
 
         if(type == "List")
         {
@@ -123,27 +138,17 @@ void MainWindow::setupHubFunctions(Hub* hub)
 
         stackWidget->setCurrentIndex(1);
 
-        auto* menuButton = new QToolButton(this);
-        menuButton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-        menuButton->setText(tr("Menu"));
-        menuButton->setIcon(QIcon(":/Resources/DataStructureMenu.png"));
-
-        toolBar->addAction(spacerAction);
-        toolBar->addWidget(menuButton);
-
-        QObject::connect(menuButton, &QToolButton::clicked, [this, searchAction, spacerAction, exitAction]
+        QObject::connect(menuButton, &QToolButton::clicked, [this, searchAction, settingsAction, spacerAction, exitAction]
         {
             Utility::setRotation(1);
 
             toolBar->clear();
-            toolBar->addAction(searchAction);
-            toolBar->addAction(spacerAction);
             toolBar->addAction(exitAction);
+            toolBar->addAction(settingsAction);
+            toolBar->addAction(spacerAction);
+            toolBar->addAction(searchAction);
 
-            QPixmap icon(":/Resources/User.png");
-            icon = icon.scaledToHeight(64);
-
-            titleIcon->setPixmap(icon);
+            titleIcon->setPixmap(QPixmap(":/Resources/User.png"));
             titleLabel->setText(user);
 
             stackWidget->currentWidget()->deleteLater();
@@ -157,6 +162,7 @@ void MainWindow::setupHubFunctions(Hub* hub)
         hub->findDataStructure(text);
     });
     QObject::connect(exitButton, &QToolButton::clicked, [this]{ emit exit(); });
+    QObject::connect(settingsButton, &QToolButton::clicked, [this]{ emit openSettings(); });
 }
 
 void MainWindow::setupListFunctions(List* list)
@@ -187,9 +193,7 @@ void MainWindow::setupListFunctions(List* list)
     insertButton->setIcon(QIcon(":/Resources/Insert.png"));
     insertButton->menu()->addAction(QIcon(":/Resources/AddRow.png"), "   " + tr("Element"), [this, list]
     {
-        auto* insertDialog = new QDialog(this, Qt::Window | Qt::WindowCloseButtonHint | Qt::WindowTitleHint);
-        insertDialog->setFixedSize(600, 270);
-        insertDialog->setWindowTitle(tr("Insert Element"));
+        auto* insertDialog = new QDialog(this);
 
         auto* nameLabel = new QLabel(tr("Name"), this);
         auto* nameEntry = new QLineEdit(this);
@@ -226,7 +230,7 @@ void MainWindow::setupListFunctions(List* list)
                 list->insertElement(nameEntry->text(), Qt::NoItemFlags);
             }
         }
-     });
+    });
 
     auto* removeButton = new QToolButton(this);
     removeButton->setMenu(new QMenu(this));
@@ -255,36 +259,36 @@ void MainWindow::setupListFunctions(List* list)
 
 void MainWindow::setupTableFunctions(Table* table)
 {
-   auto* fileButton = new QToolButton(this);
-   fileButton->setMenu(new QMenu(this));
-   fileButton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-   fileButton->setPopupMode(QToolButton::InstantPopup);
-   fileButton->setText(tr("File") + "  ");
-   fileButton->setIcon(QIcon(":/Resources/File.png"));
-   fileButton->menu()->addAction(QIcon(":/Resources/Open.png"), "   " + tr("Open"), [this, table]
-   {
+    auto* fileButton = new QToolButton(this);
+    fileButton->setMenu(new QMenu(this));
+    fileButton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+    fileButton->setPopupMode(QToolButton::InstantPopup);
+    fileButton->setText(tr("File") + "  ");
+    fileButton->setIcon(QIcon(":/Resources/File.png"));
+    fileButton->menu()->addAction(QIcon(":/Resources/Open.png"), "   " + tr("Open"), [this, table]
+    {
        table->load(QFileDialog::getOpenFileName(this, tr("Open"), "", "Xml (*.xml)"));
-   }, QKeySequence::Open);
-   fileButton->menu()->addAction(QIcon(":/Resources/Download.png"), "   " + tr("Save as"), [this, table]
-   {
+    }, QKeySequence::Open);
+    fileButton->menu()->addAction(QIcon(":/Resources/Download.png"), "   " + tr("Save as"), [this, table]
+    {
        table->save(QFileDialog::getSaveFileName(this, tr("Save as"), "", tr("Table") + " (*.pdf .xlsx .xml)"));
-   }, QKeySequence::Save);
-   fileButton->menu()->addSeparator();
-   fileButton->menu()->addAction(QIcon(":/Resources/Print.png"), "   " + tr("Print"), [table] { table->print(); }, QKeySequence::Print);
-   fileButton->menu()->addSeparator();
+    }, QKeySequence::Save);
+    fileButton->menu()->addSeparator();
+    fileButton->menu()->addAction(QIcon(":/Resources/Print.png"), "   " + tr("Print"), [table] { table->print(); }, QKeySequence::Print);
+    fileButton->menu()->addSeparator();
 
-   auto* insertButton = new QToolButton(this);
-   insertButton->setMenu(new QMenu(this));
-   insertButton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-   insertButton->setPopupMode(QToolButton::InstantPopup);
-   insertButton->setText(tr("Insert") + "  ");
-   insertButton->setIcon(QIcon(":/Resources/Insert.png"));
-   insertButton->menu()->addAction(QIcon(":/Resources/AddColumn.png"), "   " + tr("Column"), [this, table]
-   {
-      auto* insertDialog = new QInputDialog(this);
-      insertDialog->setFixedSize(500, 200);
-      insertDialog->setWindowTitle(tr("Insert Column"));
-      insertDialog->setLabelText(tr("Column Name"));
+    auto* insertButton = new QToolButton(this);
+    insertButton->setMenu(new QMenu(this));
+    insertButton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+    insertButton->setPopupMode(QToolButton::InstantPopup);
+    insertButton->setText(tr("Insert") + "  ");
+    insertButton->setIcon(QIcon(":/Resources/Insert.png"));
+    insertButton->menu()->addAction(QIcon(":/Resources/AddColumn.png"), "   " + tr("Column"), [this, table]
+    {
+       auto* insertDialog = new QInputDialog(this);
+       insertDialog->setFixedSize(500, 200);
+       insertDialog->setWindowTitle(tr("Insert Column"));
+       insertDialog->setLabelText(tr("Column Name"));
 
       if(insertDialog->exec() == QDialog::Accepted)
       {
@@ -353,76 +357,76 @@ void MainWindow::setupTableFunctions(Table* table)
 
 void MainWindow::setupTreeFunctions(Tree* tree)
 {
-    auto* fileButton = new QToolButton(this);
-    fileButton->setMenu(new QMenu(this));
-    fileButton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-    fileButton->setPopupMode(QToolButton::InstantPopup);
-    fileButton->setText(tr("File") + "  ");
-    fileButton->setIcon(QIcon(":/Resources/File.png"));
-    fileButton->menu()->addAction(QIcon(":/Resources/Open.png"), "   " + tr("Open"), [this, tree]
-    {
-        tree->load(QFileDialog::getOpenFileName(this, tr("Open"), "", "Xml (*.xml)"));
-    }, QKeySequence::Open);
-    fileButton->menu()->addAction(QIcon(":/Resources/Download.png"), "   " + tr("Save as"), [this, tree]
-    {
-        tree->save(QFileDialog::getSaveFileName(this, tr("Save as"), "", tr("Tree") + " (*.pdf .xml)"));
-    }, QKeySequence::Save);
-    fileButton->menu()->addSeparator();
-    fileButton->menu()->addAction(QIcon(":/Resources/Print.png"), "   " + tr("Print"), [tree] { tree->print(); }, QKeySequence::Print);
-    fileButton->menu()->addSeparator();
+   auto* fileButton = new QToolButton(this);
+   fileButton->setMenu(new QMenu(this));
+   fileButton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+   fileButton->setPopupMode(QToolButton::InstantPopup);
+   fileButton->setText(tr("File") + "  ");
+   fileButton->setIcon(QIcon(":/Resources/File.png"));
+   fileButton->menu()->addAction(QIcon(":/Resources/Open.png"), "   " + tr("Open"), [this, tree]
+   {
+       tree->load(QFileDialog::getOpenFileName(this, tr("Open"), "", "Xml (*.xml)"));
+   }, QKeySequence::Open);
+   fileButton->menu()->addAction(QIcon(":/Resources/Download.png"), "   " + tr("Save as"), [this, tree]
+   {
+       tree->save(QFileDialog::getSaveFileName(this, tr("Save as"), "", tr("Tree") + " (*.pdf .xml)"));
+   }, QKeySequence::Save);
+   fileButton->menu()->addSeparator();
+   fileButton->menu()->addAction(QIcon(":/Resources/Print.png"), "   " + tr("Print"), [tree] { tree->print(); }, QKeySequence::Print);
+   fileButton->menu()->addSeparator();
 
-    auto* insertButton = new QToolButton(this);
-    insertButton->setMenu(new QMenu(this));
-    insertButton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-    insertButton->setPopupMode(QToolButton::InstantPopup);
-    insertButton->setText(tr("Insert") + "  ");
-    insertButton->setIcon(QIcon(":/Resources/Insert.png"));
-    insertButton->menu()->addAction(QIcon(":/Resources/AddColumn.png"), "   " + tr("Column"), [this, tree]
-    {
-       auto* insertDialog = new QInputDialog(this);
-       insertDialog->setFixedSize(500, 200);
-       insertDialog->setWindowTitle(tr("Insert Column"));
-       insertDialog->setLabelText(tr("Column Name"));
+   auto* insertButton = new QToolButton(this);
+   insertButton->setMenu(new QMenu(this));
+   insertButton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+   insertButton->setPopupMode(QToolButton::InstantPopup);
+   insertButton->setText(tr("Insert") + "  ");
+   insertButton->setIcon(QIcon(":/Resources/Insert.png"));
+   insertButton->menu()->addAction(QIcon(":/Resources/AddColumn.png"), "   " + tr("Column"), [this, tree]
+   {
+      auto* insertDialog = new QInputDialog(this);
+      insertDialog->setFixedSize(500, 200);
+      insertDialog->setWindowTitle(tr("Insert Column"));
+      insertDialog->setLabelText(tr("Column Name"));
 
-       if(insertDialog->exec() == QDialog::Accepted)
-       {
-          tree->insertColumn(insertDialog->textValue());
-       }
-    });
-    insertButton->menu()->addAction(QIcon(":/Resources/AddNode.png"), "   " + tr("Node"), [this, tree]
-    {
-       auto* insertDialog = new QInputDialog(this);
-       insertDialog->setFixedSize(500, 200);
-       insertDialog->setWindowTitle(tr("Insert Node"));
-       insertDialog->setLabelText(tr("Node Name"));
+      if(insertDialog->exec() == QDialog::Accepted)
+      {
+         tree->insertColumn(insertDialog->textValue());
+      }
+   });
+   insertButton->menu()->addAction(QIcon(":/Resources/AddNode.png"), "   " + tr("Node"), [this, tree]
+   {
+      auto* insertDialog = new QInputDialog(this);
+      insertDialog->setFixedSize(500, 200);
+      insertDialog->setWindowTitle(tr("Insert Node"));
+      insertDialog->setLabelText(tr("Node Name"));
 
-       if(insertDialog->exec() == QDialog::Accepted)
-       {
-           tree->insertNode(insertDialog->textValue());
-       }
-    });
+      if(insertDialog->exec() == QDialog::Accepted)
+      {
+          tree->insertNode(insertDialog->textValue());
+      }
+   });
 
-    auto* removeButton = new QToolButton(this);
-    removeButton->setMenu(new QMenu(this));
-    removeButton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-    removeButton->setPopupMode(QToolButton::InstantPopup);
-    removeButton->setText(tr("Remove") + "  ");
-    removeButton->setIcon(QIcon(":/Resources/Remove.png"));
-    removeButton->menu()->addAction(QIcon(":/Resources/RemoveNode.png"), "   " + tr("Node"), [tree] { tree->removeNode(); });
+   auto* removeButton = new QToolButton(this);
+   removeButton->setMenu(new QMenu(this));
+   removeButton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+   removeButton->setPopupMode(QToolButton::InstantPopup);
+   removeButton->setText(tr("Remove") + "  ");
+   removeButton->setIcon(QIcon(":/Resources/Remove.png"));
+   removeButton->menu()->addAction(QIcon(":/Resources/RemoveNode.png"), "   " + tr("Node"), [tree] { tree->removeNode(); });
 
-    auto* sortButton = new QToolButton(this);
-    sortButton->setMenu(new QMenu(this));
-    sortButton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-    sortButton->setPopupMode(QToolButton::InstantPopup);
-    sortButton->setIcon(QIcon(":/Resources/Sort.png"));
-    sortButton->setText(tr("Sort") + "  ");
-    sortButton->menu()->addAction(tr("Ascending"), [tree] { tree->sortColumn(Qt::AscendingOrder); });
-    sortButton->menu()->addAction(tr("Descending"), [tree] { tree->sortColumn(Qt::DescendingOrder); });
+   auto* sortButton = new QToolButton(this);
+   sortButton->setMenu(new QMenu(this));
+   sortButton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+   sortButton->setPopupMode(QToolButton::InstantPopup);
+   sortButton->setIcon(QIcon(":/Resources/Sort.png"));
+   sortButton->setText(tr("Sort") + "  ");
+   sortButton->menu()->addAction(tr("Ascending"), [tree] { tree->sortColumn(Qt::AscendingOrder); });
+   sortButton->menu()->addAction(tr("Descending"), [tree] { tree->sortColumn(Qt::DescendingOrder); });
 
-    toolBar->addWidget(fileButton);
-    toolBar->addSeparator();
-    toolBar->addWidget(insertButton);
-    toolBar->addWidget(removeButton);
-    toolBar->addSeparator();
-    toolBar->addWidget(sortButton);
+   toolBar->addWidget(fileButton);
+   toolBar->addSeparator();
+   toolBar->addWidget(insertButton);
+   toolBar->addWidget(removeButton);
+   toolBar->addSeparator();
+   toolBar->addWidget(sortButton);
 }

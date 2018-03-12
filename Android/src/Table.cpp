@@ -6,6 +6,8 @@ InversePalindrome.com
 
 
 #include "Table.hpp"
+#include "WidgetHeader.hpp"
+#include "AndroidUtility.hpp"
 
 #include <QFont>
 #include <QFile>
@@ -34,10 +36,13 @@ Table::Table(QWidget* parent, const QString& directory) :
    setContextMenuPolicy(Qt::CustomContextMenu);
    setSelectionMode(QAbstractItemView::ContiguousSelection);
 
-   horizontalHeader()->setContextMenuPolicy(Qt::CustomContextMenu);
-   verticalHeader()->setContextMenuPolicy(Qt::CustomContextMenu);
-
    grabGesture(Qt::TapAndHoldGesture);
+
+   setHorizontalHeader(new WidgetHeader(Qt::Horizontal, this));
+   horizontalHeader()->setContextMenuPolicy(Qt::CustomContextMenu);
+
+   setVerticalHeader(new WidgetHeader(Qt::Vertical, this));
+   verticalHeader()->setContextMenuPolicy(Qt::CustomContextMenu);
 
    QObject::connect(horizontalHeader(), &QHeaderView::customContextMenuRequested, this, &Table::openHeaderMenu);
    QObject::connect(horizontalHeader(), &QHeaderView::sectionDoubleClicked, this, &Table::editHeader);
@@ -379,7 +384,10 @@ bool Table::event(QEvent* event)
         {
             const auto& position = mapFromGlobal(static_cast<QTapAndHoldGesture*>(gesture)->position().toPoint());
 
-
+            if(itemAt(position))
+            {
+                emit customContextMenuRequested(position);
+            }
         }
     }
 
@@ -608,7 +616,7 @@ void Table::openCellsMenu(const QPoint& position)
     auto* menu = new QMenu(this);
     menu->addAction("Font", [this, cells]
     {
-        const auto& font = QFontDialog::getFont(nullptr, QFont("Arial", 10), this);
+        const auto& font = QFontDialog::getFont(nullptr, QFont("MS Shell Dlg 2", 10), this);
 
         for(const auto& cell : cells)
         {

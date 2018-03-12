@@ -17,6 +17,7 @@ InversePalindrome.com
 #include <QDomDocument>
 #include <QColorDialog>
 #include <QPrintDialog>
+#include <QTapAndHoldGesture>
 
 
 List::List(QWidget *parent, const QString &directory) :
@@ -25,6 +26,8 @@ List::List(QWidget *parent, const QString &directory) :
 {
     setContextMenuPolicy(Qt::CustomContextMenu);
     setSelectionMode(QAbstractItemView::ContiguousSelection);
+
+    grabGesture(Qt::TapAndHoldGesture);
 
     QObject::connect(this, &List::customContextMenuRequested, this, &List::openElementMenu);
 
@@ -158,6 +161,26 @@ void List::sort(Qt::SortOrder order)
     sortItems(order);
 }
 
+bool List::event(QEvent* event)
+{
+    if(event->type() == QEvent::Gesture)
+    {
+        auto* gestureEvent = static_cast<QGestureEvent*>(event);
+
+        if(auto* gesture = gestureEvent->gesture(Qt::TapAndHoldGesture))
+        {
+            const auto& position = mapFromGlobal(static_cast<QTapAndHoldGesture*>(gesture)->position().toPoint());
+
+            if(itemAt(position))
+            {
+                emit customContextMenuRequested(position);
+            }
+        }
+    }
+
+    return QListWidget::event(event);
+}
+
 void List::saveToPdf(const QString& fileName)
 {
     QPrinter printer;
@@ -252,7 +275,7 @@ void List::openElementMenu(const QPoint& position)
 
     menu->addAction("Font", [this, elements]
     {
-        const auto& font = QFontDialog::getFont(nullptr, QFont("Arial", 10), this);
+        const auto& font = QFontDialog::getFont(nullptr, QFont("MS Shell Dlg 2", 10), this);
 
         for(const auto& element : elements)
         {

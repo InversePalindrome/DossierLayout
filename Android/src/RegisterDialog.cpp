@@ -18,11 +18,10 @@ InversePalindrome.com
 RegisterDialog::RegisterDialog(QWidget* parent) :
     QDialog(parent, Qt::Window)
 {
-    QPixmap loginIcon(":/Resources/Register.png");
-    loginIcon = loginIcon.scaledToHeight(200);
+    setAttribute(Qt::WA_DeleteOnClose);
 
-    auto* loginLabel = new QLabel(this);
-    loginLabel->setPixmap(loginIcon);
+    auto* registerLabel = new QLabel(this);
+    registerLabel->setPixmap(QPixmap(":/Resources/Register.png"));
 
     auto* userEntry = new QLineEdit(this);
 
@@ -47,7 +46,7 @@ RegisterDialog::RegisterDialog(QWidget* parent) :
     auto* layout = new QVBoxLayout(this);
 
     layout->addSpacing(15);
-    layout->addWidget(loginLabel, 0, Qt::AlignCenter);
+    layout->addWidget(registerLabel, 0, Qt::AlignCenter);
     layout->addSpacing(15);
     layout->addLayout(formLayout);
     layout->addLayout(buttonLayout);

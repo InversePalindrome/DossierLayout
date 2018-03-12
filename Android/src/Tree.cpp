@@ -6,6 +6,7 @@ InversePalindrome.com
 
 
 #include "Tree.hpp"
+#include "WidgetHeader.hpp"
 
 #include <QFile>
 #include <QMenu>
@@ -20,27 +21,30 @@ InversePalindrome.com
 #include <QDataStream>
 #include <QColorDialog>
 #include <QPrintDialog>
+#include <QGestureEvent>
 
 
 Tree::Tree(QWidget* parent, const QString& directory) :
     QTreeWidget(parent),
     directory(directory)
 {
-     setContextMenuPolicy(Qt::CustomContextMenu);
-     setSelectionMode(QAbstractItemView::ContiguousSelection);
+    setContextMenuPolicy(Qt::CustomContextMenu);
+    setSelectionMode(QAbstractItemView::ContiguousSelection);
+    setColumnCount(0);
 
-     header()->setContextMenuPolicy(Qt::CustomContextMenu);
-     header()->setSectionsClickable(true);
-     header()->setSortIndicatorShown(true);
-     headerItem()->setTextAlignment(0, Qt::AlignCenter);
-     headerItem()->setFont(0, QFont("Arial", 10, QFont::Bold));
+    grabGesture(Qt::TapAndHoldGesture);
 
-     QObject::connect(header(), &QHeaderView::sectionDoubleClicked, this, &Tree::editHeader);
-     QObject::connect(header(), &QHeaderView::customContextMenuRequested, this, &Tree::openHeaderMenu);
-     QObject::connect(header(), &QHeaderView::sectionClicked, [this](int index) { header()->setSortIndicator(index, Qt::AscendingOrder);});
-     QObject::connect(this, &Tree::customContextMenuRequested, this, &Tree::openNodesMenu);
+    setHeader(new WidgetHeader(Qt::Horizontal, this));
+    header()->setContextMenuPolicy(Qt::CustomContextMenu);
+    header()->setSectionsClickable(true);
+    header()->setSortIndicatorShown(true);
 
-     load(directory + "Tree.xml");
+    QObject::connect(header(), &QHeaderView::sectionDoubleClicked, this, &Tree::editHeader);
+    QObject::connect(header(), &QHeaderView::sectionClicked, [this](int index) { header()->setSortIndicator(index, Qt::AscendingOrder);});
+    QObject::connect(header(), &QHeaderView::customContextMenuRequested, this, &Tree::openHeaderMenu);
+    QObject::connect(this, &Tree::customContextMenuRequested, this, &Tree::openNodesMenu);
+
+    load(directory + "Tree.xml");
 }
 
 Tree::~Tree()
@@ -187,34 +191,27 @@ void Tree::removeNode()
 
 void Tree::sortColumn(Qt::SortOrder order)
 {
-   sortByColumn(header()->sortIndicatorSection(), order);
+    sortByColumn(header()->sortIndicatorSection(), order);
 }
 
-void Tree::mousePressEvent(QMouseEvent* event)
+bool Tree::event(QEvent* event)
 {
-    if(event->button() != Qt::LeftButton)
+    if(event->type() == QEvent::Gesture)
     {
-        return;
+        auto* gestureEvent = static_cast<QGestureEvent*>(event);
+
+        if(auto* gesture = gestureEvent->gesture(Qt::TapAndHoldGesture))
+        {
+            const auto& position = mapFromGlobal(static_cast<QTapAndHoldGesture*>(gesture)->position().toPoint());
+
+            if(itemAt(position))
+            {
+                emit customContextMenuRequested(position);
+            }
+        }
     }
 
-    auto* item = itemAt(event->pos());
-    bool isSelected = false;
-
-    if(item)
-    {
-        isSelected = item->isSelected();
-    }
-    else
-    {
-        clearSelection();
-    }
-
-    QTreeWidget::mousePressEvent(event);
-
-    if(isSelected)
-    {
-        item->setSelected(false);
-    }
+    return QTreeWidget::event(event);
 }
 
 void Tree::loadNode(QTreeWidgetItem* item, QDomElement& element)
@@ -365,7 +362,7 @@ void Tree::openHeaderMenu(const QPoint& position)
 
     menu->addAction("Font", [this, column]
     {
-        const auto& font = QFontDialog::getFont(nullptr, QFont("Arial", 10), this);
+        const auto& font = QFontDialog::getFont(nullptr, headerItem()->font(column), this);
 
         headerItem()->setFont(column, font);
     });
@@ -402,7 +399,7 @@ void Tree::openNodesMenu(const QPoint& position)
 
     menu->addAction("Font", [this, selectedNodes, column]
     {
-        const auto& font = QFontDialog::getFont(nullptr, QFont("Arial", 10), this);
+        const auto& font = QFontDialog::getFont(nullptr, QFont("MS Shell Dlg 2", 10), this);
 
         for(const auto& node : selectedNodes)
         {

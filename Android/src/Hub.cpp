@@ -160,7 +160,7 @@ QGroupBox* Hub::createDataStructureSelector(const QString& translatedType, const
     QObject::connect(addButton, &QToolButton::clicked, [this, translatedType, type]
     {
         bool ok;
-        const auto& name = QInputDialog::getText(this, tr("Add ") + translatedType, tr("Name:"), QLineEdit::EchoMode(), "", &ok);
+        const auto& name = QInputDialog::getText(this, tr("Add") + ' ' + translatedType, tr("Name:"), QLineEdit::EchoMode(), "", &ok);
 
         if(ok)
         {
@@ -201,8 +201,8 @@ void Hub::addDataStructure(const QString& type, const QString& name)
 
     dataStructureModel->setStringList(dataStructureModel->stringList() << name);
 
-    auto* openAction = new QAction(QIcon(":/Resources/Open.png"), tr("   Open"), this);
-    auto* deleteAction = new QAction(QIcon(":/Resources/Delete.png"), tr("   Delete"), this);
+    auto* openAction = new QAction(QIcon(":/Resources/Open.png"), "   " + tr("Open"), this);
+    auto* deleteAction = new QAction(QIcon(":/Resources/Delete.png"), "   " + tr("Delete"), this);
 
     dataButton->addAction(openAction);
     dataButton->addAction(deleteAction);
@@ -215,9 +215,7 @@ void Hub::addDataStructure(const QString& type, const QString& name)
     });
     QObject::connect(deleteAction, &QAction::triggered, [this, dataButton, name]
     {
-        QMessageBox deleteMessage(QMessageBox::Question, tr("Delete"), tr("Do you want to remove ") + '"' + name + "\"?", QMessageBox::Yes | QMessageBox::No, this);
-        deleteMessage.setButtonText(QMessageBox::Yes, tr("Yes"));
-        deleteMessage.setButtonText(QMessageBox::No, tr("No"));
+        QMessageBox deleteMessage(QMessageBox::Question, tr("Delete"), tr("Do you want to remove") + " \"" + name + "\"?", QMessageBox::Yes | QMessageBox::No, this);
 
         if(deleteMessage.exec() == QMessageBox::Yes)
         {

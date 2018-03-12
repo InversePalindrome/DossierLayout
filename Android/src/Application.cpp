@@ -93,8 +93,13 @@ MainWindow* Application::createMainWindow(const QString& user)
 
     QObject::connect(mainWindow, &MainWindow::exit, [this, mainWindow]
     {
-        mainWindow->deleteLater();
         createLoginDialog();
+        mainWindow->close();
+    });
+    QObject::connect(mainWindow, &MainWindow::openSettings, [this, mainWindow]
+    {
+        createSettingsDialog(mainWindow);
+        mainWindow->close();
     });
 
     mainWindow->show();
@@ -102,21 +107,32 @@ MainWindow* Application::createMainWindow(const QString& user)
     return mainWindow;
 }
 
-SettingsDialog* Application::createSettingsDialog()
+SettingsDialog* Application::createSettingsDialog(QWidget* parent)
 {
     auto* settingsDialog = new SettingsDialog();
 
+    const auto& name = parent->property("name").toString();
+    const auto& user = parent->property("user").toString();
+
     QObject::connect(settingsDialog, &SettingsDialog::changeStyle, this, &Application::changeStyle);
     QObject::connect(settingsDialog, &SettingsDialog::changeLanguage, this, &Application::changeLanguage);
-    QObject::connect(settingsDialog, &SettingsDialog::done, [this, settingsDialog]
+    QObject::connect(settingsDialog, &SettingsDialog::closeSettings, [this, settingsDialog, name, user]
     {
         settingsDialog->deleteLater();
-        createLoginDialog();
-    });
 
-    settingsDialog->show();
+        if(name == "Login")
+        {
+            createLoginDialog();
+        }
+        else if(name == "MainWindow")
+        {
+            createMainWindow(user);
+        }
+   });
 
-    return settingsDialog;
+   settingsDialog->show();
+
+   return settingsDialog;
 }
 
 LoginDialog* Application::createLoginDialog()
@@ -132,19 +148,19 @@ LoginDialog* Application::createLoginDialog()
         }
         else
         {
-            loginDialog->deleteLater();
-            this->createMainWindow(username);
+            createMainWindow(username);
+            loginDialog->close();
         }
     });
     QObject::connect(loginDialog, &LoginDialog::registerUser, [this, loginDialog]
     {
-        loginDialog->deleteLater();
         createRegisterDialog();
+        loginDialog->close();
     });
     QObject::connect(loginDialog, &LoginDialog::openSettings, [this, loginDialog]
     {
-        loginDialog->deleteLater();
-        createSettingsDialog();
+        createSettingsDialog(loginDialog);
+        loginDialog->close();
     });
 
     loginDialog->show();
@@ -182,14 +198,14 @@ RegisterDialog* Application::createRegisterDialog()
         {
             users.addUser(User(user), password);
 
-            registerDialog->deleteLater();
-            this->createLoginDialog();
+            createLoginDialog();
+            registerDialog->close();
         }
     });
     QObject::connect(registerDialog, &RegisterDialog::cancelRegistration, [this, registerDialog]
     {
-        registerDialog->deleteLater();
         createLoginDialog();
+        registerDialog->close();
     });
 
     registerDialog->show();
