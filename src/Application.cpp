@@ -13,11 +13,11 @@ InversePalindrome.com
 #include <QMessageBox>
 #include <QTextStream>
 #include <QDomDocument>
+#include <QSplashScreen>
 
 
 Application::Application(int& argc, char** argv) :
     QApplication(argc, argv),
-    splashScreen(QPixmap(":/Resources/InversePalindromeLogo.jpg")),
     mainTranslator(new QTranslator(this)),
     qtTranslator(new QTranslator(this))
 {
@@ -26,11 +26,15 @@ Application::Application(int& argc, char** argv) :
 
 int Application::run()
 {
-    auto splashTime = 4u;
+    auto* splashScreen = new QSplashScreen(QPixmap(":/Resources/InversePalindromeLogo.jpg"), Qt::WindowStaysOnTopHint);
 
-    splashScreen.show();
+    auto splashTime = 2u;
+
+    splashScreen->show();
     thread()->sleep(splashTime);
-    splashScreen.finish(createLoginDialog());
+    splashScreen->finish(createLoginDialog());
+
+    delete splashScreen;
 
     return exec();
 }
@@ -96,8 +100,8 @@ MainWindow* Application::createMainWindow(const QString& user)
 
     QObject::connect(mainWindow, &MainWindow::exit, [this, mainWindow]
     {
-        mainWindow->deleteLater();
         createLoginDialog();
+        mainWindow->close();
     });
 
     mainWindow->show();
@@ -113,8 +117,8 @@ SettingsDialog* Application::createSettingsDialog()
     QObject::connect(settingsDialog, &SettingsDialog::changeLanguage, this, &Application::changeLanguage);
     QObject::connect(settingsDialog, &SettingsDialog::done, [this, settingsDialog]
     {
-        settingsDialog->deleteLater();
         createLoginDialog();
+        settingsDialog->close();
     });
 
     settingsDialog->show();
@@ -135,19 +139,19 @@ LoginDialog* Application::createLoginDialog()
         }
         else
         {
-            loginDialog->deleteLater();
             createMainWindow(username);
+            loginDialog->close();
         }
     });
     QObject::connect(loginDialog, &LoginDialog::registerUser, [this, loginDialog]
     {
-        loginDialog->deleteLater();
         createRegisterDialog();
+        loginDialog->close();
     });
     QObject::connect(loginDialog, &LoginDialog::openSettings, [this, loginDialog]
     {
-        loginDialog->deleteLater();
         createSettingsDialog();
+        loginDialog->close();
     });
 
     loginDialog->show();
@@ -185,14 +189,14 @@ RegisterDialog* Application::createRegisterDialog()
         {
             users.addUser(User(user), password);
 
-            registerDialog->deleteLater();
             createLoginDialog();
+            registerDialog->close();
         }
     });
     QObject::connect(registerDialog, &RegisterDialog::cancelRegistration, [this, registerDialog]
     {
-        registerDialog->deleteLater();
         createLoginDialog();
+        registerDialog->close();
     });
 
     registerDialog->show();

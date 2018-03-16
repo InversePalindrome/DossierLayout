@@ -18,8 +18,9 @@ InversePalindrome.com
 LoginDialog::LoginDialog(QWidget* parent) :
     QDialog(parent, Qt::Window | Qt::WindowCloseButtonHint | Qt::WindowMinimizeButtonHint | Qt::WindowTitleHint)
 {
-    setFixedSize(800, 760);
+    setFixedSize(800, 800);
     setWindowTitle(tr("Login - DossierLayout"));
+    setAttribute(Qt::WA_DeleteOnClose);
 
     auto* layout = new QVBoxLayout(this);
 

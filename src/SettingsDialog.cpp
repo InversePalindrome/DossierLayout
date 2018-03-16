@@ -9,13 +9,13 @@ InversePalindrome.com
 
 #include <QFile>
 #include <QBoxLayout>
+#include <QFormLayout>
 #include <QTextStream>
 #include <QDomDocument>
 
 
 SettingsDialog::SettingsDialog(QWidget* parent) :
     QDialog(parent, Qt::Window | Qt::WindowCloseButtonHint | Qt::WindowMinimizeButtonHint | Qt::WindowTitleHint),
-    formLayout(new QFormLayout()),
     styleLabel(new QLabel(tr("Style:"), this)),
     languageLabel(new QLabel(tr("Language:"), this)),
     styleChoices(new QComboBox(this)),
@@ -24,9 +24,7 @@ SettingsDialog::SettingsDialog(QWidget* parent) :
 {
     setFixedSize(630, 500);
     setWindowTitle(tr("Settings - DossierLayout"));
-
-    auto* settingsLabel = new QLabel(this);
-    settingsLabel->setPixmap(QPixmap(":/Resources/Settings.png"));
+    setAttribute(Qt::WA_DeleteOnClose);
 
     styleChoices->setProperty("0", "Regular");
     styleChoices->setProperty("1", "Light");
@@ -44,10 +42,15 @@ SettingsDialog::SettingsDialog(QWidget* parent) :
     languageChoices->addItem("Español");
     languageChoices->setItemIcon(1, QIcon(":/Resources/Spanish.png"));
 
-    auto* layout = new QVBoxLayout(this);
+    auto* settingsLabel = new QLabel(this);
+    settingsLabel->setPixmap(QPixmap(":/Resources/Settings.png"));
+
+    auto* formLayout(new QFormLayout());
 
     formLayout->addRow(styleLabel, styleChoices);
     formLayout->addRow(languageLabel, languageChoices);
+
+    auto* layout = new QVBoxLayout(this);
 
     layout->addWidget(settingsLabel, 0, Qt::AlignCenter);
     layout->addLayout(formLayout);
@@ -122,7 +125,7 @@ void SettingsDialog::save(const QString& fileName)
 
     if(!file.open(QIODevice::WriteOnly | QIODevice::Text))
     {
-       return;
+        return;
     }
     else
     {

@@ -20,6 +20,7 @@ RegisterDialog::RegisterDialog(QWidget* parent) :
 {
     setFixedSize(640, 600);
     setWindowTitle(tr("Register - DossierLayout"));
+    setAttribute(Qt::WA_DeleteOnClose);
 
     auto* registerLabel = new QLabel(this);
     registerLabel->setPixmap(QPixmap(":/Resources/Register.png"));
