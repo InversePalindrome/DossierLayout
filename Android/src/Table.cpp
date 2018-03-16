@@ -28,13 +28,15 @@ InversePalindrome.com
 #include <limits.h>
 
 
-Table::Table(QWidget* parent, const QString& directory) :
+Table::Table(QWidget* parent, const QString& user, const QString& name) :
     QTableWidget(parent),
-    directory(directory),
+    directory(Utility::appPath() + user + '/' + name + '/'),
     clipboard(QApplication::clipboard())
 {
    setContextMenuPolicy(Qt::CustomContextMenu);
    setSelectionMode(QAbstractItemView::ContiguousSelection);
+   setProperty("name", name);
+   setStyleSheet("QHeaderView::section { background-color: white; }");
 
    grabGesture(Qt::TapAndHoldGesture);
 
@@ -44,22 +46,22 @@ Table::Table(QWidget* parent, const QString& directory) :
    setVerticalHeader(new WidgetHeader(Qt::Vertical, this));
    verticalHeader()->setContextMenuPolicy(Qt::CustomContextMenu);
 
+   load(directory + "Table.xml");
+
    QObject::connect(horizontalHeader(), &QHeaderView::customContextMenuRequested, this, &Table::openHeaderMenu);
    QObject::connect(horizontalHeader(), &QHeaderView::sectionDoubleClicked, this, &Table::editHeader);
    QObject::connect(verticalHeader(), &QHeaderView::customContextMenuRequested, this, &Table::openHeaderMenu);
    QObject::connect(verticalHeader(), &QHeaderView::sectionDoubleClicked, this, &Table::editHeader);
    QObject::connect(this, &Table::customContextMenuRequested, this, &Table::openCellsMenu);
-
-   load(directory + "Table.xml");
 }
 
 Table::~Table()
 {
-   QSettings settings(directory + "Headers.ini", QSettings::IniFormat);
-   settings.setValue("Horizontal", horizontalHeader()->saveState());
-   settings.setValue("Vertical", verticalHeader()->saveState());
+    QSettings settings(directory + "Headers.ini", QSettings::IniFormat);
+    settings.setValue("Horizontal", horizontalHeader()->saveState());
+    settings.setValue("Vertical", verticalHeader()->saveState());
 
-   save(directory + "Table.xml");
+    save(directory + "Table.xml");
 }
 
 void Table::load(const QString& fileName)

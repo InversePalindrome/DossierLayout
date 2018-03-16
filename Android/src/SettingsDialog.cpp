@@ -6,6 +6,7 @@ InversePalindrome.com
 
 
 #include "SettingsDialog.hpp"
+#include "AndroidUtility.hpp"
 
 #include <QFile>
 #include <QBoxLayout>
@@ -64,12 +65,12 @@ SettingsDialog::SettingsDialog(QWidget* parent) :
     });
     QObject::connect(doneButton, &QPushButton::clicked, [this] { emit closeSettings(); });
 
-    load("Settings.xml");
+    load(Utility::appPath() + "Settings.xml");
 }
 
 SettingsDialog::~SettingsDialog()
 {
-    save("Settings.xml");
+    save(Utility::appPath() + "Settings.xml");
 }
 
 void SettingsDialog::load(const QString& fileName)
@@ -145,8 +146,6 @@ void SettingsDialog::changeEvent(QEvent* event)
 
 void SettingsDialog::retranslateUi()
 {
-    setWindowTitle(tr("Settings - DossierLayout"));
-
     doneButton->setText(tr("Done"));
 
     styleChoices->setItemText(0, tr("Regular"));

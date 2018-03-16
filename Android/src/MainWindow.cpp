@@ -9,9 +9,9 @@ InversePalindrome.com
 #include "SettingsDialog.hpp"
 #include "AndroidUtility.hpp"
 
-#include <QDir>
 #include <QMenu>
 #include <QDialog>
+#include <QSettings>
 #include <QCheckBox>
 #include <QLineEdit>
 #include <QCompleter>
@@ -21,6 +21,7 @@ InversePalindrome.com
 #include <QToolButton>
 #include <QMessageBox>
 #include <QFileDialog>
+#include <QHeaderView>
 #include <QInputDialog>
 #include <QButtonGroup>
 #include <QRadioButton>
@@ -32,7 +33,8 @@ MainWindow::MainWindow(const QString& user) :
     view(new QGraphicsView(this)),
     stackWidget(new QStackedWidget(this)),
     titleIcon(new QLabel(this)),
-    titleLabel(new QLabel(this))
+    titleLabel(new QLabel(this)),
+    hub(new Hub(user, this))
 {
     addToolBar(toolBar);
     setContextMenuPolicy(Qt::NoContextMenu);
@@ -57,15 +59,49 @@ MainWindow::MainWindow(const QString& user) :
     centralLayout->addLayout(titleLayout);
     centralLayout->addWidget(stackWidget);
 
-    auto* hub = new Hub(user, this);
-
     stackWidget->addWidget(hub);
     stackWidget->setCurrentIndex(0);
 
-    setupHubFunctions(hub);
+    setupHubFunctions();
 }
 
-void MainWindow::setupHubFunctions(Hub* hub)
+void MainWindow::save()
+{
+    hub->save(Utility::appPath() + user.toLower() + "/DataStructures.xml");
+
+    auto* dataStructure = stackWidget->widget(1);
+
+    if(dataStructure)
+    {
+        auto* list = qobject_cast<Tree*>(dataStructure);
+        auto* table = qobject_cast<Table*>(dataStructure);
+        auto* tree = qobject_cast<Tree*>(dataStructure);
+
+        const auto& directory = Utility::appPath() + user + '/' + dataStructure->property("name").toString() + '/';
+
+        if(list)
+        {
+            list->save(directory + "List.xml");
+        }
+        else if(table)
+        {
+            QSettings settings(directory + "Headers.ini", QSettings::IniFormat);
+            settings.setValue("Horizontal", table->horizontalHeader()->saveState());
+            settings.setValue("Vertical", table->verticalHeader()->saveState());
+
+            table->save(directory + "Table.xml");
+        }
+        else if(tree)
+        {
+            QSettings settings(directory + "Header.ini", QSettings::IniFormat);
+            settings.setValue("Horizontal", tree->header()->saveState());
+
+            tree->save(directory + "Tree.xml");
+        }
+    }
+}
+
+void MainWindow::setupHubFunctions()
 {
     auto* searchBar = new QLineEdit(this);
     searchBar->setPlaceholderText("🔍");
@@ -113,7 +149,7 @@ void MainWindow::setupHubFunctions(Hub* hub)
 
         if(type == "List")
         {
-            auto* list = new List(this, user + '/' + name + '/');
+            auto* list = new List(this, user, name);
 
             setupListFunctions(list);
 
@@ -121,7 +157,7 @@ void MainWindow::setupHubFunctions(Hub* hub)
         }
         else if(type == "Table")
         {
-            auto* table = new Table(this, user + '/' + name + '/');
+            auto* table = new Table(this, user, name);
 
             setupTableFunctions(table);
 
@@ -129,7 +165,7 @@ void MainWindow::setupHubFunctions(Hub* hub)
         }
         else if(type == "Tree")
         {
-            auto* tree = new Tree(this, user + '/' + name + '/');
+            auto* tree = new Tree(this, user, name);
 
             setupTreeFunctions(tree);
 
@@ -156,12 +192,12 @@ void MainWindow::setupHubFunctions(Hub* hub)
             stackWidget->setCurrentIndex(0);
         });
     });
-    QObject::connect(searchBar, &QLineEdit::returnPressed, [hub, searchBar]{ hub->findDataStructure(searchBar->text()); });
-    QObject::connect(completer, static_cast<void(QCompleter::*)(const QString&)>(&QCompleter::activated), [hub](const QString& text)
+    QObject::connect(searchBar, &QLineEdit::returnPressed, [this, searchBar]{ hub->findDataStructure(searchBar->text()); });
+    QObject::connect(completer, static_cast<void(QCompleter::*)(const QString&)>(&QCompleter::activated), [this](const QString& text)
     {
         hub->findDataStructure(text);
     });
-    QObject::connect(exitButton, &QToolButton::clicked, [this]{ emit exit(); });
+    QObject::connect(exitButton, &QToolButton::clicked, [this] { emit exit(); });
     QObject::connect(settingsButton, &QToolButton::clicked, [this]{ emit openSettings(); });
 }
 

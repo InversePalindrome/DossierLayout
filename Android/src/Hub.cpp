@@ -6,6 +6,7 @@ InversePalindrome.com
 
 
 #include "Hub.hpp"
+#include "AndroidUtility.hpp"
 
 #include <QDir>
 #include <QHash>
@@ -35,12 +36,12 @@ Hub::Hub(const QString& user, QWidget* parent) :
     layout->addWidget(createDataStructureSelector(tr("Table"), "Table"));
     layout->addWidget(createDataStructureSelector(tr("Tree"), "Tree"));
 
-    load(user + "/DataStructures.xml");
+    load(Utility::appPath() + user + "/DataStructures.xml");
 }
 
 Hub::~Hub()
 {
-    save(user + "/DataStructures.xml");
+    save(Utility::appPath() + user + "/DataStructures.xml");
 }
 
 void Hub::load(const QString& fileName)
@@ -176,7 +177,7 @@ QGroupBox* Hub::createDataStructureSelector(const QString& translatedType, const
             }
             else
             {
-               QDir().mkdir(user + '/' + name);
+               Utility::appDir().mkpath(user + '/' + name);
 
                addDataStructure(type, name);
             }
@@ -234,7 +235,7 @@ void Hub::addDataStructure(const QString& type, const QString& name)
 
            dataStructureModel->setStringList(names);
 
-           QDir(user + '/' + name).removeRecursively();
+           QDir(Utility::appPath() + user + '/' + name).removeRecursively();
         }
     });
 }

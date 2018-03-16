@@ -6,6 +6,7 @@ InversePalindrome.com
 
 
 #include "List.hpp"
+#include "AndroidUtility.hpp"
 
 #include <QFile>
 #include <QMenu>
@@ -20,18 +21,19 @@ InversePalindrome.com
 #include <QTapAndHoldGesture>
 
 
-List::List(QWidget *parent, const QString &directory) :
+List::List(QWidget* parent, const QString& user, const QString& name) :
     QListWidget(parent),
-    directory(directory)
+    directory(Utility::appPath() + user + '/' + name + '/')
 {
     setContextMenuPolicy(Qt::CustomContextMenu);
     setSelectionMode(QAbstractItemView::ContiguousSelection);
+    setProperty("name", name);
 
     grabGesture(Qt::TapAndHoldGesture);
 
-    QObject::connect(this, &List::customContextMenuRequested, this, &List::openElementMenu);
-
     load(directory + "List.xml");
+
+    QObject::connect(this, &List::customContextMenuRequested, this, &List::openElementMenu);
 }
 
 List::~List()

@@ -7,6 +7,7 @@ InversePalindrome.com
 
 #include "Tree.hpp"
 #include "WidgetHeader.hpp"
+#include "AndroidUtility.hpp"
 
 #include <QFile>
 #include <QMenu>
@@ -24,13 +25,15 @@ InversePalindrome.com
 #include <QGestureEvent>
 
 
-Tree::Tree(QWidget* parent, const QString& directory) :
+Tree::Tree(QWidget* parent, const QString& user, const QString& name) :
     QTreeWidget(parent),
-    directory(directory)
+    directory(Utility::appPath() + user + '/' + name + '/')
 {
     setContextMenuPolicy(Qt::CustomContextMenu);
     setSelectionMode(QAbstractItemView::ContiguousSelection);
     setColumnCount(0);
+    setProperty("name", name);
+    setStyleSheet("QHeaderView::section { background-color: white; }");
 
     grabGesture(Qt::TapAndHoldGesture);
 
@@ -39,12 +42,12 @@ Tree::Tree(QWidget* parent, const QString& directory) :
     header()->setSectionsClickable(true);
     header()->setSortIndicatorShown(true);
 
+    load(directory + "Tree.xml");
+
     QObject::connect(header(), &QHeaderView::sectionDoubleClicked, this, &Tree::editHeader);
     QObject::connect(header(), &QHeaderView::sectionClicked, [this](int index) { header()->setSortIndicator(index, Qt::AscendingOrder);});
     QObject::connect(header(), &QHeaderView::customContextMenuRequested, this, &Tree::openHeaderMenu);
     QObject::connect(this, &Tree::customContextMenuRequested, this, &Tree::openNodesMenu);
-
-    load(directory + "Tree.xml");
 }
 
 Tree::~Tree()
@@ -138,7 +141,6 @@ void Tree::insertColumn(const QString& name)
 
     for(auto node : selectedItems())
     {
-        node->setBackgroundColor(columnCount() - 1, Qt::white);
         node->setTextColor(columnCount() - 1, Qt::black);
     }
 

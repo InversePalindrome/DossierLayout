@@ -6,6 +6,7 @@ InversePalindrome.com
 
 
 #include "Users.hpp"
+#include "AndroidUtility.hpp"
 
 #include <QDir>
 #include <QFile>
@@ -21,12 +22,12 @@ User::User(const QString& user) :
 Users::Users() :
     crypto(0x0c2ad4a4acb9f023)
 {
-    load("Users.xml");
+    load(Utility::appPath() + "Users.xml");
 }
 
 Users::~Users()
 {
-    save("Users.xml");
+    save(Utility::appPath() + "Users.xml");
 }
 
 void Users::load(const QString& fileName)
@@ -104,7 +105,7 @@ void Users::addUser(const User& user, const QString& password)
 {
     users.insert(user, crypto.encryptToString(password));
 
-    QDir().mkdir(user);
+    Utility::appDir().mkpath(user);
 }
 
 bool Users::isLoginValid(const User& user, const QString& password)

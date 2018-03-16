@@ -57,7 +57,7 @@ LoginDialog::LoginDialog(QWidget* parent) :
     });
     QObject::connect(registerButton, &QPushButton::clicked, [this]
     {
-        emit registerUser();
+        emit openRegistration();
     });
     QObject::connect(settingsButton, &QPushButton::clicked, [this]
     {
