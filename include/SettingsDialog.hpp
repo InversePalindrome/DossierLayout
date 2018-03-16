@@ -11,7 +11,6 @@ InversePalindrome.com
 #include <QLabel>
 #include <QDialog>
 #include <QComboBox>
-#include <QFormLayout>
 #include <QPushButton>
 
 
@@ -27,7 +26,6 @@ public:
     void save(const QString& fileName);
 
 private:
-    QFormLayout* formLayout;
     QLabel* styleLabel;
     QLabel* languageLabel;
     QComboBox* styleChoices;
