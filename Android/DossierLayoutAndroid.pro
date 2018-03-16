@@ -54,3 +54,27 @@ RESOURCES += \
     ../Styles/breeze.qrc
 
 TRANSLATIONS = ../Translations/spanish.ts
+
+DISTFILES += \
+    ../build-DossierLayoutAndroid-Android_for_x86_GCC_4_9_Qt_5_10_0_for_Android_x86-Release/android-build/AndroidManifest.xml \
+    android_release.keystore \
+    android/AndroidManifest.xml \
+    android/gradle/wrapper/gradle-wrapper.jar \
+    android/gradlew \
+    android/res/values/libs.xml \
+    android/build.gradle \
+    android/gradle/wrapper/gradle-wrapper.properties \
+    android/gradlew.bat \
+    android/AndroidManifest.xml \
+    android/res/values/libs.xml \
+    android/build.gradle \
+    ../build-DossierLayoutAndroid-Android_for_armeabi_v7a_GCC_4_9_Qt_5_10_0_for_Android_armv7-Release/android-build/AndroidManifest.xml \
+    android/AndroidManifest.xml \
+    android/gradle/wrapper/gradle-wrapper.jar \
+    android/gradlew \
+    android/res/values/libs.xml \
+    android/build.gradle \
+    android/gradle/wrapper/gradle-wrapper.properties \
+    android/gradlew.bat
+
+ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
