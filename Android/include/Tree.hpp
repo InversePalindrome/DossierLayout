@@ -17,7 +17,7 @@ class Tree : public QTreeWidget
     Q_OBJECT
 
 public:
-    Tree(QWidget* parent, const QString& directory);
+    Tree(QWidget* parent, const QString& user, const QString& name);
     ~Tree();
 
     void load(const QString& fileName);

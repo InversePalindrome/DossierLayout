@@ -19,6 +19,6 @@ public:
 
 signals:
     void loginUser(const QString& name, const QString& password);
-    void registerUser();
+    void openRegistration();
     void openSettings();
 };

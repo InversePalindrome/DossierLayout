@@ -19,7 +19,7 @@ class Table : public QTableWidget
     using ItemList = QList<QTableWidgetItem*>;
 
 public:
-    Table(QWidget* parent, const QString& directory);
+    Table(QWidget* parent, const QString& user, const QString& name);
     ~Table();
 
     void load(const QString& fileName);

@@ -26,6 +26,9 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(const QString& user);
 
+public slots:
+    void save();
+
 private:
     QString user;
 
@@ -35,7 +38,9 @@ private:
     QLabel* titleIcon;
     QLabel* titleLabel;
 
-    void setupHubFunctions(Hub* hub);
+    Hub* hub;
+
+    void setupHubFunctions();
     void setupListFunctions(List* list);
     void setupTableFunctions(Table* table);
     void setupTreeFunctions(Tree* tree);

@@ -15,7 +15,6 @@ InversePalindrome.com
 
 #include <QApplication>
 #include <QTranslator>
-#include <QSplashScreen>
 
 
 class Application : public QApplication
@@ -34,7 +33,6 @@ private slots:
 private:
     Users users;
 
-    QSplashScreen splashScreen;
     QTranslator* translator;
 
     void load(const QString& fileName);
@@ -43,4 +41,7 @@ private:
     SettingsDialog* createSettingsDialog(QWidget* parent = nullptr);
     LoginDialog* createLoginDialog();
     RegisterDialog* createRegisterDialog();
+
+signals:
+    void save();
 };

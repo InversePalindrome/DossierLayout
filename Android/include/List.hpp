@@ -16,7 +16,7 @@ class List : public QListWidget
     Q_OBJECT
 
 public:
-    List(QWidget* parent, const QString& directory);
+    List(QWidget* parent, const QString& user, const QString& name);
     ~List();
 
     void load(const QString& fileName);
