@@ -7,15 +7,16 @@ InversePalindrome.com
 
 #pragma once
 
+#include "xlsxformat.h"
+
 #include <Qt>
 #include <QPair>
-
-#include <QtXlsx/xlsxformat.h>
 
 
 namespace Utility
 {
-    QPair<QXlsx::Format::HorizontalAlignment, QXlsx::Format::VerticalAlignment> QtToExcelAlignment(int alignment);
+   QPair<QXlsx::Format::HorizontalAlignment, QXlsx::Format::VerticalAlignment> QtToExcelAlignment(int alignment);
 
-    Qt::Alignment ExcelToQtAlignment(const QPair<QXlsx::Format::HorizontalAlignment, QXlsx::Format::VerticalAlignment>& alignment);
+   Qt::Alignment ExcelToQtAlignment(const QPair<QXlsx::Format::HorizontalAlignment, QXlsx::Format::VerticalAlignment>& alignment);
 }
+
