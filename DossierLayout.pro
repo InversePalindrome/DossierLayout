@@ -3,14 +3,11 @@
 #InversePalindrome.com
 
 
-QT += core gui uitools xml printsupport xlsx
-
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+QT += widgets printsupport xml xlsx
 
 TARGET = DossierLayout
 TEMPLATE = app
-INCLUDEPATH += C:\Users\Bryan\Desktop\DossierLayout\DossierLayout\include
-win32:RC_ICONS += DossierLayout.ico
+INCLUDEPATH += $$PWD/include
 
 DEFINES += QT_DEPRECATED_WARNINGS
 
@@ -42,28 +39,6 @@ HEADERS += \
     include/Table.hpp \
     include/Tree.hpp \
     include/Users.hpp
-
-SUBDIRS += \
-    DossierLayout.pro
-
-DISTFILES += \
-    ../Resources/InversePalindromeLogo.jpg \
-    ../Resources/AddRow.png \
-    ../Resources/Download.png \
-    ../Resources/Exit.png \
-    ../Resources/List.png \
-    ../Resources/LoginTitle.png \
-    ../Resources/Merge.png \
-    ../Resources/Open.png \
-    ../Resources/Print.png \
-    ../Resources/RemoveColumn.png \
-    ../Resources/RemoveNode.png \
-    ../Resources/RemoveRow.png \
-    ../Resources/Sigma.png \
-    ../Resources/Sort.png \
-    ../Resources/Split.png \
-    ../Resources/Table.png \
-    ../Resources/Tree.png \
 
 RESOURCES += \
     ../Resources/resources.qrc \
