@@ -26,21 +26,21 @@ Tree::Tree(QWidget* parent, const QString& directory) :
     QTreeWidget(parent),
     directory(directory)
 {
-     setContextMenuPolicy(Qt::CustomContextMenu);
-     setSelectionMode(QAbstractItemView::ContiguousSelection);
+    setContextMenuPolicy(Qt::CustomContextMenu);
+    setSelectionMode(QAbstractItemView::ContiguousSelection);
 
-     header()->setContextMenuPolicy(Qt::CustomContextMenu);
-     header()->setSectionsClickable(true);
-     header()->setSortIndicatorShown(true);
-     headerItem()->setTextAlignment(0, Qt::AlignCenter);
-     headerItem()->setFont(0, QFont("Arial", 10, QFont::Bold));
+    header()->setContextMenuPolicy(Qt::CustomContextMenu);
+    header()->setSectionsClickable(true);
+    header()->setSortIndicatorShown(true);
+    headerItem()->setTextAlignment(0, Qt::AlignCenter);
+    headerItem()->setFont(0, QFont("Arial", 10, QFont::Bold));
 
-     QObject::connect(header(), &QHeaderView::sectionDoubleClicked, this, &Tree::editHeader);
-     QObject::connect(header(), &QHeaderView::customContextMenuRequested, this, &Tree::openHeaderMenu);
-     QObject::connect(header(), &QHeaderView::sectionClicked, [this](auto index) { header()->setSortIndicator(index, Qt::AscendingOrder);});
-     QObject::connect(this, &Tree::customContextMenuRequested, this, &Tree::openNodesMenu);
+    QObject::connect(header(), &QHeaderView::sectionDoubleClicked, this, &Tree::editHeader);
+    QObject::connect(header(), &QHeaderView::customContextMenuRequested, this, &Tree::openHeaderMenu);
+    QObject::connect(header(), &QHeaderView::sectionClicked, [this](auto index) { header()->setSortIndicator(index, Qt::AscendingOrder);});
+    QObject::connect(this, &Tree::customContextMenuRequested, this, &Tree::openNodesMenu);
 
-     load(directory + "Tree.xml");
+    load(directory + "Tree.xml");
 }
 
 Tree::~Tree()

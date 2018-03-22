@@ -20,7 +20,7 @@ Application::Application(int& argc, char** argv) :
     QApplication(argc, argv),
     mainTranslator(new QTranslator(this)),
     qtTranslator(new QTranslator(this))
-{
+{  
     load("Settings.xml");
 }
 

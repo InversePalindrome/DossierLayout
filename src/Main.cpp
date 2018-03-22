@@ -10,6 +10,8 @@ InversePalindrome.com
 
 int main(int argc, char *argv[])
 {
+   QCoreApplication::addLibraryPath(".");
+
    Application app(argc, argv);
 
    return app.run();
