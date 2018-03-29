@@ -3,11 +3,14 @@
 #InversePalindrome.com
 
 
-QT += widgets printsupport xml xlsx
+QT += widgets printsupport xml
 
 TARGET = DossierLayout
 TEMPLATE = app
 INCLUDEPATH += $$PWD/include
+include(Qtxlsx/src/xlsx/qtxlsx.pri)
+
+win32:RC_ICONS += DossierLayout.ico
 
 DEFINES += QT_DEPRECATED_WARNINGS
 
@@ -43,6 +46,7 @@ HEADERS += \
 RESOURCES += \
     ../Resources/resources.qrc \
     ../Translations/translations.qrc \
-    ../Styles/breeze.qrc
+    ../Styles/breeze.qrc \
+    qt_conf.qrc
 
 TRANSLATIONS = ../Translations/spanish.ts
